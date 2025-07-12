@@ -1,14 +1,32 @@
 pipeline {
-    agent any  // 在任何可用节点执行（[[0]](#__0) [[16]](#__16)）
+    agent any
     stages {
         stage('拉取代码') {
             steps {
                 checkout scm  // 自动同步 SCM 配置的仓库（[[2]](#__2) [[16]](#__16)）
             }
         }
-        stage('执行斐波那契脚本') {
+        
+        stage('Deploy') {
             steps {
-                sh 'python3 fib.py'  // 执行仓库中的脚本（[[10]](#__10) [[17]](#__17)）
+                sshPublisher(
+                    publishers: [
+                        sshPublisherDesc(
+                            configName: '192.168.88.84', // 你的SSH Server配置名称
+                            transfers: [
+                                sshTransfer(
+                                    sourceFiles: 'fib.py',
+                                    removePrefix: '',
+                                    remoteDirectory: '/tmp/',
+                                    execCommand: '''
+                                    chmod +x /tmp/fib.py
+                                    python3 /tmp/fib.py
+                                    '''
+                                )
+                            ]
+                        )
+                    ]
+                )
             }
         }
     }
