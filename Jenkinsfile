@@ -17,10 +17,10 @@ pipeline {
                                 sshTransfer(
                                     sourceFiles: 'fib.py',
                                     removePrefix: '',
-                                    remoteDirectory: '/tmp/',
+                                    remoteDirectory: '/home/admin/app/',
                                     execCommand: '''
-                                    chmod +x /tmp/fib.py
-                                    python3 /tmp/fib.py
+                                    chmod +x /home/admin/app/fib.py
+                                    python3 /home/admin/app/fib.py
                                     '''
                                 )
                             ]
