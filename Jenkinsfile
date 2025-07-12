@@ -10,6 +10,10 @@ pipeline {
             steps {
                 sh 'echo "Hello World!"'  // 输出测试信息（[[1]](#__1) [[10]](#__10)）
             }
+        stage('执行fib.py') {
+            steps {
+                sh 'python3 ./fib.py'  // 输出测试信息（[[1]](#__1) [[10]](#__10)）
+            }
         }
     }
 }
