@@ -1,13 +1,10 @@
 pipeline {
     agent any
-    stages {
-        stage('Checkout') {
-            steps {
-                git url: 'git@github.com:aotubee/hello-world.git', 
-                    credentialsId: 'a242ab64-b9d4-496f-a120-610abdd9dcb1',
-                    branch: 'main'
-            }
+    stage('拉取代码') {
+        steps {
+            checkout scm  // 自动同步 SCM 配置的仓库（[[2]](#__2) [[16]](#__16)）
         }
+    }
         stage('Deploy') {
             steps {
                 sshPublisher(
