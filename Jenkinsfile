@@ -1,10 +1,12 @@
 pipeline {
     agent any
-    stage('拉取代码') {
-        steps {
-            checkout scm  // 自动同步 SCM 配置的仓库（[[2]](#__2) [[16]](#__16)）
+    stages {
+        stage('拉取代码') {
+            steps {
+                checkout scm  // 自动同步 SCM 配置的仓库（[[2]](#__2) [[16]](#__16)）
+            }
         }
-    }
+
         stage('Deploy') {
             steps {
                 sshPublisher(
