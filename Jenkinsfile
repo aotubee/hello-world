@@ -14,7 +14,7 @@ pipeline {
                 sh 'python3 ./fib.py' 
             }
         }
-        stage('远程部署x') {
+        stage('远程部署') {
             steps {
                 script {
                     sshPublisher(
@@ -24,7 +24,7 @@ pipeline {
                                 transfers: [
                                     sshTransfer (
                                         execCommand: '''
-                                            sh 'python3 ./fib.py' 
+                                            sh 'python3 /tmp/fib.py' 
                                         '''
                                     )
                                 ],
