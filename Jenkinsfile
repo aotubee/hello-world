@@ -23,7 +23,8 @@ pipeline {
                         sshPublisherDesc(
                             configName: "node-84",
                             transfers: [
-                                sshTransfer(
+                                sshTransfer (
+                                    execCommand: """
                                     docker run -d --name nginx-server \\
                                       -p 80:80 \\
                                       -p 443:443 \\
