@@ -25,7 +25,7 @@ pipeline {
                                 transfers: [
                                     sshTransfer (
                                         execCommand: '''
-                                            sh 'python3 /tmp/fib.py' 
+                                            'python3 ./fib.py' 
                                         '''
                                     )
                                 ],
