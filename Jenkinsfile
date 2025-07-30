@@ -15,7 +15,7 @@ pipeline {
                 sh 'python3 ./fib.py' 
             }
         }
-        stage('远程部署') {
+        stage('安装Apache HTTP服务') {  
             steps {
                 script {
                     sshPublisher(
@@ -24,8 +24,17 @@ pipeline {
                                 configName: "node-84",
                                 transfers: [
                                     sshTransfer (
+                                        // 添加文件传输示例（按需配置）
+                                        sourceFiles: "**/*.conf",  // 可传输配置文件
+                                        remoteDirectory: "/etc/httpd/conf.d/",
                                         execCommand: '''
-                                            'python3 ./fib.py' 
+                                            # 安装httpd并启动
+                                            sudo yum install -y httpd
+                                            sudo systemctl enable --now httpd
+                                            
+                                            # 验证安装
+                                            echo "Apache版本：$(httpd -v)"
+                                            curl -I 127.0.0.1:80 | grep '200 OK'
                                         '''
                                     )
                                 ],
@@ -41,6 +50,9 @@ pipeline {
     post {
         always {
             cleanWs()
+        }
+        failure {  // 添加失败通知
+            emailext body: '构建失败，请检查日志', subject: 'Pipeline Failed'
         }
     }
 }
