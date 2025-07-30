@@ -11,6 +11,7 @@ pipeline {
         }
         stage('执行fib.py') {
             steps { 
+                sh 'pwd' 
                 sh 'python3 ./fib.py' 
             }
         }
