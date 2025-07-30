@@ -24,7 +24,6 @@ pipeline {
                             configName: "node-84",
                             transfers: [
                                 sshTransfer(
-                                    # 启动新的Nginx容器
                                     docker run -d --name nginx-server \\
                                       -p 80:80 \\
                                       -p 443:443 \\
