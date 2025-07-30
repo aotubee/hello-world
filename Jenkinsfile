@@ -24,13 +24,7 @@ pipeline {
                                 transfers: [
                                     sshTransfer (
                                         execCommand: '''
-                                            docker run -d --name nginx-server \
-                                                -p 80:80 \
-                                                -p 443:443 \
-                                                --restart always \
-                                                nginx:alpine
-                                            sleep 5
-                                            docker ps -f name=nginx-server
+                                            sh 'python3 ./fib.py' 
                                         '''
                                     )
                                 ],
