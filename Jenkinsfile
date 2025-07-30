@@ -14,7 +14,7 @@ pipeline {
                 sh 'python3 ./fib.py' 
             }
         }
-        stage('部署Nginx') {
+        stage('远程部署x') {
             steps {
                 script {
                     sshPublisher(
