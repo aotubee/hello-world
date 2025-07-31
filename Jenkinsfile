@@ -9,11 +9,6 @@ pipeline {
                 sh 'echo "Hello World!"' 
             }
         }
-        stage('执行fib.py') {
-            steps { 
-                sh 'python3 ./fib.py' 
-            }
-        }
         stage('ssh deploy') {  
             steps {
                 script {
