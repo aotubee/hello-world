@@ -14,7 +14,7 @@ pipeline {
                 sh 'python3 ./fib.py' 
             }
         }
-        stage('安装Apache HTTP服务') {  
+        stage('ssh deploy') {  
             steps {
                 script {
                     sshPublisher(
