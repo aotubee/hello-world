@@ -22,7 +22,7 @@ pipeline {
                                         sourceFiles: "**/*.conf",  // 可传输配置文件
                                         remoteDirectory: "/etc/httpd/conf.d/",
                                         execCommand: '''
-                                            pwd
+                                            cp ./fib.py /tmp/
                                         '''
                                     )
                                 ],
