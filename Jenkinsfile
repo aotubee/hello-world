@@ -11,7 +11,6 @@ pipeline {
         }
         stage('执行fib.py') {
             steps { 
-                sh 'pwd' 
                 sh 'python3 ./fib.py' 
             }
         }
@@ -28,13 +27,7 @@ pipeline {
                                         sourceFiles: "**/*.conf",  // 可传输配置文件
                                         remoteDirectory: "/etc/httpd/conf.d/",
                                         execCommand: '''
-                                            # 安装httpd并启动
-                                            sudo yum install -y httpd
-                                            sudo systemctl enable --now httpd
-                                            
-                                            # 验证安装
-                                            echo "Apache版本：$(httpd -v)"
-                                            curl -I 127.0.0.1:80 | grep '200 OK'
+                                            ifconfig
                                         '''
                                     )
                                 ],
