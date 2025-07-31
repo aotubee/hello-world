@@ -22,7 +22,20 @@ pipeline {
                                         sourceFiles: "**/*.conf",  // 可传输配置文件
                                         remoteDirectory: "/etc/httpd/conf.d/",
                                         execCommand: '''
-                                            cp ./fib.py /tmp/
+                                            # 调试输出
+                                            echo "Current user: $(whoami)"
+                                            echo "Searching ifconfig: $(which ifconfig)"
+                                    
+                                            # 安装依赖或使用绝对路径
+                                            if ! command -v ifconfig &> /dev/null; then
+                                                sudo yum install -y net-tools || echo "Install failed"
+                                            fi
+                                    
+                                            # 验证网络
+                                            /usr/sbin/ifconfig -a
+                                    
+                                            # 验证文件传输
+                                            ls -l /etc/httpd/conf.d/*.conf
                                         '''
                                     )
                                 ],
