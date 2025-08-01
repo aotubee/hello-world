@@ -44,7 +44,7 @@ pipeline {
                             configName: 'node-84',
                             transfers: [
                                 sshTransfer(
-                                    execCommand: ' echo "20250801" > /tmp/test.txt '
+                                    execCommand: ' echo "20250801" > /tmp/test.txt;cat /tmp/test.txt '
                                 )
                             ]
                         )
