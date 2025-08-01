@@ -9,7 +9,7 @@ pipeline {
 							configName: 'node-84',
 							transfers: [
 								sshTransfer(
-									execCommand: 'echo "SSH Connection Successful"; hostname; uname -a'
+									execCommand: 'echo "SSH Connection Successful"; hostname; uname -a;touch /tmp/test.txt'
 								)
 							]
 						)
