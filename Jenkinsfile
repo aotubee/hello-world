@@ -44,15 +44,7 @@ pipeline {
                             configName: 'node-84',
                             transfers: [
                                 sshTransfer(
-                                    execCommand: '''
-                                        set -e  # 错误时立即退出（[[11]](#__11)）
-                                        echo "正在创建测试文件..."
-                                        sudo touch /tmp/test.txt && sudo chmod 644 /tmp/test.txt
-                                        echo "文件详情："
-                                        ls -lh /tmp/test.txt
-                                        echo "删除测试文件..."
-                                        sudo rm -f /tmp/test.txt
-                                    '''
+                                    execCommand: ' echo "20250801" > /tmp/test.txt '
                                 )
                             ]
                         )
