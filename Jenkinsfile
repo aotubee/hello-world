@@ -1,74 +1,32 @@
 pipeline {
     agent any
-    
+    options {
+        timeout(time: 10, unit: 'MINUTES')  // 添加超时控制（[[18]](#__18)）
+    }
     stages {
-        stage('Pre-Check') {
-            steps {
-                echo "🚀 Starting deployment to node-84"
-                echo "Current workspace: ${env.WORKSPACE}"
-            }
-        }
-        
-        stage('Test SSH Connection') {
+        stage('环境准备') {  // 新增前置检查阶段
             steps {
                 script {
-                    echo "🔍 Testing SSH connection to node-84..."
-                    
-                    // 使用try-catch捕获错误并提供更友好的错误信息
-                    try {
-                        sshPublisher(
-                            publishers: [
-                                sshPublisherDesc(
-                                    configName: 'node-84',
-                                    transfers: [
-                                        sshTransfer(
-                                            execCommand: '''
-                                                echo "✅ SSH Connection Successful"
-                                                echo "🖥️ Hostname: $(hostname)"
-                                                echo "💻 Kernel Info: $(uname -a)"
-                                                echo "📂 Creating test file: /tmp/test.txt"
-                                                touch /tmp/test.txt
-                                                ls -l /tmp/test.txt
-                                                echo "🟢 All commands executed successfully"
-                                            '''
-                                        )
-                                    ]
-                                )
-                            ]
-                        )
-                    } catch (Exception e) {
-                        echo "❌ SSH Connection Failed: ${e.getMessage()}"
-                        // 添加详细错误日志
-                        def sshLog = findFiles(glob: '**/publish-over-ssh@*/log') 
-                        if (sshLog) {
-                            echo "📄 SSH Error Log:"
-                            sh "cat ${sshLog[0].path}"
-                        }
-                        error("SSH connection test failed")
-                    }
+                    echo "===== 开始执行时间：${new Date()} ====="
+                    echo "当前工作目录：${env.WORKSPACE}"
                 }
             }
         }
         
-        stage('Verify Connection') {
+        stage('测试SSH基础连接') {  // 分解为独立验证阶段
             steps {
-                echo "🔬 Verifying test file creation..."
                 sshPublisher(
                     publishers: [
                         sshPublisherDesc(
                             configName: 'node-84',
+                            verbose: true,  // 开启详细日志（[[20]](#__20)）
                             transfers: [
                                 sshTransfer(
                                     execCommand: '''
-                                        echo "🔎 Checking test file:"
-                                        if [ -f /tmp/test.txt ]; then
-                                            echo "✅ Test file exists: /tmp/test.txt"
-                                            echo "🗂️ File contents:"
-                                            cat /tmp/test.txt
-                                        else
-                                            echo "❌ Test file not found!"
-                                            exit 1
-                                        fi
+                                        echo "### 连接基本信息 ###"
+                                        echo "用户：$(whoami)"
+                                        echo "主机名：$(hostname)"
+                                        echo "内核版本：$(uname -a)"
                                     '''
                                 )
                             ]
@@ -77,29 +35,40 @@ pipeline {
                 )
             }
         }
-        
-        stage('Post-Check') {
+
+        stage('验证文件操作') {  // 新增文件操作验证阶段
             steps {
-                echo "connection test completed successfully"
-                echo "Remote host is ready for deployment"
+                sshPublisher(
+                    publishers: [
+                        sshPublisherDesc(
+                            configName: 'node-84',
+                            transfers: [
+                                sshTransfer(
+                                    execCommand: '''
+                                        set -e  # 错误时立即退出（[[11]](#__11)）
+                                        echo "正在创建测试文件..."
+                                        sudo touch /tmp/test.txt && sudo chmod 644 /tmp/test.txt
+                                        echo "文件详情："
+                                        ls -lh /tmp/test.txt
+                                        echo "删除测试文件..."
+                                        sudo rm -f /tmp/test.txt
+                                    '''
+                                )
+                            ]
+                        )
+                    ]
+                )
             }
         }
     }
-    
-    post {
-        success {
-            echo "🎉 All stages completed successfully!"
-            slackSend channel: '#deployments', message: "SSH connection to node-84 verified successfully. Build: ${env.BUILD_URL}"
+    post {  // 新增结果处理模块（[[12]](#__12) [[20]](#__20)）
+        always {
+            echo "===== 执行结束时间：${new Date()} ====="
+            archiveArtifacts artifacts: '**/ssh.log', allowEmptyArchive: true
         }
         failure {
-            echo "❌ Pipeline failed. Check logs for details."
-            emailext subject: "Pipeline Failed: ${env.JOB_NAME}",
-                     body: "SSH connection test failed for node-84. Build: ${env.BUILD_URL}",
-                     to: 'dev-ops@example.com'
-        }
-        always {
-            echo "🧹 Cleaning up workspace..."
-            cleanWs()
+            emailext body: 'SSH部署失败，请检查日志', subject: 'Pipeline Failed'
         }
     }
 }
+
