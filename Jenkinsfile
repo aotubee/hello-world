@@ -80,7 +80,7 @@ pipeline {
         
         stage('Post-Check') {
             steps {
-                echo "🏁 SSH connection test completed successfully"
+                echo "connection test completed successfully"
                 echo "Remote host is ready for deployment"
             }
         }
