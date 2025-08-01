@@ -61,14 +61,5 @@ pipeline {
             }
         }
     }
-    post {  // 新增结果处理模块（[[12]](#__12) [[20]](#__20)）
-        always {
-            echo "===== 执行结束时间：${new Date()} ====="
-            archiveArtifacts artifacts: '/tmp/ssh.log', allowEmptyArchive: true
-        }
-        failure {
-            emailext body: 'SSH部署失败，请检查日志', subject: 'Pipeline Failed'
-        }
-    }
-}
+
 
