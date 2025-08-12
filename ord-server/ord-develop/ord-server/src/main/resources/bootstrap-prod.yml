@@ -1,0 +1,334 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos.ms.tseveryday.com:8848
+  datasource:
+    jdbc-url: jdbc:mysql://everyday-mysql-erp.cbesk3vrkid2.rds.cn-northwest-1.amazonaws.com.cn:3306/erp?characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+    username: aws_erp_admin
+    password: 3dDeH90eaVQ=
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    maximum-pool-size: 40
+    minimum-idle: 10
+  dss:
+    slave:
+      jdbc-url: jdbc:mysql://192.168.16.24:3306/datapush?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&allowMultiQueries=true&serverTimezone=GMT%2B8
+      username: datapush
+      password: everyd@y123
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      max-idle: 10
+      max-wait: 10000
+      min-idle: 5
+      initial-size: 5
+
+  redis:
+    host: everyday-redis-online.tbntld.ng.0001.cnw1.cache.amazonaws.com.cn
+    port: 6379
+    database: 2
+    password:
+    otherdbarray: 0,6,3
+
+#预警服务db
+warningRedisDB: 6
+
+async:
+  export:
+    enable: true
+    hostname: 10.0.1.11
+    port: 62121
+    username: fileuser
+    password: KfVBA7bCrBI=
+    path: /down
+    redis-db: 3
+    threadPool:
+      corePoolSize: 10
+      maximumPoolSize: 20
+      keepAliveTime: 60
+      queueCapacity: 50
+
+#是否关闭swagger文档
+swagger:
+  production: true
+
+logging:
+  level:
+    RocketmqClient: error
+mq:
+  producer:
+    enable: true
+    nameAddr: 10.0.2.15:9876;10.0.2.16:9876
+    drive: com.edc.plugins.jms.mq.rocketmq.ApacheProducer
+    group: goods-to-erp-prod
+    # 通过MQ异步发送保存日志消息生产者
+    save-log-sender:
+      topic: save-log-prod
+      tags: saveLogProd
+    # 中科同步大仓库存发送者
+    zk-sync-stock-warehouse-sender:
+      topic: zk-sync-stock-warehouse-prod
+      tags: zkSyncStockWarehouseProd
+#    # 订货单支付成功更新状态发送者
+#    update-order-paid-sender:
+#      topic: update-order-paid-prod
+#      tags: updateOrderPaidProd
+    # 预售订单支付成功更新状态发送者
+    update-presale-order-paid-sender:
+      topic: update-presale-order-paid-prod
+      tags: updatePresaleOrderPaidProd
+    # 配货/配销产生效期库存调整单发送者
+    take-delivery-adjust-expiry-sender:
+      topic: take-delivery-adjust-expiry-prod
+      tags: takeDeliveryAdjustExpiryProd
+    #-------------直营发送者配置 begin --------------
+    # 待订货单状态更新至可创建要货单后消息发送者（要货单创建前）-发送者
+    dir-before-create-request-order-sender:
+      topic: dir-erp-order-prod
+      tags: dirBeforeCreateRequestOrder
+    # 要货单创建成功后发送消息-发送者
+    dir-after-create-request-order-sender:
+      topic: dir-erp-order-prod
+      tags: dirAfterCreateRequestOrder
+    # 直营首单铺货拆配货单-发送者
+    dir-first-to-delivery-sender:
+      topic: dir-erp-order-prod
+      tags: dirFirstToDelivery
+    # 直营分货单生成订货单
+    dir-distribution-create-order-sender:
+      topic: dir-erp-order-prod
+      tags: dirDistributionCreateOrder
+    # 直营配货单收货后生成直营配货差异单-发送者
+    dir-delivery-to-difference-sender:
+      topic: dir-erp-order-prod
+      tags: dirDeliveryToDifference
+    # 采购订单回传配货单-发送者
+    dir-purchase-order-to-erp-sender:
+      topic: dir-erp-order-prod
+      tags: dirPurchaseOrderToErp
+    # DTS配货单数据下发-发送者
+    dir-delivery-to-dts-sender:
+      topic: dir-erp-dts-prod
+      tags: dirDeliveryToDts
+    # DTS配销差异单数据下发-发送者
+    dir-difference-order-to-dts-sender:
+      topic: dir-erp-dts-prod
+      tags: dirDifferenceOrderToDts
+    # DTS直营退货单数据下发-发送者
+    dir-return-to-dts-sender:
+      topic: dir-erp-dts-prod
+      tags: dirReturnToDts
+    # DTS配货单数据回传-发送者
+    dir-delivery-dts-to-erp-sender:
+      topic: dir-erp-dts-prod
+      tags: dirDeliveryDtsToErp
+    # DTS直营退货单数据回传-发送者
+    dir-return-dts-to-erp-sender:
+      topic: dir-erp-dts-prod
+      tags: dirReturnDtsToErp
+    # DTS直营差异单数据回传-发送者
+    dir-difference-dts-to-erp-sender:
+      topic: dir-erp-dts-prod
+      tags: dirDifferenceDtsToErp
+    # 直营配货单数据文件执行-发送者
+    order-dir-delivery-data-file-sender:
+      topic: dir-erp-order-prod
+      tags: orderDirDeliveryDataFile
+    #-------------直营发送者配置 end --------------
+
+
+    #-------------加盟发送者配置 begin --------------
+    # 加盟配货单数据文件执行-发送者
+    order-dis-delivery-data-file-sender:
+      topic: dis-erp-dts-prod
+      tags: orderDisDeliveryDataFile
+    # 待订货单状态更新至可创建要货单后消息发送者（要货单创建前）
+    dis-before-create-request-order-sender:
+      topic: dis-erp-order-prod
+      tags: disBeforeCreateRequestOrder
+    # 要货单创建成功后发送消息-发送者
+    dis-after-create-request-order-sender:
+      topic: dis-erp-order-prod
+      tags: disAfterCreateRequestOrder
+    # 直营首单铺货拆配货单-发送者
+    dis-first-to-delivery-sender:
+      topic: dis-erp-order-prod
+      tags: disFirstToDelivery
+    # 直营分货单生成订货单
+    dis-distribution-create-order-sender:
+      topic: dis-erp-order-prod
+      tags: disDistributionCreateOrder
+    # 直营配货单收货后生成直营配货差异单-发送者
+    dis-delivery-to-difference-sender:
+      topic: dis-erp-order-prod
+      tags: disDeliveryToDifference
+    # 采购订单回传配货单-发送者
+    dis-purchase-order-to-erp-sender:
+      topic: dis-erp-order-prod
+      tags: disPurchaseOrderToErp
+    # DTS配货单数据下发-发送者
+    dis-delivery-to-dts-sender:
+      topic: dis-erp-dts-prod
+      tags: disDeliveryToDts
+    # DTS配销差异单数据下发-发送者
+    dis-difference-order-to-dts-sender:
+      topic: dis-erp-dts-prod
+      tags: disDifferenceOrderToDts
+    # DTS加盟退货单数据下发-发送者
+    dis-return-to-dts-sender:
+      topic: dis-erp-dts-prod
+      tags: disReturnToDts
+    # DTS批发出货单数据下发-发送者
+    wholesale-shipment-to-dts-sender:
+      topic: dis-erp-dts-prod
+      tags: wholesaleShipmentToDts
+    # DTS批发退货单数据下发-发送者
+    wholesale-return-to-dts-sender:
+      topic: dis-erp-dts-prod
+      tags: wholesaleReturnToDts
+    # DTS配货单数据回传-发送者
+    dis-delivery-dts-to-erp-sender:
+      topic: dis-erp-dts-prod
+      tags: disDeliveryDtsToErp
+    # DTS加盟退货单数据回传-发送者
+    dis-return-dts-to-erp-sender:
+      topic: dis-erp-dts-prod
+      tags: disReturnDtsToErp
+    # DTS加盟差异单数据回传-发送者
+    dis-difference-dts-to-erp-sender:
+      topic: dis-erp-dts-prod
+      tags: disDifferenceDtsToErp
+    # DTS批发单数据回传-发送者
+    wholesale-order-call-back-sender:
+      topic: dis-erp-dts-prod
+      tags: wholesaleOrderCallBack
+    # DTS批发退数据回传-发送者
+    wholesale-re-order-call-back-sender:
+      topic: dis-erp-dts-prod
+      tags: wholesaleReOrderCallBack
+    #    # 中科请求创建批发出货单-发送者
+    #    zk-create-wholesale-shipment-sender:
+    #      topic: dis-erp-order-test
+    #      tags: zKCreateWholesaleShipment
+    #    # 中科请求创建批发退货单-发送者
+    #    zk-create-wholesale-return-sender:
+    #      topic: dis-erp-order-test
+    #      tags: zKCreateWholesaleReturn
+    # 中科请求创建批发出货单回传中科-发送者
+    zk-wholesale-shipment-back-sender:
+      topic: dis-zk-wholesale-prod
+      tags: zKWholesaleShipmentBack
+    # 中科请求创建批发退货单回传中科-发送者
+    zk-wholesale-return-back-sender:
+      topic: dis-zk-wholesale-prod
+      tags: zKWholesaleReturnBack
+    # 批发出采购回传-发送者
+    handle-wholesale-shipment-purchase-back-sender:
+      topic: dis-erp-order-prod
+      tags: handleWholesaleShipmentPurchaseBack
+      #-------------加盟发送者配置 end --------------
+
+  consumer:
+    #-------------直营消费者配置 begin --------------
+    # 直营ERP内部消息-消费者
+    handle-dir-erp-order:
+      enable: true
+      nameAddr: 10.0.2.15:9876;10.0.2.16:9876
+      drive: com.edc.plugins.jms.mq.rocketmq.ApacheConsumer
+      group: dirErpOrder-prod
+      topic: dir-erp-order-prod
+
+    # 直营DTS-消费者
+    handle-dir-erp-dts:
+      enable: true
+      nameAddr: 10.0.2.15:9876;10.0.2.16:9876
+      drive: com.edc.plugins.jms.mq.rocketmq.ApacheConsumer
+      group: dirErpDts-prod
+      topic: dir-erp-dts-prod
+    #-------------直营消费者配置 end --------------
+
+
+
+    #-------------加盟消费者配置 begin --------------
+    # 加盟ERP内部消息-消费者
+    handle-dis-erp-order:
+      enable: true
+      nameAddr: 10.0.2.15:9876;10.0.2.16:9876
+      drive: com.edc.plugins.jms.mq.rocketmq.ApacheConsumer
+      group: disErpOrder-prod
+      topic: dis-erp-order-prod
+
+    # 加盟DTS-消费者
+    handle-dis-erp-dts:
+      enable: true
+      nameAddr: 10.0.2.15:9876;10.0.2.16:9876
+      drive: com.edc.plugins.jms.mq.rocketmq.ApacheConsumer
+      group: disErpDts-prod
+      topic: dis-erp-dts-prod
+
+
+    # 中科消息-消费者
+    handle-zk-wholesale:
+      enable: true
+      nameAddr: 10.0.2.15:9876;10.0.2.16:9876
+      drive: com.edc.plugins.jms.mq.rocketmq.ApacheConsumer
+      group: zkWholesale-prod
+      topic: dis-zk-wholesale-prod
+    #-------------加盟消费者配置 end --------------
+#    update-order-paid-consumer:
+#      enable: true
+#      nameAddr: 10.0.2.15:9876;10.0.2.16:9876
+#      drive: com.edc.plugins.jms.mq.rocketmq.ApacheConsumer
+#      group: update-order-paid-prod
+#      topic: update-order-paid-prod
+#      tags: updateOrderPaidProd
+    update-presale-order-paid-consumer:
+      enable: true
+      nameAddr: 10.0.2.15:9876;10.0.2.16:9876
+      drive: com.edc.plugins.jms.mq.rocketmq.ApacheConsumer
+      group: update-presale-order-paid-prod
+      topic: update-presale-order-paid-prod
+      tags: updatePresaleOrderPaidProd
+redisMq:
+  #ppServiceTopic: ppServiceTopic
+  disOrderTrackTopic: disOrderTrackTopic
+  dirOrderTrackTopic: dirOrderTrackTopic
+  erpOrdTopic: erpOrdTopic
+
+# 异步任务调用
+asyn-task:
+  retry-max: 5
+  interval: "{
+      1: 0,
+      2: 5,
+      3: 10,
+      4: 15,
+      5: 20
+      }"
+
+#开启异步保存日志
+asyncLog:
+  isEnabled: true
+
+
+# 向物流发送常温接单汇总信息地址
+sendToLogisticsDingTalkRobotUrl: https://oapi.dingtalk.com/robot/send?access_token=9222b5b7bea3230354a6f335bdfd3f6aaa085a8a05810ac56e30d453524cd1b4,https://oapi.dingtalk.com/robot/send?access_token=8e3367f9e303d2a734ca219d8781fff05c95bf9fa19c908deefefe29619b2120
+baoJiLogisticsDingTalkRobotUrl: https://oapi.dingtalk.com/robot/send?access_token=5242925e36d72d17a7543ee11b2d8839b888df86640e712befbeff1937b0f345
+#noTransferOrderStoreUrl: https://oapi.dingtalk.com/robot/send?access_token=a57a88b4a305274b000059d1ed3480cb96db0963fd0c109483e0cdf78aad8c1c
+noTransferOrderStoreUrl: https://oapi.dingtalk.com/robot/send?access_token=1092332ce49695b1e50e2779e29d4379fe737bd836aaf3593fd7a8851bc441f2
+dingTalk:
+  zzTransferOrderErrorNoticeUrl: https://oapi.dingtalk.com/robot/send?access_token=aea502045419a2a6b1e59d2a50d570892a177b677788dfa8e5ffbb2cbaefd0c6
+  xaTransferOrderErrorNoticeUrl: https://oapi.dingtalk.com/robot/send?access_token=aea502045419a2a6b1e59d2a50d570892a177b677788dfa8e5ffbb2cbaefd0c6
+
+
+
+xxl:
+  job:
+    admin:
+      addresses: http://10.0.2.16:19998/xxl-job-admin/
+    accessToken: default_token
+    executor:
+      appname: order-server
+      address:
+      ip:
+      port: 51022
+      logpath: /tmp/data/applogs/xxl-job/jobhandler
+      logretentiondays: 7

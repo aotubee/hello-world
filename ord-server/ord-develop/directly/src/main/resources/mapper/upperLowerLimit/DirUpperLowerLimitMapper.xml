@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.upperlowerlimit.mapper.DirUpperLowerLimitMapper">
+    <select id="findReplenishmentConfigList"
+            resultType="com.edc.erp.directly.upperlowerlimit.model.out.ReplenishmentConfig">
+        select
+        id,
+        store_code,
+        store_name,
+        sku_code,
+        goods_name,
+        inventory_upper_limit,
+        inventory_lower_limit,
+        min_inventory_upper_limit,
+        min_inventory_lower_limit,
+        is_auto_replenishment,
+        creator,
+        create_time,
+        updater,
+        update_time,
+        is_delete
+        from
+        gc_replenishment_config
+        where is_delete =0
+        and is_auto_replenishment=1
+        and biz_org_code=#{bizOrgCode}
+        and store_code=#{storeCode}
+    </select>
+    <select id="isReplenishmentStoreDisabled"
+            resultType="com.edc.erp.directly.upperlowerlimit.model.out.ReplenishmentStoreDisabledRange">
+        SELECT
+        id, store_code, store_name, begin_time, end_time, org_code,biz_org_code, create_time, creator, updater,
+        update_time, is_invalid, is_delete
+        from
+        gc_replenishment_store_disabled_range
+        where DATE_FORMAT(now(),'%Y-%m-%d') between begin_time and end_time
+        and store_code = #{storeCode} and biz_org_code = #{bizOrgCode} and is_invalid = #{isInvalid} and is_delete =
+        #{isDelete}
+    </select>
+
+    <select id="findStoreBizInvQtyList" resultType="com.edc.erp.directly.upperlowerlimit.model.out.InvStockStoreOut">
+        select
+        store_code, goods_code, financial_qty, take_qty, business_qty, stock_price, org_code, biz_org_code
+        from inv_stock_store
+        where store_code=#{storeCode} and biz_org_code=#{bizOrgCode} and goods_code in
+        <foreach collection="goodsCodesList" item="item" open="(" close=")" separator="," index="index">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

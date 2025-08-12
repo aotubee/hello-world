@@ -1,0 +1,80 @@
+spring:
+  application:
+    name: ord-server
+  profiles:
+    active: test
+  cache:
+    - name: goods_flash_sale_week
+      type: redis
+      expireAfterAccess: 7200
+    - name: inv_biz_rsn_trans
+      type: redis
+      expireAfterAccess: 7200
+    - name: store_goods_sell_price_by_dis
+      type: redis
+      expireAfterAccess: 172800
+    - name: ord_stock_trans_info
+      type: redis
+      expireAfterAccess: 432000
+    - name: ord_org_sort_out
+      type: redis
+      expireAfterAccess: 172800
+    - name: ord_store_biz_goods
+      type: redis
+      expireAfterAccess: 1800
+    - name: ord_old_store_info
+      type: redis
+      expireAfterAccess: 7200
+    - name: ord_store_info
+      type: redis
+      expireAfterAccess: 7200
+    - name: ord_store_status_switch
+      type: redis
+      expireAfterAccess: 3600
+    - name: warehouse_inv_biz_rsn_trans
+      type: redis
+      expireAfterAccess: 7200
+    - name: trans_info_stock
+      type: redis
+      expireAfterAccess: 3600
+server:
+  port: 11022
+
+##=====actuator=====##
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,env,metrics,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  level:
+    RocketmqClient: error
+    com.alibaba.nacos.client.naming: error
+
+
+#feign超时重试配置
+feignretry:
+  #链接时间，不需要配置太长
+  connectTimeout: 10000
+  #负载均衡处理时间
+  readTimeout: 60000
+  #是否开启重试，0：开启，1：关闭，默认关闭
+  isOpenRetry: 0
+  #重试次数，nacos下包含首次
+  maxAttempts: 3
+  #切换实例数，和熔断等待时间有关，配置里自动计算
+  maxAutoRetriesNextServer: 1
+  #核心线程数
+  coreSize: 20
+  #最大队列
+  maxQueueSize: 2000
+  #拒绝队列上限
+  queueSizeRejectionThreshold: 1500
+
+#
+#cors:
+#  enable: true

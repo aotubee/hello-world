@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.wholesale.returns.mapper.WholesaleReturnDetailMapper">
+
+    <!-- 结果集 -->
+    <resultMap id="resultMap" type="com.edc.erp.wholesale.returns.entity.WholesaleReturnDetail">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="wholesaleReturnId" column="wholesale_return_id" jdbcType="BIGINT"/>
+        <result property="goodsCode" column="goods_code" jdbcType="VARCHAR"/>
+        <result property="goodsName" column="goods_name" jdbcType="VARCHAR"/>
+        <result property="goodsType" column="goods_type" jdbcType="VARCHAR"/>
+        <result property="barCode" column="bar_code" jdbcType="VARCHAR"/>
+        <result property="packageSpecification" column="package_specification" jdbcType="VARCHAR"/>
+        <result property="packageUnit" column="package_unit" jdbcType="VARCHAR"/>
+        <result property="returnsPrice" column="returns_price" jdbcType="DECIMAL"/>
+        <result property="applyQuantity" column="apply_quantity" jdbcType="INTEGER"/>
+        <result property="applyPackageNum" column="apply_package_num" jdbcType="INTEGER"/>
+        <result property="applyAmount" column="apply_amount" jdbcType="DECIMAL"/>
+        <result property="checkQuantity" column="check_quantity" jdbcType="INTEGER"/>
+        <result property="storageQuantity" column="storage_quantity" jdbcType="INTEGER"/>
+        <result property="inventoryPrice" column="inventory_price" jdbcType="DECIMAL"/>
+        <result property="practicalStorageAmount" column="practical_storage_amount" jdbcType="DECIMAL"/>
+        <result property="storageNetProfit" column="storage_net_profit" jdbcType="DECIMAL"/>
+        <result property="storageTax" column="storage_tax" jdbcType="DECIMAL"/>
+        <result property="costAmount" column="cost_amount" jdbcType="DECIMAL"/>
+        <result property="costNetProfitAmount" column="cost_net_profit_amount" jdbcType="DECIMAL"/>
+        <result property="costTax" column="cost_tax" jdbcType="DECIMAL"/>
+        <result property="line" column="line" jdbcType="INTEGER"/>
+        <result property="returnPrinciple" column="return_principle" jdbcType="VARCHAR"/>
+        <result property="vendorCode" column="vendor_code" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="invoiceType" column="invoice_type" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id
+        , wholesale_return_id, goods_code, goods_name, goods_type, bar_code, package_specification, package_unit, returns_price,
+        apply_quantity, apply_package_num, apply_amount, check_quantity, storage_quantity, inventory_price, practical_storage_amount,
+        storage_net_profit, storage_tax, cost_amount, cost_net_profit_amount, cost_tax,line,return_principle,vendor_code,remark, creator,
+        create_time, updater, update_time, is_delete,invoice_type
+    </sql>
+
+    <!-- 批量新增SQL片段 -->
+    <sql id="Base_Column_List_Update">
+        wholesale_return_id, goods_code, goods_name, goods_type, bar_code, package_specification, package_unit, returns_price,
+        apply_quantity, apply_package_num, apply_amount, check_quantity, storage_quantity, inventory_price, practical_storage_amount,
+        storage_net_profit, storage_tax, cost_amount, cost_net_profit_amount, cost_tax,line,return_principle, vendor_code,remark, creator,
+                           create_time, updater, update_time, is_delete,invoice_type
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Base_Where_Clause">
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="wholesaleReturnId != null">
+                and wholesale_return_id = #{wholesaleReturnId}
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and goods_code = #{goodsCode}
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                and goods_name = #{goodsName}
+            </if>
+            <if test="goodsType != null and goodsType != ''">
+                and goods_type = #{goodsType}
+            </if>
+            <if test="barCode != null and barCode != ''">
+                and bar_code = #{barCode}
+            </if>
+            <if test="packageSpecification != null and packageSpecification != ''">
+                and package_specification = #{packageSpecification}
+            </if>
+            <if test="packageUnit != null and packageUnit != ''">
+                and package_unit = #{packageUnit}
+            </if>
+            <if test="returnsPrice != null">
+                and returns_price = #{returnsPrice}
+            </if>
+            <if test="applyQuantity != null">
+                and apply_quantity = #{applyQuantity}
+            </if>
+            <if test="applyPackageNum != null">
+                and apply_package_num = #{applyPackageNum}
+            </if>
+            <if test="applyAmount != null">
+                and apply_amount = #{applyAmount}
+            </if>
+            <if test="checkQuantity != null">
+                and check_quantity = #{checkQuantity}
+            </if>
+            <if test="storageQuantity != null">
+                and storage_quantity = #{storageQuantity}
+            </if>
+            <if test="inventoryPrice != null">
+                and inventory_price = #{inventoryPrice}
+            </if>
+            <if test="practicalStorageAmount != null">
+                and practical_storage_amount = #{practicalStorageAmount}
+            </if>
+            <if test="storageNetProfit != null">
+                and storage_net_profit = #{storageNetProfit}
+            </if>
+            <if test="storageTax != null">
+                and storage_tax = #{storageTax}
+            </if>
+            <if test="costAmount != null">
+                and cost_amount = #{costAmount}
+            </if>
+            <if test="costNetProfitAmount != null">
+                and cost_net_profit_amount = #{costNetProfitAmount}
+            </if>
+            <if test="costTax != null">
+                and cost_tax = #{costTax}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="creator != null and creator != ''">
+                and creator = #{creator}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updater != null and updater != ''">
+                and updater = #{updater}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="isDelete != null">
+                and is_delete = #{isDelete}
+            </if>
+            <if test="vendorCode != null and vendorCode != ''">
+                and vendor_code = #{vendorCode}
+            </if>
+            <if test="invoiceType != null and invoiceType != ''">
+                and invoice_type = #{invoiceType}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 批量新增 -->
+    <insert id="insertWholesaleReturnDetailList">
+        insert into ord_wholesale_return_detail(<include refid="Base_Column_List_Update"/>)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.wholesaleReturnId},#{item.goodsCode},#{item.goodsName},#{item.goodsType},#{item.barCode},#{item.packageSpecification},#{item.packageUnit},#{item.returnsPrice},
+            #{item.applyQuantity},#{item.applyPackageNum},#{item.applyAmount},#{item.checkQuantity},#{item.storageQuantity},#{item.inventoryPrice},#{item.practicalStorageAmount},
+            #{item.storageNetProfit},#{item.storageTax},#{item.costAmount},#{item.costNetProfitAmount},#{item.costTax},#{item.line},#{item.returnPrinciple},#{item.vendorCode},
+             #{item.remark},#{item.creator},#{item.createTime},#{item.updater},#{item.updateTime},#{item.isDelete},#{item.invoiceType})
+        </foreach>
+    </insert>
+
+    <!-- 根据批发退货单主键、商品代码、商品名称筛查批发退货单详情 -->
+    <select id="findFilterWholesaleReturnDetailByPage" resultType="com.edc.erp.wholesale.returns.entity.WholesaleReturnDetail">
+        select <include refid="Base_Column_List"/>
+        from ord_wholesale_return_detail
+        <where>
+            is_delete = 0 and wholesale_return_id = #{wholesaleReturnId}
+            <if test="goodsCode != null and goodsCode != ''">
+                and goods_code = #{goodsCode}
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                and goods_name like "%" #{goodsName} "%"
+            </if>
+        </where>
+    </select>
+    <select id="sumWholesaleReturnDateInfoByIdList"
+            resultType="com.edc.erp.wholesale.model.out.returns.WholesaleReturnDateInfoOut">
+        SELECT
+        sum(apply_quantity) as totalApplyQuantity, sum(apply_amount) as totalApplyAmount,
+        sum(check_quantity) as totalCheckQuantity,sum(check_quantity * returns_price) as totalCheckAmount,
+        sum(storage_quantity) as totalStorageQuantity, sum(practical_storage_amount) as totalPracticalStorageAmount
+        FROM ord_wholesale_return_detail
+        where wholesale_return_id in
+        <foreach collection="idList" item="wholesaleReturnId" open="(" separator="," close=")">
+            #{wholesaleReturnId}
+        </foreach>
+        and is_delete = 0
+    </select>
+
+    <!--  批量更新批发退明细  -->
+    <update id="batchUpdate">
+        <if test="detail != null and detail.size() != 0">
+            <foreach collection="detail" item="item" index="index" separator=";">
+                update ord_wholesale_return_detail
+                <set>
+                    <if test="item.wholesaleReturnId != null">
+                        wholesale_return_id = #{item.wholesaleReturnId,jdbcType=BIGINT},
+                    </if>
+                    <if test="item.goodsCode != null">
+                        goods_code = #{item.goodsCode,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.goodsName != null">
+                        goods_name = #{item.goodsName,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.goodsType != null">
+                        goods_type = #{item.goodsType,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.barCode != null">
+                        bar_code = #{item.barCode,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.packageSpecification != null">
+                        package_specification = #{item.packageSpecification,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.packageUnit != null">
+                        package_unit = #{item.packageUnit,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.returnsPrice != null">
+                        returns_price = #{item.returnsPrice,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.applyQuantity != null">
+                        apply_quantity = #{item.applyQuantity,jdbcType=INTEGER},
+                    </if>
+                    <if test="item.applyPackageNum != null">
+                        apply_package_num = #{item.applyPackageNum,jdbcType=INTEGER},
+                    </if>
+                    <if test="item.applyAmount != null">
+                        apply_amount = #{item.applyAmount,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.checkQuantity != null">
+                        check_quantity = #{item.checkQuantity,jdbcType=INTEGER},
+                    </if>
+                    <if test="item.storageQuantity != null">
+                        storage_quantity = #{item.storageQuantity,jdbcType=INTEGER},
+                    </if>
+                    <if test="item.inventoryPrice != null">
+                        inventory_price = #{item.inventoryPrice,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.practicalStorageAmount != null">
+                        practical_storage_amount = #{item.practicalStorageAmount,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.storageNetProfit != null">
+                        storage_net_profit = #{item.storageNetProfit,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.storageTax != null">
+                        storage_tax = #{item.storageTax,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.costAmount != null">
+                        cost_amount = #{item.costAmount,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.costNetProfitAmount != null">
+                        cost_net_profit_amount = #{item.costNetProfitAmount,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.costTax != null">
+                        cost_tax = #{item.costTax,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.remark != null">
+                        remark = #{item.remark,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.vendorCode != null and item.vendorCode != ''">
+                        vendor_code = #{item.vendorCode,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.creator != null">
+                        creator = #{item.creator,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.createTime != null">
+                        create_time = #{item.createTime,jdbcType=TIMESTAMP},
+                    </if>
+                    <if test="item.updater != null">
+                        updater = #{item.updater,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.updateTime != null">
+                        update_time = #{item.updateTime,jdbcType=TIMESTAMP},
+                    </if>
+                    <if test="item.isDelete != null">
+                        is_delete = #{item.isDelete,jdbcType=TINYINT},
+                    </if>
+                    <if test="item.invoiceType != null">
+                        invoice_type = #{item.invoiceType,jdbcType=VARCHAR},
+                    </if>
+                </set>
+                WHERE id = #{item.id,jdbcType=BIGINT}
+            </foreach>
+        </if>
+    </update>
+
+    <update id="batchUpdateForAudit">
+        <if test="detail != null and detail.size() != 0">
+            <foreach collection="detail" item="item" index="index" separator=";">
+                update ord_wholesale_return_detail
+                <set>
+
+                    <if test="item.checkQuantity != null">
+                        check_quantity = #{item.checkQuantity,jdbcType=INTEGER},
+                    </if>
+
+                    <if test="item.updater != null">
+                        updater = #{item.updater,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.updateTime != null">
+                        update_time = #{item.updateTime,jdbcType=TIMESTAMP},
+                    </if>
+                     
+                </set>
+                WHERE id = #{item.id,jdbcType=BIGINT}
+            </foreach>
+        </if>
+    </update>
+</mapper>

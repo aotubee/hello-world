@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.wholesale.returns.mapper.WholesaleReturnsMapper">
+
+    <!-- 结果集 -->
+    <resultMap id="resultMap" type="com.edc.erp.wholesale.returns.entity.WholesaleReturns">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="wholesale_return_no" jdbcType="VARCHAR" property="wholesaleReturnNo" />
+        <result column="return_status" jdbcType="VARCHAR" property="returnStatus" />
+        <result column="client_code" jdbcType="VARCHAR" property="clientCode" />
+        <result column="price_group_code" jdbcType="VARCHAR" property="priceGroupCode" />
+        <result column="storage_wrh" jdbcType="VARCHAR" property="storageWrh" />
+        <result column="storage_stock_code" jdbcType="VARCHAR" property="storageStockCode" />
+        <result column="is_reversal" jdbcType="TINYINT" property="isReversal" />
+        <result column="is_reversal_order" jdbcType="TINYINT" property="isReversalOrder" />
+        <result column="application_quantity" jdbcType="INTEGER" property="applicationQuantity" />
+        <result column="application_amount" jdbcType="DECIMAL" property="applicationAmount" />
+        <result column="storage_quantity" jdbcType="INTEGER" property="storageQuantity" />
+        <result column="storage_amount" jdbcType="DECIMAL" property="storageAmount" />
+        <result column="tracking_no" jdbcType="VARCHAR" property="trackingNo" />
+        <result column="source_no" jdbcType="VARCHAR" property="sourceNo" />
+        <result column="wholesale_shipment_no" jdbcType="VARCHAR" property="wholesaleShipmentNo" />
+        <result column="returns_reason" jdbcType="VARCHAR" property="returnsReason" />
+        <result column="org_code" jdbcType="VARCHAR" property="orgCode" />
+        <result column="consignee" jdbcType="VARCHAR" property="consignee" />
+        <result column="distribution_info_id" jdbcType="INTEGER" property="distributionInfoId" />
+        <result column="consignee_phone" jdbcType="VARCHAR" property="consigneePhone" />
+        <result column="address_detail" jdbcType="VARCHAR" property="addressDetail" />
+        <result column="biz_org_code" jdbcType="VARCHAR" property="bizOrgCode" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="updater" jdbcType="VARCHAR" property="updater" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+        <result property="receiveTime" column="receive_time" jdbcType="TIMESTAMP"/>
+        <result property="auditTime" column="audit_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id, wholesale_return_no, return_status, client_code, price_group_code, storage_wrh,storage_stock_code, is_reversal, is_reversal_order,
+        application_quantity, application_amount,storage_quantity, storage_amount, tracking_no, source_no, wholesale_shipment_no,
+        returns_reason, org_code, consignee, distribution_info_id, consignee_phone, address_detail,
+        biz_org_code, remark, creator, create_time, updater, update_time, is_delete, receive_time,audit_time
+    </sql>
+
+    <!-- 批发退货单列表查询 -->
+    <select id="findWholesaleReturnsByPage" resultType="com.edc.erp.wholesale.model.out.returns.WholesaleReturnsListOut">
+        select owr.id, owr.wholesale_return_no, owr.return_status, owr.client_code, owr.price_group_code, owr.storage_wrh, owr.storage_stock_code, owr.is_reversal, owr.is_reversal_order,
+        owr.application_quantity, owr.application_amount,owr.storage_quantity, owr.storage_amount, owr.tracking_no, owr.source_no, owr.wholesale_shipment_no,
+        owr.returns_reason, owr.org_code, owr.consignee, owr.distribution_info_id, owr.consignee_phone, owr.address_detail,
+        owr.biz_org_code, owr.remark, owr.creator, owr.create_time, owr.updater, owr.update_time, owr.is_delete, lsi.stock_name storageStockCodeStr,
+        lwi.warehouse_name storageWrhStr, owr.receive_time,owr.audit_time
+        from ord_wholesale_returns owr
+        LEFT JOIN logc_stock_info lsi ON lsi.stock_code = owr.storage_stock_code AND lsi.is_delete = 0 and lsi.biz_org_code = #{wholesaleReturnsListIn.bizOrgCode}
+        LEFT JOIN logc_warehouse_info lwi ON lwi.warehouse_code = owr.storage_wrh AND lwi.id = lsi.warehouse_id AND lwi.is_delete = 0 and lwi.biz_org_code = #{wholesaleReturnsListIn.bizOrgCode}
+        <if test="wholesaleReturnsListIn.goodsCode != null and wholesaleReturnsListIn.goodsCode != ''">
+            INNER JOIN ord_wholesale_return_detail rd on rd.wholesale_return_id = owr.id
+        </if>
+        <where>
+            <if test="wholesaleReturnsListIn.bizOrgCode != null and wholesaleReturnsListIn.bizOrgCode != ''">
+                and owr.biz_org_code = #{wholesaleReturnsListIn.bizOrgCode,jdbcType=VARCHAR}
+            </if>
+            <if test="wholesaleReturnsListIn.wholesaleReturnNo != null and wholesaleReturnsListIn.wholesaleReturnNo != ''">
+                and  owr.wholesale_return_no = #{wholesaleReturnsListIn.wholesaleReturnNo,jdbcType=VARCHAR}
+            </if>
+            <if test="wholesaleReturnsListIn.returnStatus != null and wholesaleReturnsListIn.returnStatus != ''">
+                and owr.return_status = #{wholesaleReturnsListIn.returnStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="wholesaleReturnsListIn.clientCode != null and wholesaleReturnsListIn.clientCode != ''">
+                and owr.client_code = #{wholesaleReturnsListIn.clientCode,jdbcType=VARCHAR}
+            </if>
+            <if test="wholesaleReturnsListIn.storageWrh != null and wholesaleReturnsListIn.storageWrh != ''">
+                and owr.storage_wrh = #{wholesaleReturnsListIn.storageWrh,jdbcType=VARCHAR}
+            </if>
+            <if test="wholesaleReturnsListIn.storageStockCode != null and wholesaleReturnsListIn.storageStockCode != ''">
+                and owr.storage_stock_code = #{wholesaleReturnsListIn.storageStockCode,jdbcType=VARCHAR}
+            </if>
+            <if test="wholesaleReturnsListIn.trackingNo != null and wholesaleReturnsListIn.trackingNo != ''">
+                and owr.tracking_no = #{wholesaleReturnsListIn.trackingNo}
+            </if>
+            <if test="wholesaleReturnsListIn.sourceNo != null and wholesaleReturnsListIn.sourceNo != ''">
+                and owr.source_no = #{wholesaleReturnsListIn.sourceNo}
+            </if>
+            <if test="wholesaleReturnsListIn.isReversal != null">
+                and owr.is_reversal = #{wholesaleReturnsListIn.isReversal,jdbcType=INTEGER}
+            </if>
+            <if test="wholesaleReturnsListIn.isReversalOrder != null">
+                and owr.is_reversal_order = #{wholesaleReturnsListIn.isReversalOrder,jdbcType=INTEGER}
+            </if>
+            <if test="wholesaleReturnsListIn.startCreateTime != null">
+                and owr.create_time &gt;= #{wholesaleReturnsListIn.startCreateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="wholesaleReturnsListIn.endCreateTime != null">
+                and owr.create_time &lt;= #{wholesaleReturnsListIn.endCreateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="wholesaleReturnsListIn.receiveTimeBegin != null">
+                and owr.receive_time &gt;= #{wholesaleReturnsListIn.receiveTimeBegin}
+            </if>
+            <if test="wholesaleReturnsListIn.receiveTimeEnd != null">
+                and owr.receive_time &lt;= #{wholesaleReturnsListIn.receiveTimeEnd}
+            </if>
+            <if test="wholesaleReturnsListIn.isDelete != null">
+                and owr.is_delete = #{wholesaleReturnsListIn.isDelete,jdbcType=INTEGER}
+            </if>
+            <if test="wholesaleReturnsListIn.creator != null and wholesaleReturnsListIn.creator != ''">
+                and owr.creator like CONCAT('%',#{wholesaleReturnsListIn.creator},'%')
+            </if>
+            <if test="wholesaleReturnsListIn.goodsCode != null and wholesaleReturnsListIn.goodsCode != ''">
+                and rd.goods_code = #{wholesaleReturnsListIn.goodsCode}
+            </if>
+        </where>
+        order by owr.create_time desc,owr.id desc
+    </select>
+
+
+    <select id="findNeedSumWholesaleReturnIdList" resultType="java.lang.Long">
+        select owr.id
+        from ord_wholesale_returns owr
+        LEFT JOIN logc_stock_info lsi ON lsi.stock_code = owr.storage_stock_code AND lsi.is_delete = 0 and lsi.biz_org_code = #{wholesaleReturnsListIn.bizOrgCode}
+        LEFT JOIN logc_warehouse_info lwi ON lwi.warehouse_code = owr.storage_wrh AND lwi.id = lsi.warehouse_id AND lwi.is_delete = 0 and lwi.biz_org_code = #{wholesaleReturnsListIn.bizOrgCode}
+        <if test="wholesaleReturnsListIn.goodsCode != null and wholesaleReturnsListIn.goodsCode != ''">
+            INNER JOIN ord_wholesale_return_detail rd on rd.wholesale_return_id = owr.id
+        </if>
+        <where>
+            <if test="wholesaleReturnsListIn.bizOrgCode != null and wholesaleReturnsListIn.bizOrgCode != ''">
+                and owr.biz_org_code = #{wholesaleReturnsListIn.bizOrgCode,jdbcType=VARCHAR}
+            </if>
+            <if test="wholesaleReturnsListIn.wholesaleReturnNo != null and wholesaleReturnsListIn.wholesaleReturnNo != ''">
+                and  owr.wholesale_return_no = #{wholesaleReturnsListIn.wholesaleReturnNo,jdbcType=VARCHAR}
+            </if>
+            <if test="wholesaleReturnsListIn.returnStatus != null and wholesaleReturnsListIn.returnStatus != ''">
+                and owr.return_status = #{wholesaleReturnsListIn.returnStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="wholesaleReturnsListIn.clientCode != null and wholesaleReturnsListIn.clientCode != ''">
+                and owr.client_code = #{wholesaleReturnsListIn.clientCode,jdbcType=VARCHAR}
+            </if>
+            <if test="wholesaleReturnsListIn.storageWrh != null and wholesaleReturnsListIn.storageWrh != ''">
+                and owr.storage_wrh = #{wholesaleReturnsListIn.storageWrh,jdbcType=VARCHAR}
+            </if>
+            <if test="wholesaleReturnsListIn.storageStockCode != null and wholesaleReturnsListIn.storageStockCode != ''">
+                and owr.storage_stock_code = #{wholesaleReturnsListIn.storageStockCode,jdbcType=VARCHAR}
+            </if>
+            <if test="wholesaleReturnsListIn.trackingNo != null and wholesaleReturnsListIn.trackingNo != ''">
+                and owr.tracking_no = #{wholesaleReturnsListIn.trackingNo}
+            </if>
+            <if test="wholesaleReturnsListIn.sourceNo != null and wholesaleReturnsListIn.sourceNo != ''">
+                and owr.source_no = #{wholesaleReturnsListIn.sourceNo}
+            </if>
+            <if test="wholesaleReturnsListIn.isReversal != null">
+                and owr.is_reversal = #{wholesaleReturnsListIn.isReversal,jdbcType=INTEGER}
+            </if>
+            <if test="wholesaleReturnsListIn.isReversalOrder != null">
+                and owr.is_reversal_order = #{wholesaleReturnsListIn.isReversalOrder,jdbcType=INTEGER}
+            </if>
+            <if test="wholesaleReturnsListIn.startCreateTime != null">
+                and owr.create_time &gt;= #{wholesaleReturnsListIn.startCreateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="wholesaleReturnsListIn.endCreateTime != null">
+                and owr.create_time &lt;= #{wholesaleReturnsListIn.endCreateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="wholesaleReturnsListIn.receiveTimeBegin != null">
+                and owr.receive_time &gt;= #{wholesaleReturnsListIn.receiveTimeBegin}
+            </if>
+            <if test="wholesaleReturnsListIn.receiveTimeEnd != null">
+                and owr.receive_time &lt;= #{wholesaleReturnsListIn.receiveTimeEnd}
+            </if>
+            <if test="wholesaleReturnsListIn.isDelete != null">
+                and owr.is_delete = #{wholesaleReturnsListIn.isDelete,jdbcType=INTEGER}
+            </if>
+            <if test="wholesaleReturnsListIn.creator != null and wholesaleReturnsListIn.creator != ''">
+                and owr.creator like CONCAT('%',#{wholesaleReturnsListIn.creator},'%')
+            </if>
+            <if test="wholesaleReturnsListIn.goodsCode != null and wholesaleReturnsListIn.goodsCode != ''">
+                and rd.goods_code = #{wholesaleReturnsListIn.goodsCode}
+            </if>
+        </where>
+        order by owr.create_time desc,owr.id desc
+    </select>
+
+    <update id="updateOrder">
+        update ord_wholesale_returns
+        <set>
+            <if test="order.returnStatus != null and order.returnStatus != ''">
+                return_status = #{order.returnStatus},
+            </if>
+            <if test="order.applicationQuantity != null">
+                application_quantity = #{order.applicationQuantity},
+            </if>
+            <if test="order.applicationAmount != null">
+                application_amount = #{order.applicationAmount},
+            </if>
+            <if test="order.storageQuantity != null">
+                storage_quantity = #{order.storageQuantity},
+            </if>
+            <if test="order.storageAmount != null">
+                storage_amount = #{order.storageAmount},
+            </if>
+            <if test="order.trackingNo != null and order.trackingNo != ''">
+                tracking_no = #{order.trackingNo},
+            </if>
+            <if test="order.remark != null and order.remark != ''">
+                remark = #{order.remark},
+            </if>
+            <if test="order.receiveTime != null">
+                receive_time = #{order.receiveTime},
+            </if>
+            updater = #{order.updater}, update_time = now()
+        </set>
+        where id = #{order.id} and return_status = #{beforeStatus}
+    </update>
+
+
+</mapper>

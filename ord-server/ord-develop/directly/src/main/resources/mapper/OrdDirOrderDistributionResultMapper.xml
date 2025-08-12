@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.distribution.mapper.OrdDirOrderDistributionResultMapper">
+
+    <update id="updateByDistributionOrderIdAndStoreCode">
+        update ord_dir_order_distribution_result
+        <set>
+                is_done = #{isDone},updater = #{updater},updater = #{updater},update_time = #{updateTime},
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+        </set>
+        where distribution_order_id = #{distributionOrderId} and store_code = #{storeCode} and is_delete = 0
+    </update>
+</mapper>

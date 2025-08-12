@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.dirrequestorder.mapper.OrdDirDelivRequestDeliveryMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.directly.dirrequestorder.entity.OrdDirDelivRequestDelivery">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="requestOrderId" column="request_order_id" jdbcType="BIGINT"/>
+        <result property="deliveryOrderId" column="delivery_order_id" jdbcType="BIGINT"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, request_order_id, delivery_order_id, creator, create_time    
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="requestOrderId != null">
+                    and request_order_id = #{requestOrderId}
+                </if>
+                    <if test="deliveryOrderId != null">
+                    and delivery_order_id = #{deliveryOrderId}
+                </if>
+                    <if test="creator != null and creator != ''">
+                    and creator = #{creator}
+                </if>
+                    <if test="createTime != null">
+                    and create_time = #{createTime}
+                </if>
+                </where>
+     </sql>
+    <insert id="batchSaveDirDeliveryRequestOrderList">
+        insert into ord_dir_deliv_request_delivery (request_order_id,delivery_order_id,creator,create_time)
+        values
+        <foreach collection="ordDirDelivRequestDeliveryList" item="item" separator=",">
+            (#{item.requestOrderId},#{item.deliveryOrderId},#{item.creator},#{item.createTime})
+        </foreach>
+    </insert>
+</mapper>

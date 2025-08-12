@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.wholesale.shipment.mapper.WholesaleShipmentMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.wholesale.shipment.entity.WholesaleShipment">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="shipmentNo" column="shipment_no" jdbcType="VARCHAR"/>
+        <result property="shipmentStatus" column="shipment_status" jdbcType="VARCHAR"/>
+        <result property="clientCode" column="client_code" jdbcType="VARCHAR"/>
+        <result property="priceGroupCode" column="price_group_code" jdbcType="VARCHAR"/>
+        <result property="shipmentWrh" column="shipment_wrh" jdbcType="VARCHAR"/>
+        <result property="shipmentStockCode" column="shipment_stock_code" jdbcType="VARCHAR"/>
+        <result property="isReversalOrder" column="is_reversal_order" jdbcType="INTEGER"/>
+        <result property="isReversal" column="is_reversal" jdbcType="INTEGER"/>
+        <result property="applicationQuantity" column="application_quantity" jdbcType="INTEGER"/>
+        <result property="applicationAmount" column="application_amount" jdbcType="DECIMAL"/>
+        <result property="auditQuantity" column="audit_quantity" jdbcType="INTEGER"/>
+        <result property="auditAmount" column="audit_amount" jdbcType="DECIMAL"/>
+        <result property="trackingNo" column="tracking_no" jdbcType="VARCHAR"/>
+        <result property="sourceNo" column="source_no" jdbcType="VARCHAR"/>
+        <result property="shipmentQuantity" column="shipment_quantity" jdbcType="INTEGER"/>
+        <result property="practicalShipmentAmount" column="practical_shipment_amount" jdbcType="DECIMAL"/>
+        <result property="distributionInfoId" column="distribution_info_id" jdbcType="INTEGER"/>
+        <result property="consignee" column="consignee" jdbcType="VARCHAR"/>
+        <result property="consigneePhone" column="consignee_phone" jdbcType="VARCHAR"/>
+        <result property="addressDetail" column="address_detail" jdbcType="VARCHAR"/>
+        <result property="distributionType" column="distribution_type" jdbcType="VARCHAR"/>
+        <result property="driverInfo" column="driver_info" jdbcType="VARCHAR"/>
+        <result property="purBatchNumber" column="pur_batch_number" jdbcType="VARCHAR"/>
+        <result property="auditTime" column="audit_time" jdbcType="TIMESTAMP"/>
+        <result property="pushPurTime" column="push_pur_time" jdbcType="TIMESTAMP"/>
+        <result property="pushPurProgress" column="push_pur_progress" jdbcType="INTEGER"/>
+        <result property="orderPriority" column="order_priority" jdbcType="VARCHAR"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="deliveryTime" column="delivery_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, shipment_no, shipment_status, client_code, price_group_code,shipment_wrh, shipment_stock_code, is_reversal_order,
+         is_reversal, application_quantity, application_amount,audit_quantity, audit_amount, tracking_no, source_no, shipment_quantity,
+         practical_shipment_amount, distribution_info_id, consignee, consignee_phone, address_detail,distribution_type,driver_info,pur_batch_number,audit_time,
+         pushPurTime,pushPurProgress,order_priority,org_code,biz_org_code, remark, is_delete, create_time, creator, updater, update_time, delivery_time
+    </sql>
+
+    <!-- 带别名  -->
+    <sql id="Column_List_One">
+        ows.id, ows.shipment_no, ows.shipment_status, ows.client_code, ows.price_group_code,ows.shipment_wrh, ows.shipment_stock_code, ows.is_reversal_order, ows.is_reversal ,
+        ows.application_quantity, ows.application_amount, ows.audit_quantity, ows.audit_amount, ows.tracking_no, ows.source_no, ows.shipment_quantity, ows.practical_shipment_amount,
+        ows.distribution_info_id,ows.consignee, ows.consignee_phone, ows.address_detail, ows.org_code, ows.biz_org_code, ows.remark, ows.is_delete, ows.create_time, ows.creator,
+        ows.updater, ows.update_time, ows.delivery_time,ows.distribution_type,ows.driver_info,ows.audit_time, ows.push_pur_time,ows.push_pur_progress
+    </sql>
+
+    <!--  分页查询批发出货单 -->
+    <select id="findShipmentByPage"
+            parameterType="com.edc.erp.wholesale.model.in.shipment.QueryShipmentIn"
+            resultType="com.edc.erp.wholesale.model.out.shipment.ShipmentWithDetailOut">
+        SELECT
+            <include refid="Column_List_One"/>,
+            lsi.stock_name,
+            lwi.warehouse_name
+        FROM
+            ord_wholesale_shipment ows
+        LEFT JOIN logc_stock_info lsi ON lsi.stock_code = ows.shipment_stock_code AND lsi.is_delete = 0 and lsi.biz_org_code = ows.biz_org_code
+        LEFT JOIN logc_warehouse_info lwi ON lwi.warehouse_code = ows.shipment_wrh AND lsi.warehouse_id = lwi.id AND lwi.is_delete = 0 and lwi.biz_org_code = ows.biz_org_code
+        <if test="query.goodsCode != null and query.goodsCode != ''">
+            INNER JOIN ord_wholesale_shipment_detail sd on sd.wholesale_shipment_id = ows.id
+        </if>
+        <where>
+            ows.is_delete = 0
+            <if test="query.shipmentNo != null and query.shipmentNo != ''">
+                and ows.shipment_no = #{query.shipmentNo}
+            </if>
+            <if test="query.shipmentStatus != null and query.shipmentStatus != ''">
+                and ows.shipment_status = #{query.shipmentStatus}
+            </if>
+            <if test="query.clientCode != null and query.clientCode != ''">
+                and ows.client_code = #{query.clientCode}
+            </if>
+            <if test="query.shipmentWrh != null and query.shipmentWrh != ''">
+                and ows.shipment_wrh = #{query.shipmentWrh}
+            </if>
+            <if test="query.shipmentStockCode != null and query.shipmentStockCode != ''">
+                and ows.shipment_stock_code = #{query.shipmentStockCode}
+            </if>
+            <if test="query.trackingNo != null and query.trackingNo != ''">
+                and ows.tracking_no = #{query.trackingNo}
+            </if>
+            <if test="query.sourceNo != null and query.sourceNo != ''">
+                and ows.source_no = #{query.sourceNo}
+            </if>
+            <if test="query.bizOrgCode != null and query.bizOrgCode != ''">
+                and ows.biz_org_code = #{query.bizOrgCode}
+            </if>
+            <if test="query.beginCreateTime != null and query.beginCreateTime != ''">
+                and ows.create_time &gt;= #{query.beginCreateTime}
+            </if>
+            <if test="query.endCreateTime != null and query.endCreateTime != ''">
+                and ows.create_time &lt;= #{query.endCreateTime}
+            </if>
+            <if test="query.deliveryTimeBegin != null">
+                and ows.delivery_time &gt;= #{query.deliveryTimeBegin}
+            </if>
+            <if test="query.deliveryTimeEnd != null">
+                and ows.delivery_time &lt;= #{query.deliveryTimeEnd}
+            </if>
+            <if test="query.isReversalOrder != null">
+                and ows.is_reversal_order = #{query.isReversalOrder}
+            </if>
+            <if test="query.isReversal != null">
+                and ows.is_reversal = #{query.isReversal}
+            </if>
+            <if test="query.wholesaleShipmentIds != null and query.wholesaleShipmentIds.size() != 0">
+                and ows.id in
+                <foreach collection="query.wholesaleShipmentIds" item="wholesaleShipmentId" open="(" separator="," close=")">
+                    #{wholesaleShipmentId}
+                </foreach>
+            </if>
+            <if test="query.distributionType != null and query.distributionType != ''">
+                and ows.distribution_type = #{query.distributionType}
+            </if>
+            <if test="query.creator != null and query.creator != ''">
+                and ows.creator like CONCAT('%',#{query.creator},'%')
+            </if>
+            <if test="query.goodsCode != null and query.goodsCode != ''">
+                and sd.goods_code = #{query.goodsCode}
+            </if>
+            <if test="query.pushPurTimeBegin != null and query.pushPurTimeEnd != null">
+                and ows.push_pur_time between #{query.pushPurTimeBegin} and #{query.pushPurTimeEnd}
+            </if>
+        </where>
+        ORDER BY ows.create_time DESC,ows.id DESC
+    </select>
+
+    <!-- 查询允许批发的仓位信息  -->
+    <select id="findStockInfo"
+            parameterType="com.edc.erp.model.in.QueryWarehouseIn"
+            resultType="com.edc.erp.model.out.StockInfoOut">
+        SELECT
+            lsi.id AS stockId,
+            lsi.stock_code,
+            lsi.stock_name,
+            lsi.warehouse_id,
+            lsi.biz_org_code
+        FROM
+            logc_stock_info lsi
+        INNER JOIN
+            logc_stock_business_switch lsbs ON lsbs.stock_code = lsi.stock_code and lsi.biz_org_code = lsbs.biz_org_code and lsbs.${isOutReturn}
+        <where>
+            lsi.is_delete = 0
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and (lsi.biz_org_code = #{bizOrgCode}
+                or lsi.id in (select stock_id from logc_stock_org_auth where biz_org_code = #{bizOrgCode}))
+            </if>
+            <if test="isEnable != null">
+                and lsi.is_enable = #{isEnable}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据允许批发的仓位信息的仓储id查询仓储信息 -->
+    <select id="findWarehouseInfo" resultType="com.edc.erp.model.out.WarehouseInfoOut">
+        SELECT
+            lwi.id,
+            lwi.warehouse_code,
+            lwi.warehouse_name,
+            lwi.biz_org_code
+        FROM
+            logc_warehouse_info lwi
+        <where>
+            lwi.is_delete = 0 AND lwi.is_enable = 1
+            <if test="stockInfo != null and stockInfo.size() != 0">
+                AND lwi.id IN
+                <foreach collection="stockInfo" item="item" open="(" separator="," close=")">
+                    #{item.warehouseId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据商品代码和出货单状态 查询出货单详情 -->
+    <select id="getWholesaleShipmentDetail" resultType="com.edc.erp.wholesale.shipment.entity.WholesaleShipmentDetail">
+        SELECT
+            owrd.id,
+            owrd.goods_code,
+            owrd.wholesale_shipment_id
+        FROM
+            ord_wholesale_shipment_detail owrd
+        INNER JOIN ord_wholesale_shipment ows on ows.id = owrd.wholesale_shipment_id and ows.is_delete = 0
+        <where>
+            owrd.is_delete = 0
+            <if test="goodsCode != null and goodsCode != ''">
+                and owrd.goods_code = #{goodsCode}
+            </if>
+            <if test="status != null and status != ''">
+                and ows.shipment_status = #{status}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and ows.biz_org_code = #{bizOrgCode}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryShipmentReportForPage"
+            parameterType="com.edc.erp.wholesale.model.in.shipment.QueryShipmentIn"
+            resultType="com.edc.erp.wholesale.model.out.shipment.QueryShipmentReportOut">
+        SELECT
+        sum(ows.application_quantity) as applicationQuantity, sum(ows.application_amount) as applicationAmount,
+        sum(ows.shipment_quantity) as shipmentQuantity,sum(ows.practical_shipment_amount) as practicalShipmentAmount
+        FROM
+        ord_wholesale_shipment ows
+        LEFT JOIN logc_stock_info lsi ON lsi.stock_code = ows.shipment_stock_code AND lsi.is_delete = 0 and lsi.biz_org_code = ows.biz_org_code
+        LEFT JOIN logc_warehouse_info lwi ON lwi.warehouse_code = ows.shipment_wrh AND lsi.warehouse_id = lwi.id AND lwi.is_delete = 0 and lwi.biz_org_code = ows.biz_org_code
+        <where>
+            ows.is_delete = 0
+            <if test="query.shipmentNo != null and query.shipmentNo != ''">
+                and ows.shipment_no = #{query.shipmentNo}
+            </if>
+            <if test="query.shipmentStatus != null and query.shipmentStatus != ''">
+                and ows.shipment_status = #{query.shipmentStatus}
+            </if>
+            <if test="query.clientCode != null and query.clientCode != ''">
+                and ows.client_code = #{query.clientCode}
+            </if>
+            <if test="query.shipmentWrh != null and query.shipmentWrh != ''">
+                and ows.shipment_wrh = #{query.shipmentWrh}
+            </if>
+            <if test="query.shipmentStockCode != null and query.shipmentStockCode != ''">
+                and ows.shipment_stock_code = #{query.shipmentStockCode}
+            </if>
+            <if test="query.bizOrgCode != null and query.bizOrgCode != ''">
+                and ows.biz_org_code = #{query.bizOrgCode}
+            </if>
+            <if test="query.beginCreateTime != null and query.beginCreateTime != ''">
+                and ows.create_time &gt;= #{query.beginCreateTime}
+            </if>
+            <if test="query.endCreateTime != null and query.endCreateTime != ''">
+                and ows.create_time &lt;= #{query.endCreateTime}
+            </if>
+            <if test="query.deliveryTimeBegin != null">
+                and ows.delivery_time &gt;= #{query.deliveryTimeBegin}
+            </if>
+            <if test="query.deliveryTimeEnd != null">
+                and ows.delivery_time &lt;= #{query.deliveryTimeEnd}
+            </if>
+            <if test="query.isReversalOrder != null">
+                and ows.is_reversal_order = #{query.isReversalOrder}
+            </if>
+            <if test="query.isReversal != null">
+                and ows.is_reversal = #{query.isReversal}
+            </if>
+            <if test="query.wholesaleShipmentIds != null and query.wholesaleShipmentIds.size() != 0">
+                and ows.id in
+                <foreach collection="query.wholesaleShipmentIds" item="wholesaleShipmentId" open="(" separator="," close=")">
+                    #{wholesaleShipmentId}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY ows.create_time DESC,ows.id DESC
+    </select>
+    <select id="findNeedPushPurWholesaleShipmentId" resultType="java.lang.Long">
+        select id from ord_wholesale_shipment where distribution_type = #{distributionType} and shipment_status = #{shipmentStatus} and pur_batch_number is null
+        and audit_time between #{beginTime} and #{endTime} and biz_org_code = #{bizOrgCode} and push_pur_progress = 1 and push_pur_time is null and is_delete = 0
+    </select>
+
+    <select id="findNeedDelayPushPurWholesaleShipmentId" resultType="java.lang.Long">
+        select id from ord_wholesale_shipment where distribution_type = #{distributionType} and shipment_status = #{shipmentStatus} and pur_batch_number is null
+        <![CDATA[
+            and push_pur_time <= #{executeTime} and biz_org_code = #{bizOrgCode} and push_pur_progress = 1 and is_delete = 0
+        ]]>
+    </select>
+
+
+    <update id="updatePurBatchNumberByIdList">
+        update ord_wholesale_shipment set pur_batch_number = #{purBatchNumber},updater = #{updater},update_time = #{updateTime},push_pur_progress = #{pushPurProgress} where id in
+        <foreach collection="shipmentIdList" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+        and is_delete = 0
+    </update>
+
+
+    <select id="findNeedSumWholesaleOrderIdList"
+            parameterType="com.edc.erp.wholesale.model.in.shipment.QueryShipmentIn"
+            resultType="java.lang.Long">
+        SELECT
+         ows.id
+        FROM
+        ord_wholesale_shipment ows
+        LEFT JOIN logc_stock_info lsi ON lsi.stock_code = ows.shipment_stock_code AND lsi.is_delete = 0 and lsi.biz_org_code = ows.biz_org_code
+        LEFT JOIN logc_warehouse_info lwi ON lwi.warehouse_code = ows.shipment_wrh AND lsi.warehouse_id = lwi.id AND lwi.is_delete = 0 and lwi.biz_org_code = ows.biz_org_code
+        <if test="query.goodsCode != null and query.goodsCode != ''">
+            INNER JOIN ord_wholesale_shipment_detail sd on sd.wholesale_shipment_id = ows.id
+        </if>
+        <where>
+            ows.is_delete = 0
+            <if test="query.shipmentNo != null and query.shipmentNo != ''">
+                and ows.shipment_no = #{query.shipmentNo}
+            </if>
+            <if test="query.shipmentStatus != null and query.shipmentStatus != ''">
+                and ows.shipment_status = #{query.shipmentStatus}
+            </if>
+            <if test="query.clientCode != null and query.clientCode != ''">
+                and ows.client_code = #{query.clientCode}
+            </if>
+            <if test="query.shipmentWrh != null and query.shipmentWrh != ''">
+                and ows.shipment_wrh = #{query.shipmentWrh}
+            </if>
+            <if test="query.shipmentStockCode != null and query.shipmentStockCode != ''">
+                and ows.shipment_stock_code = #{query.shipmentStockCode}
+            </if>
+            <if test="query.trackingNo != null and query.trackingNo != ''">
+                and ows.tracking_no = #{query.trackingNo}
+            </if>
+            <if test="query.sourceNo != null and query.sourceNo != ''">
+                and ows.source_no = #{query.sourceNo}
+            </if>
+            <if test="query.bizOrgCode != null and query.bizOrgCode != ''">
+                and ows.biz_org_code = #{query.bizOrgCode}
+            </if>
+            <if test="query.beginCreateTime != null and query.beginCreateTime != ''">
+                and ows.create_time &gt;= #{query.beginCreateTime}
+            </if>
+            <if test="query.endCreateTime != null and query.endCreateTime != ''">
+                and ows.create_time &lt;= #{query.endCreateTime}
+            </if>
+            <if test="query.deliveryTimeBegin != null">
+                and ows.delivery_time &gt;= #{query.deliveryTimeBegin}
+            </if>
+            <if test="query.deliveryTimeEnd != null">
+                and ows.delivery_time &lt;= #{query.deliveryTimeEnd}
+            </if>
+            <if test="query.isReversalOrder != null">
+                and ows.is_reversal_order = #{query.isReversalOrder}
+            </if>
+            <if test="query.isReversal != null">
+                and ows.is_reversal = #{query.isReversal}
+            </if>
+            <if test="query.wholesaleShipmentIds != null and query.wholesaleShipmentIds.size() != 0">
+                and ows.id in
+                <foreach collection="query.wholesaleShipmentIds" item="wholesaleShipmentId" open="(" separator="," close=")">
+                    #{wholesaleShipmentId}
+                </foreach>
+            </if>
+            <if test="query.distributionType != null and query.distributionType != ''">
+                and ows.distribution_type = #{query.distributionType}
+            </if>
+            <if test="query.creator != null and query.creator != ''">
+                and ows.creator like CONCAT('%',#{query.creator},'%')
+            </if>
+            <if test="query.goodsCode != null and query.goodsCode != ''">
+                and sd.goods_code = #{query.goodsCode}
+            </if>
+        </where>
+        ORDER BY ows.create_time DESC,ows.id DESC
+    </select>
+
+    <update id="updateOrder">
+        update ord_wholesale_shipment
+        <set>
+            <if test="order.shipmentStatus != null and order.shipmentStatus != ''">
+                shipment_status = #{order.shipmentStatus},
+            </if>
+            <if test="order.trackingNo != null and order.trackingNo != ''">
+                tracking_no = #{order.trackingNo},
+            </if>
+            <if test="order.driverInfo != null and order.driverInfo != ''">
+                driver_info = #{order.driverInfo},
+            </if>
+            <if test="order.remark != null and order.remark != ''">
+                remark = #{order.remark},
+            </if>
+            <if test="order.deliveryTime != null">
+                delivery_time = #{order.deliveryTime},
+            </if>
+            <if test="order.shipmentQuantity != null">
+                shipment_quantity = #{order.shipmentQuantity},
+            </if>
+            <if test="order.practicalShipmentAmount != null">
+                practical_shipment_amount = #{order.practicalShipmentAmount},
+            </if>
+            updater = #{order.updater}, update_time = now()
+        </set>
+        where id = #{order.id} and shipment_status = #{beforeStatus}
+    </update>
+    <update id="updatePushPurTime">
+        update ord_wholesale_shipment set push_pur_time = #{pushPurTime},updater = #{updater},update_time = #{updateTime}
+        where id = #{id} and push_pur_progress = 1
+    </update>
+
+    <update id="updateShipmentPurchaseNoByPurBatchNumber">
+        update ord_wholesale_shipment ws left join ord_wholesale_shipment_detail wsd on ws.id = wsd.wholesale_shipment_id
+            set ws.push_pur_progress = #{obj.pushPurProgress},ws.updater = #{updater},ws.update_time = #{updateTime}
+        where wsd.vendor_code = #{obj.vendorCode} and ws.pur_batch_number = #{obj.purBatchNumber} and ws.biz_org_code = #{obj.bizOrgCode} and wsd.is_delete = 0 and ws.is_delete = 0
+    </update>
+</mapper>

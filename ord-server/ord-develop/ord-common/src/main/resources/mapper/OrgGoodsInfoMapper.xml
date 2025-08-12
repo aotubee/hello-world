@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.common.mapper.OrgGoodsInfoMapper">
+
+  <resultMap id="BaseResultMap" type="com.edc.erp.common.model.entity.OrgGoodsInfo">
+    <id column="id" jdbcType="BIGINT" property="orgGoodsId" />
+    <result column="goods_id" jdbcType="BIGINT" property="goodsId" />
+    <result column="mnemonic_code" jdbcType="VARCHAR" property="mnemonicCode" />
+    <result column="org_goods_bar" jdbcType="VARCHAR" property="orgGoodsBar" />
+    <result column="org_goods_name" jdbcType="VARCHAR" property="orgGoodsName" />
+    <result column="org_sort" jdbcType="VARCHAR" property="orgSort" />
+    <result column="org_goods_type" jdbcType="VARCHAR" property="orgGoodsType" />
+    <result column="goods_tag" jdbcType="VARCHAR" property="goodsTag" />
+    <result column="selling_point" jdbcType="VARCHAR" property="sellingPoint" />
+    <result column="life_cycle_id" jdbcType="INTEGER" property="lifeCycleId" />
+    <result column="goods_status_id" jdbcType="INTEGER" property="goodsStatusId" />
+    <result column="sort_id" jdbcType="INTEGER" property="sortId" />
+    <result column="org_code" jdbcType="VARCHAR" property="orgCode" />
+    <result column="biz_org_code" jdbcType="VARCHAR" property="bizOrgCode" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater" jdbcType="VARCHAR" property="updater" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_delete" jdbcType="TINYINT" property="isDelete" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, goods_id, mnemonic_code, org_goods_bar, org_goods_name, org_sort, org_goods_type,
+    goods_tag, selling_point, life_cycle_id, goods_status_id, sort_id, org_code, biz_org_code,
+    creator, create_time, updater, update_time, is_delete
+  </sql>
+
+  <select id="selectByGoodsCode" resultMap="BaseResultMap">
+    select
+    gogi.id, gogi.goods_id, gogi.mnemonic_code, gogi.org_goods_bar, gogi.org_goods_name, gogi.org_sort, gogi.org_goods_type,
+    gogi.goods_tag, gogi.selling_point, gogi.life_cycle_id, gogi.goods_status_id, gogi.sort_id, gogi.org_code, gogi.biz_org_code,
+    gogi.creator, gogi.create_time, gogi.updater, gogi.update_time, gogi.is_delete
+    from gc_org_goods_info gogi
+    INNER JOIN gc_standard_goods_info gsgi on gogi.goods_id = gsgi.id and gsgi.is_delete = 0
+    where  gogi.is_delete = 0 and  gsgi.goods_code = #{goodsCode,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getPrice" resultType="java.math.BigDecimal">
+    select gwpgd.price
+    from gc_wholesale_price_group_detail gwpgd
+    left join csr_client_wholesale_config ccwc on gwpgd.price_group_code = ccwc.price_group_code and ccwc.biz_org_code = #{bizOrgCode,jdbcType=VARCHAR}
+    where gwpgd.price_group_code = #{priceGroupCode,jdbcType=VARCHAR} and gwpgd.goods_code = #{goodsCode,jdbcType=VARCHAR}
+    and gwpgd.biz_org_code = #{bizOrgCode,jdbcType=VARCHAR} and  ccwc.client_code = #{clientCode,jdbcType=VARCHAR} and gwpgd.is_delete = 0
+  </select>
+  <select id="getGoodsLogisticsByGoodsCode" resultType="java.lang.Integer">
+    select
+      CASE
+        WHEN gogd.storage_area = 'highWorth' THEN 3
+        WHEN gogd.storage_area = 'wholeUnit' THEN 2
+        WHEN gogd.storage_area = 'bulk' THEN 1
+        ELSE 4
+        END  AS statistical_type
+    FROM
+      gc_standard_goods_info gsgi
+        INNER JOIN gc_org_goods_info gogi ON gsgi.id = gogi.goods_id
+        AND gogi.is_delete = 0
+        AND gogi.biz_org_code = #{bizOrgCode}
+        INNER JOIN gc_org_goods_distribution gogd ON gogi.id = gogd.org_goods_id
+        AND gogd.is_delete = 0
+    WHERE
+      gsgi.goods_code = #{goodsCode}
+      AND gsgi.is_delete = 0
+  </select>
+    <select id="getSellPrice" resultType="java.math.BigDecimal">
+      select
+        ifnull(gpgg.sell_price, 0)
+      from gc_price_group_goods gpgg
+      inner join sc_store_goods_config ssgc on gpgg.price_group_code = ssgc.selling_price_code and ssgc.is_delete = 0
+      where ssgc.store_code = #{storeCode} and ssgc.biz_org_code = #{bizOrgCode} and gpgg.bar_code = #{goodsCode}
+        and gpgg.is_delete = 0
+        and gpgg.specification_number = 1
+        limit 1
+    </select>
+
+
+</mapper>

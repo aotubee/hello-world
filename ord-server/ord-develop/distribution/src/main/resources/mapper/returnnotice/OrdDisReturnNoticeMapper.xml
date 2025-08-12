@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.returnnoticeorder.mapper.OrdDisReturnNoticeMapper">
+
+    <!-- 结果集 -->
+    <resultMap id="resultMap" type="com.edc.erp.returnnoticeorder.entity.OrdDisReturnNotice">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="returnNoticeOrderNo" column="return_notice_order_no" jdbcType="VARCHAR"/>
+        <result property="returnType" column="return_type" jdbcType="VARCHAR"/>
+        <result property="returnWhy" column="return_why" jdbcType="VARCHAR"/>
+        <result property="skuCount" column="sku_count" jdbcType="INTEGER"/>
+        <result property="takeEffectTime" column="take_effect_time" jdbcType="TIMESTAMP"/>
+        <result property="returnDeadline" column="return_deadline" jdbcType="TIMESTAMP"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="isEffectiveImmediately" column="is_effective_immediately" jdbcType="INTEGER"/>
+
+    </resultMap>
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id
+        , return_notice_order_no, return_type, return_why, sku_count, take_effect_time, return_deadline, remark, org_code, biz_org_code, creator, create_time, updater, update_time, is_delete,status, is_effective_immediately
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Base_Where_Clause">
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="returnNoticeOrderNo != null and returnNoticeOrderNo != ''">
+                and return_notice_order_no = #{returnNoticeOrderNo}
+            </if>
+            <if test="returnType != null and returnType != ''">
+                and return_type = #{returnType}
+            </if>
+            <if test="returnWhy != null and returnWhy != ''">
+                and return_why = #{returnWhy}
+            </if>
+            <if test="skuCount != null">
+                and sku_count = #{skuCount}
+            </if>
+            <if test="takeEffectTime != null">
+                and take_effect_time = #{takeEffectTime}
+            </if>
+            <if test="returnDeadline != null">
+                and return_deadline = #{returnDeadline}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="orgCode != null and orgCode != ''">
+                and org_code = #{orgCode}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and biz_org_code = #{bizOrgCode}
+            </if>
+            <if test="creator != null and creator != ''">
+                and creator = #{creator}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updater != null and updater != ''">
+                and updater = #{updater}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="isDelete != null">
+                and is_delete = #{isDelete}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 查询 -->
+    <select id="findOrdReturnNoticeByPage"
+            resultType="com.edc.erp.returnnoticeorder.model.out.OrdReturnNoticeOrderOut"
+            parameterType="com.edc.erp.returnnoticeorder.model.in.OrdReturnNoticeIn">
+        select
+        rno.id, rno.return_notice_order_no, rno.status,rno.sku_count,rno.return_type, rno.return_why,
+        rno.take_effect_time, rno.return_deadline,rno.remark,
+        rno.biz_org_code, rno.creator, rno.create_time, rno.updater, rno.update_time, rno.is_delete,
+        case when (select odr.return_notice_order_id
+        from ord_dis_return odr
+        where odr.store_code = #{storeCode,jdbcType=VARCHAR}
+        and odr.return_notice_order_id = rno.id
+        and odr.is_delete = 0 limit 1) > 0 then 1 else 0 END as isReturn
+        from
+        ord_dis_return_notice rno
+        where
+        1=1
+        <if test="returnNoticeOrderNo != null and returnNoticeOrderNo != ''">
+            and rno.return_notice_order_no = #{returnNoticeOrderNo}
+        </if>
+        <if test="storeCode != null and storeCode != ''">
+            and exists (select 1 from ord_dis_return_notice_store rns where rno.id = rns.return_notice_order_id and
+            rns.store_code = #{storeCode})
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and exists (select 1 from ord_dis_return_notice_goods rng where rno.id = rng.return_notice_order_id and
+            rng.goods_code = #{goodsCode})
+        </if>
+        <if test="bizOrgCode != null and bizOrgCode != ''">
+            and rno.biz_org_code = #{bizOrgCode}
+        </if>
+        <if test="status != null and status != ''">
+            and rno.status = #{status}
+        </if>
+        <if test="beginTime != null and beginTime !='' and endTime != null and endTime !=''">
+            and rno.create_time between #{beginTime} and #{endTime}
+        </if>
+        <if test="takeEffectBeginTime != null and takeEffectBeginTime !='' and takeEffectEndTime != null and takeEffectEndTime !=''">
+            and rno.take_effect_time between #{takeEffectBeginTime} and #{takeEffectEndTime}
+        </if>
+        <if test="creator != null and creator != ''">
+            and rno.creator like concat('%', #{creator}, '%')
+        </if>
+        group by rno.id
+    </select>
+
+    <select id="selectTakeEffectTime" resultMap="resultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+        ord_dis_return_notice
+        <where>
+            <if test="isDelete != null">
+                and is_delete = #{isDelete}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="takeEffectTime != null">
+                <![CDATA[
+                and take_effect_time <= #{takeEffectTime,jdbcType=TIMESTAMP}
+                and return_deadline >=#{takeEffectTime,jdbcType=TIMESTAMP}
+                ]]>
+            </if>
+        </where>
+    </select>
+
+    <select id="checkReturnNoticeNo" resultMap="resultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+        ord_dis_return_notice
+        where
+        is_delete=0
+        and  biz_org_code=#{bizOrgCode,jdbcType=VARCHAR}
+        and  return_notice_order_no =#{returnNoticeOrderNo,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findReturnNoticeGoodsByReturnNoticeOrderId"
+            resultType="com.edc.erp.returnnoticeorder.model.out.OrdReturnNoticeGoodsOut">
+        select g.goods_code, g.bar_code, g.goods_name, g.goods_image,s.qty from ord_dis_return_notice_goods g
+        inner JOIN ord_dis_return_notice_store s on s.return_notice_order_id = g.return_notice_order_id  and s.return_notice_goods_id = g.id
+        where g.return_notice_order_id = #{returnNoticeOrderId} and s.store_code = #{storeCode}
+    </select>
+
+    <select id="selectOneByIdAndStoreCode"
+            resultType="com.edc.erp.returnnoticeorder.model.out.OrdBackHeaderReturnNoticeOrderOut">
+        select rno.id returnNoticeOrderId,rno.return_notice_order_no returnNoticeOrderNo, rno.return_type returnType,rno.create_time,
+        rno.take_effect_time takeEffectTime,  rno.remark,
+        (select odrns.return_deadline
+        from ord_dis_return_notice_store odrns
+        where odrns.return_notice_order_id = rno.id limit 1) as return_deadline
+        <if test="storeCode != null and storeCode != ''">
+            ,
+            exists (select odr.return_notice_order_id
+            from ord_dis_return odr
+            where odr.store_code = #{storeCode}
+            and odr.return_notice_order_id = rno.id
+            and odr.is_delete = 0) as isReturn
+        </if>
+        from ord_dis_return_notice rno
+        where rno.id = #{returnNoticeOrderId,jdbcType=INTEGER}
+        <if test="storeCode != null and storeCode != ''">
+            and exists(select odrns.return_notice_order_id
+            from ord_dis_return_notice_store odrns
+            where odrns.return_notice_order_id = rno.id
+            and odrns.store_code = #{storeCode})
+        </if>
+    </select>
+    <select id="getUnreturnedCount" resultType="java.lang.Integer">
+        select count(rno.id) from  ord_dis_return_notice rno
+        where rno.status = 'processed' and rno.return_deadline > now() and rno.biz_org_code = #{bizOrgCode}
+          and exists (select rns.store_code from ord_dis_return_notice_store rns where rno.id = rns.return_notice_order_id and
+            rns.store_code = #{storeCode})
+          and not exists(select odr.store_code
+                         from ord_dis_return odr
+                         where odr.store_code = #{storeCode}
+                           and odr.return_notice_order_id = rno.id
+                           and odr.is_delete = 0)
+    </select>
+</mapper>

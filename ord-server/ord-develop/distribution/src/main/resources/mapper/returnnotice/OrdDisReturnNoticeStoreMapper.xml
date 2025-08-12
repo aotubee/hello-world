@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.returnnoticeorder.mapper.OrdDisReturnNoticeStoreMapper">
+
+    <!-- 结果集 -->
+    <resultMap id="resultMap" type="com.edc.erp.returnnoticeorder.entity.OrdDisReturnNoticeStore">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="returnNoticeOrderId" column="return_notice_order_id" jdbcType="BIGINT"/>
+        <result property="returnNoticeGoodsId" column="return_notice_goods_id" jdbcType="BIGINT"/>
+        <result property="returnDeadline" column="return_deadline" jdbcType="TIMESTAMP"/>
+        <result property="storeCode" column="store_code" jdbcType="VARCHAR"/>
+        <result property="storeName" column="store_name" jdbcType="VARCHAR"/>
+        <result property="qty" column="qty" jdbcType="DECIMAL"/>
+        <result property="client" column="client" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id
+        , return_notice_order_id, return_notice_goods_id, return_deadline, store_code, store_name, qty,client
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Base_Where_Clause">
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="returnNoticeOrderId != null">
+                and return_notice_order_id = #{returnNoticeOrderId}
+            </if>
+            <if test="returnNoticeGoodsId != null">
+                and return_notice_goods_id = #{returnNoticeGoodsId}
+            </if>
+            <if test="returnDeadline != null">
+                and return_deadline = #{returnDeadline}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and store_code = #{storeCode}
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and store_name = #{storeName}
+            </if>
+            <if test="qty != null">
+                and qty = #{qty}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 查询 -->
+    <select id="findPpReturnNoticeStoresByPage"
+            resultType="com.edc.erp.returnnoticeorder.model.out.OrdReturnNoticeStoreOut"
+            parameterType="com.edc.erp.returnnoticeorder.model.in.OrdReturnNoticeStoreIn">
+        select
+        id
+        , return_notice_order_id, return_notice_goods_id, return_deadline, store_code, store_name, qty
+        from ord_dis_return_notice_store where 1=1
+        <if test="returnNoticeOrderId != null">
+            and return_notice_order_id = #{returnNoticeOrderId,jdbcType=INTEGER}
+        </if>
+        <if test="returnNoticeGoodsId != null">
+            and return_notice_goods_id = #{returnNoticeGoodsId,jdbcType=INTEGER}
+        </if>
+        <if test="storeCode != null and storeCode != ''">
+            and store_code = #{storeCode}
+        </if>
+        <if test="storeName != null and storeName != ''">
+            and store_name like concat('%', #{storeName}, '%')
+        </if>
+        group by id
+    </select>
+
+    <select id="findByReturnNoticeIdAndReturnGoodsId"
+            resultType="com.edc.erp.returnnoticeorder.model.out.OrdReturnNoticeStoreOut">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        ord_dis_return_notice_store
+        <where>
+        <if test="returnNoticeId != null">
+            and return_notice_order_id = #{returnNoticeId,jdbcType=INTEGER}
+        </if>
+        <if test="returnNoticeGoodsId != null">
+            and return_notice_goods_id =#{returnNoticeGoodsId,jdbcType=INTEGER}
+        </if>
+        </where>
+    </select>
+
+    <select id="findStoreInfo" resultType="com.edc.erp.returnnoticeorder.model.out.OrdReturnNoticeStoreOut">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dis_return_notice_store
+        <where>
+            <if test="returnNoticeOrderId != null">
+                and return_notice_order_id = #{returnNoticeOrderId}
+            </if>
+            <if test="returnNoticeGoodsId != null">
+                and return_notice_goods_id = #{returnNoticeGoodsId}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and store_code = #{storeCode}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="getMaxQtyByParameter" resultType="java.math.BigDecimal">
+        select odrns.qty
+        from ord_dis_return_notice_store odrns
+        LEFT JOIN ord_dis_return_notice_goods odtng on odrns.return_notice_goods_id = odtng.id
+        where
+        odrns.return_notice_order_id  = #{returnNoticeOrderId,jdbcType=INTEGER}
+        and odtng.goods_code = #{goodsCode,jdbcType=VARCHAR}
+        and odrns.store_code = #{storeCode,jdbcType=VARCHAR}
+    </select>
+</mapper>

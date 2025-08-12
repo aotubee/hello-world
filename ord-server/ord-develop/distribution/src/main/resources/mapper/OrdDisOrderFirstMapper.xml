@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.disfirstorder.mapper.OrdDisOrderFirstMapper">
+
+    <!-- 结果集 -->
+    <resultMap id="resultMap" type="com.edc.erp.disfirstorder.entity.OrdDisOrderFirst">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="firstOrderNo" column="first_order_no" jdbcType="VARCHAR"/>
+        <result property="firstOrderStatus" column="first_order_status" jdbcType="VARCHAR"/>
+        <result property="storeCode" column="store_code" jdbcType="VARCHAR"/>
+        <result property="storeName" column="store_name" jdbcType="VARCHAR"/>
+        <result property="goodsNum" column="goods_num" jdbcType="INTEGER"/>
+        <result property="totalNum" column="total_num" jdbcType="INTEGER"/>
+        <result property="totalAmount" column="total_amount" jdbcType="DECIMAL"/>
+        <result property="effectiveTime" column="effective_time" jdbcType="TIMESTAMP"/>
+        <result property="approver" column="approver" jdbcType="VARCHAR"/>
+        <result property="approvalTime" column="approval_time" jdbcType="TIMESTAMP"/>
+        <result property="freezeStatus" column="freeze_status" jdbcType="VARCHAR"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="isEffectiveImmediately" column="is_effective_immediately" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, first_order_no, first_order_status, store_code, store_name, goods_num, total_num, total_amount, effective_time, approver, approval_time,freeze_status, org_code, biz_org_code, creator, create_time, updater, update_time, is_delete,is_effective_immediately
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Base_Where_Clause">
+        <where>
+            is_delete =0
+            <if test="firstOrderNo != null and firstOrderNo != ''">
+                and first_order_no = #{firstOrderNo}
+            </if>
+            <if test="firstOrderStatus != null and firstOrderStatus != ''">
+                and first_order_status = #{firstOrderStatus}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and store_code = #{storeCode}
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and store_name like concat('%',#{storeName},'%')
+            </if>
+            <if test="approver != null and approver != ''">
+                and approver like concat('%',#{approver},'%')
+            </if>
+            <if test="orgCode != null and orgCode != ''">
+                and org_code = #{orgCode}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and biz_org_code = #{bizOrgCode}
+            </if>
+            <if test="createStartTime != null and createStartTime != '' and createEndTime != null and createEndTime != ''">
+                and create_time between #{createStartTime} and #{createEndTime}
+            </if>
+            <if test="effectiveStateTime != null and effectiveStateTime != '' and effectiveEndTime != null and effectiveEndTime != ''">
+                and effective_time between #{effectiveStateTime} and #{effectiveEndTime}
+            </if>
+            <if test="creator != null and creator != ''">
+                and creator  like concat('%',#{creator},'%')
+            </if>
+            <if test="updater != null and updater != ''">
+                and updater = #{updater}
+            </if>
+        </where>
+    </sql>
+    <update id="unFreezeDisFirstOrder">
+        update ord_dis_order_first set freeze_status = 'release',updater = #{order.updater}, update_time = now()
+        where id = #{order.id} and biz_org_code= #{order.bizOrgCode}
+    </update>
+    <select id="findFirstOrderByPage" resultType="com.edc.erp.disfirstorder.model.out.OrdDerDisOrderFirstOut">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dis_order_first
+        <include refid="Base_Where_Clause"/>
+    </select>
+    <select id="getOrderFirstConfig" resultType="com.edc.erp.disfirstorder.model.out.FirstOrderConfigOut">
+        select id,is_stock,is_distribution_mode,is_sort,org_code,biz_org_code
+        from opt_first_order_config
+        where biz_org_code=#{bizOrgCode}
+    </select>
+    <select id="findOrderFirstConfigSort" resultType="com.edc.erp.disfirstorder.model.out.FirstOrderSortOut">
+    select sort_code from opt_first_order_config_sort where config_id=#{id}
+    </select>
+    <select id="selectByEffectiveTime" resultMap="resultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dis_order_first
+        <where>
+            <if test="firstOrderStatus != null and firstOrderStatus != ''">
+                and first_order_status = #{firstOrderStatus}
+            </if>
+            <if test="effectiveTime != null">
+                and effective_time &lt;= #{effectiveTime}
+            </if>
+        <if test="isDelete != null and isDelete != ''">
+            and is_delete = #{isDelete}
+        </if>
+        </where>
+    </select>
+    <select id="getOrdDisFirstByDeliveryOrderId"
+            resultType="com.edc.erp.disfirstorder.entity.OrdDisOrderFirst">
+        select
+            f.id, f.first_order_no, f.first_order_status, f.store_code, f.store_name, f.goods_num, f.total_num, f.total_amount,
+            f.effective_time, f.approver, f.approval_time, f.org_code, f.biz_org_code, f.creator, f.create_time, f.updater,
+            f.update_time, f.is_delete,f.is_effective_immediately,f.freeze_status
+        from ord_dis_order_first f inner join ord_dis_order_first_delivery fd on f.id = fd.first_order_id
+        where fd.delivery_order_id = #{deliveryOrderId} and f.is_delete = 0
+    </select>
+
+
+</mapper>

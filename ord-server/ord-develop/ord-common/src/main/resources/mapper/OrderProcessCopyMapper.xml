@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.common.mapper.OrderProcessCopyMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.common.entity.OrderProcessCopy">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="processName" column="process_name" jdbcType="VARCHAR"/>
+        <result property="serialNumber" column="serial_number" jdbcType="INTEGER"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="storeCode" column="store_code" jdbcType="VARCHAR"/>
+        <result property="shortOrderType" column="short_order_type" jdbcType="VARCHAR"/>
+        <result property="orderCycleId" column="order_cycle_id" jdbcType="BIGINT"/>
+        <result property="progressCode" column="progress_code" jdbcType="VARCHAR"/>
+        <result property="processConfigItem" column="process_config_item" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, process_name, serial_number, org_code, creator, create_time, store_code, short_order_type, order_cycle_id, progress_code, process_config_item, biz_org_code    
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="processName != null and processName != ''">
+                    and process_name = #{processName}
+                </if>
+                    <if test="serialNumber != null">
+                    and serial_number = #{serialNumber}
+                </if>
+                    <if test="orgCode != null and orgCode != ''">
+                    and org_code = #{orgCode}
+                </if>
+                    <if test="creator != null and creator != ''">
+                    and creator = #{creator}
+                </if>
+                    <if test="createTime != null">
+                    and create_time = #{createTime}
+                </if>
+                    <if test="storeCode != null and storeCode != ''">
+                    and store_code = #{storeCode}
+                </if>
+                    <if test="shortOrderType != null and shortOrderType != ''">
+                    and short_order_type = #{shortOrderType}
+                </if>
+                    <if test="orderCycleId != null">
+                    and order_cycle_id = #{orderCycleId}
+                </if>
+                    <if test="progressCode != null and progressCode != ''">
+                    and progress_code = #{progressCode}
+                </if>
+                    <if test="processConfigItem != null and processConfigItem != ''">
+                    and process_config_item = #{processConfigItem}
+                </if>
+                    <if test="bizOrgCode != null and bizOrgCode != ''">
+                    and biz_org_code = #{bizOrgCode}
+                </if>
+                </where>
+     </sql>
+
+
+
+    <select id="getOneByParameter" resultMap="resultMap">
+        select <include refid="Base_Column_List"/> from opt_order_process_copy
+        where store_code = #{storeCode} and biz_org_code = #{bizOrgCode,jdbcType=VARCHAR}
+        and order_cycle_id = #{orderingCycleId} and progress_code = #{progressCode}
+    </select>
+
+    <select id="getNextOneByParameter" resultMap="resultMap">
+        select <include refid="Base_Column_List"/> from opt_order_process_copy where store_code = #{storeCode} and biz_org_code = #{bizOrgCode,jdbcType=VARCHAR}
+        and order_cycle_id = #{orderingCycleId} and id > #{id,jdbcType=BIGINT} order by id asc limit 1
+    </select>
+</mapper>

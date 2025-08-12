@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.common.mapper.dss.DssOrderInfoMapper">
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        sDh, sFdbh, dAddtime, sSpbh, nsl
+    </sql>
+    
+    <select id="findDssOrderInfoList" resultType="com.edc.erp.common.model.out.DssOrderInfoOut">
+        select dr.sDh, dr.sFdbh, dr.dAddtime, i.sSpbh, i.nsl
+        from purchase_deliveryreceipt_items i
+        inner join purchase_deliveryreceipt dr on dr.sDh = i.sDh and dr.sFdbh = i.sFdbh
+        where dr.dAddtime between #{beginTime} and #{endTime} and dr.sFdbh in
+        <foreach collection="storeCodeList" separator="," item="item" open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

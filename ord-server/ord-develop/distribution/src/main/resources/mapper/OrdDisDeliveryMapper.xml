@@ -1,0 +1,815 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.disdeliveryorder.mapper.OrdDisDeliveryMapper">
+    <!-- 结果集 -->
+    <resultMap id="resultMap" type="com.edc.erp.disdeliveryorder.entity.OrdDisDelivery">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="deliveryOrderNo" column="delivery_order_no" jdbcType="VARCHAR"/>
+        <result property="deliveryStatusCode" column="delivery_status_code" jdbcType="VARCHAR"/>
+        <result property="sourceCode" column="source_code" jdbcType="VARCHAR"/>
+        <result property="stockCode" column="stock_code" jdbcType="VARCHAR"/>
+        <result property="isReversalOrder" column="is_reversal_order" jdbcType="INTEGER"/>
+        <result property="isReversal" column="is_reversal" jdbcType="INTEGER"/>
+        <result property="distributionType" column="distribution_type" jdbcType="VARCHAR"/>
+        <result property="goodsType" column="goods_type" jdbcType="VARCHAR"/>
+        <result property="skuCount" column="sku_count" jdbcType="INTEGER"/>
+        <result property="storeName" column="store_name" jdbcType="VARCHAR"/>
+        <result property="storeCode" column="store_code" jdbcType="VARCHAR"/>
+        <result property="orderQuantity" column="order_quantity" jdbcType="DECIMAL"/>
+        <result property="orderAmount" column="order_amount" jdbcType="DECIMAL"/>
+        <result property="deliveryQuantity" column="delivery_quantity" jdbcType="DECIMAL"/>
+        <result property="deliveryAmount" column="delivery_amount" jdbcType="DECIMAL"/>
+        <result property="distributionQuantity" column="distribution_quantity" jdbcType="DECIMAL"/>
+        <result property="distributionAmount" column="distribution_amount" jdbcType="DECIMAL"/>
+        <result property="differenceOrderNo" column="difference_order_no" jdbcType="VARCHAR"/>
+        <result property="requestOrderNo" column="request_order_no" jdbcType="VARCHAR"/>
+        <result property="hdDeliveryNo" column="hd_delivery_no" jdbcType="VARCHAR"/>
+        <result property="deliveryTime" column="delivery_time" jdbcType="TIMESTAMP"/>
+        <result property="distributionTime" column="distribution_time" jdbcType="TIMESTAMP"/>
+        <result property="receiveTime" column="receive_time" jdbcType="TIMESTAMP"/>
+        <result property="receiveProgress" column="receive_progress" jdbcType="INTEGER"/>
+        <result property="autoTakeDeliveryTime" column="auto_take_delivery_time" jdbcType="TIMESTAMP"/>
+        <result property="takeRemark" column="take_remark" jdbcType="VARCHAR"/>
+        <result property="freezeStatus" column="freeze_status" jdbcType="VARCHAR"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+        <result property="sourceNo" column="source_no" jdbcType="VARCHAR"/>
+        <result property="logisticsNo" column="logistics_no" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orderPriority" column="order_priority" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id,
+        delivery_order_no,
+        delivery_status_code,
+            source_code,
+        stock_code,
+        is_reversal_order,
+        is_reversal,
+        distribution_type,
+        goods_type,
+        sku_count,
+        store_name,
+        store_code,
+        order_quantity,
+        order_amount,
+        delivery_quantity,
+        delivery_amount,
+        distribution_quantity,
+        distribution_amount,
+        difference_order_no,
+        request_order_no,
+        hd_delivery_no,
+        delivery_time,
+        distribution_time,
+        receive_time,
+        receive_progress,
+        auto_take_delivery_time,
+        take_remark,
+        freeze_status,
+        org_code,
+        biz_org_code,
+        source_no,
+        logistics_no,
+        creator,
+        create_time,
+        updater,
+        update_time,
+        is_delete,
+        remark,
+        order_priority,
+        wrh_code
+    </sql>
+
+    <update id="updateResetTakeDisDeliveryById">
+        update ord_dis_delivery set receive_progress = #{receiveProgress},updater = #{updater},update_time = now()
+        where id = #{disDeliveryOrderId} and delivery_status_code = #{deliveryStatusCode} and receive_progress = 2 and biz_org_code = #{bizOrgCode} and is_delete = 0
+    </update>
+    <update id="updateDisDeliveryTakeOngoingById">
+        update ord_dis_delivery set receive_progress = #{receiveProgress},updater = #{updater},update_time = #{updateTime}
+        where id = #{id} and delivery_status_code = #{deliveryStatusCode} and receive_progress = 1 and biz_org_code = #{bizOrgCode} and is_delete = 0
+    </update>
+    <update id="updateOrdDisDeliveryStatus">
+        update ord_dis_delivery set
+        delivery_status_code = #{deliveryStatusCodeUpdate},
+            distribution_quantity=#{distributionQuantity},
+            distribution_amount= #{distributionAmount}
+        where
+            delivery_status_code = #{deliveryStatusCode}
+            AND distribution_type = #{distributionType}
+            AND id = #{deliveryOrderId}
+    </update>
+    <update id="batchUpdateFreeze">
+        update ord_dis_delivery set freeze_status = 'freeze',updater = #{loginUsername},update_time = now()
+        where id in
+        <foreach collection="idList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and biz_org_code = #{bizOrgCode} and freeze_status = 'unFreeze'
+    </update>
+
+    <select id="findDeliveryOrdersByPage"
+            resultType="com.edc.erp.disdeliveryorder.model.out.DisDeliveryOrderOut">
+        select
+        odd.id,odd.delivery_order_no,odd.delivery_status_code,odd.source_code,odd.stock_code,odd.is_reversal_order,odd.is_reversal,
+        odd.distribution_type,odd.goods_type,odd.sku_count,odd.store_name,odd.store_code,odd.order_quantity,odd.order_amount,odd.delivery_quantity,
+        odd.delivery_amount,odd.distribution_quantity,odd.distribution_amount,odd.request_order_no,
+        odd.hd_delivery_no,odd.delivery_time,odd.distribution_time,odd.receive_time,odd.receive_progress,odd.auto_take_delivery_time,
+        odd.take_remark,odd.org_code,odd.biz_org_code,odd.source_no,odd.logistics_no,odd.creator,odd.create_time,odd.updater,
+        odd.update_time,odd.is_delete,odd.remark,odd.order_priority,odd.wrh_code
+        from ord_dis_delivery odd
+        <where>
+            odd.is_delete = 0
+            <if test="deliveryOrderNo != null and deliveryOrderNo != ''">
+                and odd.delivery_order_no = #{deliveryOrderNo}
+            </if>
+            <if test="deliveryStatusCode != null and deliveryStatusCode != ''">
+                and odd.delivery_status_code = #{deliveryStatusCode}
+            </if>
+            <if test="isReversalOrder != null">
+                and odd.is_reversal_order = #{isReversalOrder}
+            </if>
+            <if test="isReversal != null">
+                and odd.is_reversal = #{isReversal}
+            </if>
+            <if test="stockCodeList != null and stockCodeList.size() > 0">
+                and odd.stock_code in
+                <foreach collection="stockCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="stockCode != null and stockCode != ''">
+                and odd.stock_code = #{stockCode}
+            </if>
+            <if test="stockCodeList != null and stockCodeList.size() > 0">
+                and odd.stock_code in
+                <foreach collection="stockCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="wrhCode != null and wrhCode != ''">
+                and odd.wrh_code = #{wrhCode}
+            </if>
+            <if test="distributionType != null and distributionType != ''">
+                and odd.distribution_type = #{distributionType}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and odd.store_code = #{storeCode}
+            </if>
+            <if test="storeCodeList != null and storeCodeList.size() > 0">
+                and odd.store_code in
+                <foreach collection="storeCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and odd.store_name like concat('%', #{storeName}, '%')
+            </if>
+            <if test="requestOrderNo != null and requestOrderNo != ''">
+                and odd.request_order_no = #{requestOrderNo}
+            </if>
+            <if test="hdDeliveryNo != null and hdDeliveryNo != ''">
+                and odd.hd_delivery_no = #{hdDeliveryNo}
+            </if>
+            <if test="logisticsNo != null and logisticsNo != ''">
+                and odd.logistics_no = #{logisticsNo}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and odd.biz_org_code = #{bizOrgCode}
+            </if>
+            <if test="createStartTime != null and createStartTime != ''">
+                and odd.create_time &gt;= #{createStartTime}
+            </if>
+            <if test="createEndTime != null and createEndTime != ''">
+                and odd.create_time &lt;= #{createEndTime}
+            </if>
+            <if test="deliveryTimeBegin != null">
+                and odd.delivery_time &gt;= #{deliveryTimeBegin}
+            </if>
+            <if test="deliveryTimeEnd != null">
+                and odd.delivery_time &lt;= #{deliveryTimeEnd}
+            </if>
+            <if test="createMonth != null and createMonth != ''">
+                and  date_format(odd.create_time, '%Y-%m') =#{createMonth}
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and exists(select oddd.delivery_order_id
+                           from ord_dis_delivery_detail oddd
+                           where oddd.delivery_order_id = odd.id
+                             and oddd.goods_code = #{goodsCode})
+            </if>
+        </where>
+        order by odd.create_time desc,odd.id desc
+    </select>
+    <insert id="batchInsert">
+        insert into ord_dis_delivery
+        (delivery_order_no, delivery_status_code, source_code,stock_code, is_reversal_order, is_reversal,
+        distribution_type, goods_type,sku_count, store_name, store_code, order_priority,order_quantity,order_amount, delivery_quantity,
+        delivery_amount, distribution_quantity, distribution_amount, difference_order_no, request_order_no,
+        hd_delivery_no, delivery_time, distribution_time, receive_time, receive_progress,
+        auto_take_delivery_time, take_remark, org_code, biz_org_code, source_no, logistics_no,
+        creator, create_time, updater, update_time, is_delete, remark, wrh_code)
+        values
+        <foreach collection="ordDisDeliveries" item="item" separator=",">
+            (#{item.deliveryOrderNo,jdbcType=VARCHAR}, #{item.deliveryStatusCode,jdbcType=VARCHAR}, #{item.sourceCode,jdbcType=VARCHAR},
+            #{item.stockCode,jdbcType=VARCHAR}, #{item.isReversalOrder,jdbcType=TINYINT}, #{item.isReversal,jdbcType=TINYINT},
+            #{item.distributionType,jdbcType=VARCHAR},#{item.goodsType,jdbcType=VARCHAR}, #{item.skuCount,jdbcType=INTEGER}, #{item.storeName,jdbcType=VARCHAR},
+            #{item.storeCode,jdbcType=VARCHAR}, #{item.orderPriority,jdbcType=VARCHAR},#{item.orderQuantity,jdbcType=DECIMAL} ,
+            #{item.orderAmount,jdbcType=DECIMAL},#{item.deliveryQuantity,jdbcType=DECIMAL},
+            #{item.deliveryAmount,jdbcType=DECIMAL}, #{item.distributionQuantity,jdbcType=DECIMAL},
+            #{item.distributionAmount,jdbcType=DECIMAL}, #{item.differenceOrderNo,jdbcType=VARCHAR},
+            #{item.requestOrderNo,jdbcType=VARCHAR}, #{item.hdDeliveryNo,jdbcType=VARCHAR},
+            #{item.deliveryTime,jdbcType=TIMESTAMP}, #{item.distributionTime,jdbcType=TIMESTAMP},
+            #{item.receiveTime,jdbcType=TIMESTAMP}, #{item.receiveProgress,jdbcType=TINYINT},
+            #{item.autoTakeDeliveryTime,jdbcType=TIMESTAMP}, #{item.takeRemark,jdbcType=VARCHAR},
+            #{item.orgCode,jdbcType=VARCHAR}, #{item.bizOrgCode,jdbcType=VARCHAR}, #{item.sourceNo,jdbcType=VARCHAR},
+            #{item.logisticsNo,jdbcType=VARCHAR}, #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.isDelete,jdbcType=TINYINT},
+            #{item.remark,jdbcType=VARCHAR}, #{item.wrhCode,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <select id="getStockPrice" resultType="java.math.BigDecimal">
+        select stock_price from inv_stock_store
+        where store_code=#{storeCode} and goods_code=#{goodsCode} and biz_org_code=#{bizOrgCode}
+    </select>
+
+    <select id="getStockWarehousePrice" resultType="java.math.BigDecimal">
+        select stock_price from inv_stock_warehouse
+        where warehouse_code=#{wrhCode} and stock_code=#{stockCode} and goods_code=#{goodsCode} and biz_org_code=#{bizOrgCode}
+    </select>
+
+    <select id="findDeliveryOrdersByIds" resultMap="resultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dis_delivery
+        where id in
+        <foreach collection="ordDisDeliveryIds" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="getDeliveryOrderTotal" resultType="com.edc.erp.disdeliveryorder.model.out.DisDeliveryOrderOut">
+        select sum(odd.delivery_quantity)as delivery_quantity ,sum(odd.delivery_amount)as delivery_amount,sum(odd.distribution_quantity)as distribution_quantity,
+               sum(odd.distribution_amount)as distribution_amount,SUM(oddd.arrival_quantity) AS totalArrivalQuantity,SUM(oddd.arrival_amount) AS totalArrivalAmount
+        from
+        ord_dis_delivery odd
+        inner join ord_dis_delivery_detail oddd on oddd.delivery_order_id = odd.id and oddd.is_delete = 0
+        <where>
+            odd.is_delete = 0
+            <if test="deliveryOrderNo != null and deliveryOrderNo != ''">
+                and odd.delivery_order_no = #{deliveryOrderNo}
+            </if>
+            <if test="deliveryStatusCode != null and deliveryStatusCode != ''">
+                and odd.delivery_status_code = #{deliveryStatusCode}
+            </if>
+            <if test="isReversalOrder != null">
+                and odd.is_reversal_order = #{isReversalOrder}
+            </if>
+            <if test="isReversal != null">
+                and odd.is_reversal = #{isReversal}
+            </if>
+            <if test="stockCode != null and stockCode != ''">
+                and odd.stock_code = #{stockCode}
+            </if>
+            <if test="wrhCode != null and wrhCode != ''">
+                and odd.wrh_code = #{wrhCode}
+            </if>
+            <if test="distributionType != null and distributionType != ''">
+                and odd.distribution_type = #{distributionType}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and odd.store_code = #{storeCode}
+            </if>
+            <if test="storeCodeList != null and storeCodeList.size() > 0">
+                and odd.store_code in
+                <foreach collection="storeCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and odd.store_name like concat('%', #{storeName}, '%')
+            </if>
+            <if test="differenceOrderNo != null and differenceOrderNo != ''">
+                and odd.difference_order_no = #{differenceOrderNo}
+            </if>
+            <if test="requestOrderNo != null and requestOrderNo != ''">
+                and odd.request_order_no = #{requestOrderNo}
+            </if>
+            <if test="hdDeliveryNo != null and hdDeliveryNo != ''">
+                and odd.hd_delivery_no = #{hdDeliveryNo}
+            </if>
+            <if test="logisticsNo != null and logisticsNo != ''">
+                and odd.logistics_no = #{logisticsNo}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and odd.biz_org_code = #{bizOrgCode}
+            </if>
+            <if test="createStartTime != null and createStartTime != ''">
+                and odd.create_time &gt;= #{createStartTime}
+            </if>
+            <if test="createEndTime != null and createEndTime != ''">
+                and odd.create_time &lt;= #{createEndTime}
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and oddd.goods_code = #{goodsCode}
+            </if>
+        </where>
+    </select>
+    
+    <select id="findDisDeliveryOrder" resultType="com.edc.erp.disdeliveryorder.model.out.DisDeliveryOrderOut">
+        select 
+        <include refid="Base_Column_List"/>
+        from
+        ord_dis_delivery
+        <where>
+            <if test="storeCode != null and storeCode != ''">
+                and store_code = #{storeCode,jdbcType=VARCHAR}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and biz_org_code = #{bizOrgCode,jdbcType=VARCHAR}
+            </if>
+            <if test="deliveryStatusCode != null and deliveryStatusCode != ''">
+                and delivery_status_code in
+                <foreach collection="deliveryStatusCode.split(',')" item="item" separator="," open="(" close=")">
+                #{item,jdbcType=VARCHAR}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="findTransferOrderByCarryForwardCycle" resultMap="resultMap">
+        select
+        odd.id, odd.delivery_order_no, odd.delivery_status_code, odd.stock_code, odd.is_reversal_order, odd.is_reversal, odd.distribution_type,odd.goods_type,
+        odd.sku_count, odd.store_name, odd.store_code, odd.order_priority, odd.delivery_quantity, odd.delivery_amount, odd.distribution_quantity,
+        odd.distribution_amount, odd.difference_order_no, odd.request_order_no, odd.hd_delivery_no, odd.delivery_time, odd.distribution_time, odd.receive_time,
+        odd.receive_progress, odd.auto_take_delivery_time, odd.take_remark, odd.org_code, odd.biz_org_code, odd.source_no, odd.logistics_no, odd.creator,
+        odd.create_time, odd.updater, odd.update_time, odd.is_delete, odd.remark, odd.wrh_code
+        FROM
+        ord_dis_delivery odd
+        INNER JOIN ord_dis_deliv_request_delivery oddrd ON odd.id = oddrd.delivery_order_id
+        INNER JOIN ord_dis_deliv_request oddr ON oddrd.request_order_id = oddr.id AND odd.biz_org_code = oddr.biz_org_code AND odd.is_delete = 0 <where>
+            odd.is_delete = 0
+            <if test="truncationDateTime != null and truncationDateTime.size() > 0">
+                and oddr.truncation_date_time in
+                <foreach collection="truncationDateTime" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="deliveryStatusCode != null and deliveryStatusCode != ''">
+                and odd.delivery_status_code = #{deliveryStatusCode,jdbcType=VARCHAR}
+            </if>
+            <if test="distributionType != null and distributionType != ''">
+                and odd.distribution_type = #{distributionType,jdbcType=VARCHAR}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and odd.biz_org_code = #{bizOrgCode}
+            </if>
+        </where>
+    </select>
+
+    <select id="getRequestOrder" resultType="com.edc.erp.disrequestorder.entity.OrdDisDelivRequest">
+        select
+        oddr.id,
+        oddr.store_code,
+        oddr.order_type_config_id,
+        oddr.order_cycle_id,
+        oddr.request_order_no
+        from
+        ord_dis_deliv_request oddr
+        inner join ord_dis_deliv_request_delivery oddrd on oddrd.request_order_id=oddr.id
+        where oddrd.delivery_order_id=#{id} and oddr.biz_org_code=#{bizOrgCode}
+    </select>
+
+    <select id="getOrderCycleById" resultType="com.edc.erp.distribution.entity.OrdDisOrderCycle">
+        select
+        id,
+        store_code,
+        order_type_config_id,
+        short_order_type,
+        truncation_date_time,
+        minimum_order_amount,
+        org_code,
+        biz_org_code,
+        creator,
+        create_time,
+        updater,
+        update_time,
+        is_delete
+        from ord_dis_order_cycle
+        where id=#{orderCycleId} and biz_org_code=#{bizOrgCode}
+    </select>
+    <select id="findInDeliveryOrder" resultType="com.edc.erp.common.model.vo.InOneQtyVO">
+        select oddd.goods_code,
+               sum(case when odd.delivery_status_code = 'shipped' then oddd.delivery_quantity else oddd.distribution_quantity end) as qty
+        from
+            ord_dis_delivery odd
+                inner join ord_dis_delivery_detail oddd on odd.id = oddd.delivery_order_id and odd.is_delete = 0
+        where odd.store_code=#{storeCode} and odd.delivery_status_code in ('approved','previewApproved','shipped')
+            and odd.create_time &gt;= #{beginTime}
+            and odd.create_time &lt;= #{endTime}
+        GROUP BY oddd.goods_code
+    </select>
+    <select id="findNeedAutoTakeDisDeliveryOrderList"
+            resultType="com.edc.erp.disdeliveryorder.entity.OrdDisDelivery">
+        select <include refid="Base_Column_List"/> from ord_dis_delivery where
+        <![CDATA[
+         auto_take_delivery_time <= #{nowTime} and delivery_status_code = #{deliveryStatusCode}
+         ]]>
+        and is_reversal_order = 0 and is_reversal = 0
+        and is_delete = 0
+    </select>
+    <select id="findTruncationDateTime"
+            resultType="com.edc.erp.common.model.out.purchase.OrderDeliverRequestOut">
+        SELECT
+            DISTINCT
+            oddr.truncation_date_time,
+            oddr.status_code
+        FROM
+            ord_dis_deliv_request oddr
+                INNER JOIN
+            ord_dis_deliv_request_detail oddrd ON oddrd.request_order_id = oddr.id AND oddrd.is_delete = 0
+        WHERE
+            oddr.is_delete = 0
+          AND oddr.truncation_date_time  &gt;= #{startTime}
+          AND oddr.truncation_date_time  &lt;= #{endTime}
+          AND oddrd.distribution_type = #{distributionType}
+          AND oddr.biz_org_code = #{bizOrgCode}
+    </select>
+
+    <select id="countByStatusAndIdList" resultType="java.lang.Integer">
+        select count(*) from ord_dis_delivery where delivery_status_code = #{deliveryOrderStatus} and id in
+        <foreach collection="idList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and is_delete = 0
+    </select>
+    <select id="findListForAsyncExportByPage"
+            resultType="com.edc.erp.disdeliveryorder.model.out.AsyncExcelDeliveryOrderDetail">
+        select
+        odd.delivery_order_no,odd.delivery_status_code,  odd.wrh_code, odd.stock_code,   odd.distribution_type,odd.store_code, odd.store_name,oddd.goods_code, oddd.goods_name,
+        oddd.distribution_specification,oddd.order_quantity,oddd.order_unit_price,oddd.order_amount,oddd.distribution_quantity,oddd.distribution_unit_price, oddd.distribution_amount,
+        oddd.delivery_quantity,oddd.delivery_amount,oddd.arrival_quantity,oddd.arrival_amount,oddd.vendor_code,oddd.is_gift,oddd.purchase_no,oddd.expiry,oddd.invoice_type,
+        odd.creator, odd.create_time
+        from ord_dis_delivery odd
+        inner join ord_dis_delivery_detail oddd on oddd.delivery_order_id = odd.id and oddd.is_delete = 0
+        <where>
+            odd.is_delete = 0
+            <if test="deliveryOrderNo != null and deliveryOrderNo != ''">
+                and odd.delivery_order_no = #{deliveryOrderNo}
+            </if>
+            <if test="deliveryStatusCode != null and deliveryStatusCode != ''">
+                and odd.delivery_status_code = #{deliveryStatusCode}
+            </if>
+            <if test="isReversalOrder != null">
+                and odd.is_reversal_order = #{isReversalOrder}
+            </if>
+            <if test="isReversal != null">
+                and odd.is_reversal = #{isReversal}
+            </if>
+            <if test="stockCode != null and stockCode != ''">
+                and odd.stock_code = #{stockCode}
+            </if>
+            <if test="stockCodeList != null and stockCodeList.size() > 0">
+                and odd.stock_code in
+                <foreach collection="stockCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="wrhCode != null and wrhCode != ''">
+                and odd.wrh_code = #{wrhCode}
+            </if>
+            <if test="distributionType != null and distributionType != ''">
+                and odd.distribution_type = #{distributionType}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and odd.store_code = #{storeCode}
+            </if>
+            <if test="storeCodeList != null and storeCodeList.size() > 0">
+                and odd.store_code in
+                <foreach collection="storeCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and odd.store_name like concat('%', #{storeName}, '%')
+            </if>
+            <if test="requestOrderNo != null and requestOrderNo != ''">
+                and odd.request_order_no = #{requestOrderNo}
+            </if>
+            <if test="hdDeliveryNo != null and hdDeliveryNo != ''">
+                and odd.hd_delivery_no = #{hdDeliveryNo}
+            </if>
+            <if test="logisticsNo != null and logisticsNo != ''">
+                and odd.logistics_no = #{logisticsNo}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and odd.biz_org_code = #{bizOrgCode}
+            </if>
+            <if test="createStartTime != null and createStartTime != ''">
+                and odd.create_time &gt;= #{createStartTime}
+            </if>
+            <if test="createEndTime != null and createEndTime != ''">
+                and odd.create_time &lt;= #{createEndTime}
+            </if>
+            <if test="createMonth != null and createMonth != ''">
+                and  date_format(odd.create_time, '%Y-%m') =#{createMonth}
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and oddd.goods_code = #{goodsCode}
+            </if>
+        </where>
+        order by odd.id desc,oddd.line
+    </select>
+
+    <select id="findNoSalvageDeliveryOrderList" resultType="com.edc.erp.disdeliveryorder.model.out.DisNoSalvageDeliveryOrderOut">
+        select  id,delivery_order_no from ord_dis_delivery where delivery_status_code = #{deliveryStatusCode} and id in
+        <foreach collection="idList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and biz_org_code = #{bizOrgCode} and is_delete = 0
+    </select>
+    <select id="findNotAuditDeliveryOrderList" resultType="java.lang.String">
+        select delivery_order_no from ord_dis_delivery where
+        create_time &gt;= #{createTimeBegin} and create_time &lt;= #{createTimeEnd}
+        and delivery_status_code in
+        <foreach collection="orderStatusCodeList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and biz_org_code = #{bizOrgCode} and is_delete = 0
+    </select>
+    <select id="findThirtyDaysDeliveryOrderTotalAmountByStoreCode" resultType="java.math.BigDecimal">
+        select order_amount
+        from ord_dis_delivery
+        where store_code = #{storeCode}
+        and stock_code = #{stockCode}
+        and delivery_status_code != #{statusCode}
+        and biz_org_code = #{bizOrgCode}
+        and is_delete = 0
+        and create_time &lt; CURDATE()
+        ORDER BY id desc limit 30
+    </select>
+    <select id="findNeedFreezeDeliveryOrderList"
+            resultType="com.edc.erp.disdeliveryorder.entity.OrdDisDelivery">
+        select id,delivery_order_no,delivery_status_code,source_code,store_code,distribution_amount from ord_dis_delivery where is_delete = 0
+         and freeze_status = 'unFreeze' and create_time >= #{handleTime}
+         and biz_org_code = #{bizOrgCode}
+    </select>
+    <select id="findOrderConfigDeliveryOrderOut"
+            resultType="com.edc.erp.disdeliveryorder.model.out.OrderConfigFreezeDeliveryOrderOut">
+        select r.order_cycle_id,r.store_code,r.truncation_date_time,d.id as deliveryOrderId,d.delivery_order_no,d.delivery_status_code,d.distribution_amount
+        from ord_dis_delivery d
+        INNER JOIN ord_dis_deliv_request_delivery drd  on drd.delivery_order_id = d.id
+        INNER JOIN ord_dis_deliv_request r on r.id = drd.request_order_id
+        where d.freeze_status = 'unFreeze' and d.id in
+        <foreach collection="disDeliveryList" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+        and d.distribution_amount > 0 and d.biz_org_code = #{bizOrgCode}
+    </select>
+
+    <select id="findFirstOrderDeliveryOrderOut"
+            resultType="com.edc.erp.disdeliveryorder.model.out.FirstOrderFreezeDeliveryOrderOut">
+        select f.id as firstOrderId,f.first_order_no,f.store_code,d.id as deliveryOrderId,d.delivery_order_no,d.delivery_status_code,d.distribution_amount
+        from ord_dis_delivery d
+        INNER JOIN ord_dis_order_first_delivery fd  on fd.delivery_order_id = d.id
+        INNER JOIN ord_dis_order_first f on f.id = fd.first_order_id
+        where d.freeze_status = 'unFreeze' and d.id in
+        <foreach collection="disDeliveryList" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+        and f.first_order_status = 'executed' and d.biz_org_code = #{bizOrgCode} and f.is_delete = 0
+    </select>
+
+    <select id="countNoInvalidByCycleIdAndNonDeliveryOrderId" resultType="java.lang.Integer">
+        select count(1)
+        from ord_dis_delivery d
+                 INNER JOIN ord_dis_deliv_request_delivery drd  on drd.delivery_order_id = d.id
+                 INNER JOIN ord_dis_deliv_request r on r.id = drd.request_order_id
+        where r.order_cycle_id = #{orderCycleId} and d.id != #{deliveryOrderId} and d.delivery_status_code != 'invalid'
+          and d.biz_org_code = #{bizOrgCode} and d.is_delete = 0 and r.is_delete = 0
+    </select>
+
+    <select id="countNoInvalidByFirstOrderAndNonDeliveryOrderId" resultType="java.lang.Integer">
+        select count(1)
+        from ord_dis_delivery d
+                 INNER JOIN ord_dis_order_first_delivery fd  on fd.delivery_order_id = d.id
+        where fd.first_order_id = #{firstOrderId} and d.id != #{deliveryOrderId} and d.delivery_status_code != 'invalid'
+          and d.biz_org_code = #{bizOrgCode} and d.is_delete = 0
+    </select>
+
+
+    <select id="findNoAuditDeliveryOrderList"
+            resultType="com.edc.erp.disdeliveryorder.model.out.DisNoAuditDeliveryOrderInfoOut">
+        select d.delivery_order_no ,r.truncation_date_time from ord_dis_delivery d
+        INNER JOIN ord_dis_deliv_request_delivery rd on rd.delivery_order_id = d.id
+        INNER JOIN ord_dis_deliv_request r on r.id = rd.request_order_id
+        where
+        d.create_time >= #{createTimeBegin}
+        <![CDATA[  and d.create_time <= #{createTimeEnd} ]]>
+        and d.delivery_status_code in
+        <foreach collection="orderStatusCodeList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and d.biz_org_code = #{bizOrgCode} and d.is_delete = 0
+    </select>
+
+    <select id="sumDeliveryData"
+            resultType="com.edc.erp.disdeliveryorder.model.out.SumDisDeliveryOrderDataOut">
+        select
+        sum(odd.order_quantity) as orderQuantity,sum(odd.order_amount) as orderAmount,sum(odd.delivery_quantity) as deliveryQuantity,
+        sum(odd.delivery_amount) as deliveryAmount,sum(odd.distribution_quantity) as distributionQuantity,sum(odd.distribution_amount) as distribution_amount
+        from ord_dis_delivery odd
+        <where>
+            odd.is_delete = 0
+            <if test="deliveryOrderNo != null and deliveryOrderNo != ''">
+                and odd.delivery_order_no = #{deliveryOrderNo}
+            </if>
+            <if test="deliveryStatusCode != null and deliveryStatusCode != ''">
+                and odd.delivery_status_code = #{deliveryStatusCode}
+            </if>
+            <if test="isReversalOrder != null">
+                and odd.is_reversal_order = #{isReversalOrder}
+            </if>
+            <if test="isReversal != null">
+                and odd.is_reversal = #{isReversal}
+            </if>
+            <if test="stockCodeList != null and stockCodeList.size() > 0">
+                and odd.stock_code in
+                <foreach collection="stockCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="stockCode != null and stockCode != ''">
+                and odd.stock_code = #{stockCode}
+            </if>
+            <if test="stockCodeList != null and stockCodeList.size() > 0">
+                and odd.stock_code in
+                <foreach collection="stockCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="wrhCode != null and wrhCode != ''">
+                and odd.wrh_code = #{wrhCode}
+            </if>
+            <if test="distributionType != null and distributionType != ''">
+                and odd.distribution_type = #{distributionType}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and odd.store_code = #{storeCode}
+            </if>
+            <if test="storeCodeList != null and storeCodeList.size() > 0">
+                and odd.store_code in
+                <foreach collection="storeCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and odd.store_name like concat('%', #{storeName}, '%')
+            </if>
+            <if test="requestOrderNo != null and requestOrderNo != ''">
+                and odd.request_order_no = #{requestOrderNo}
+            </if>
+            <if test="hdDeliveryNo != null and hdDeliveryNo != ''">
+                and odd.hd_delivery_no = #{hdDeliveryNo}
+            </if>
+            <if test="logisticsNo != null and logisticsNo != ''">
+                and odd.logistics_no = #{logisticsNo}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and odd.biz_org_code = #{bizOrgCode}
+            </if>
+            <if test="createStartTime != null and createStartTime != ''">
+                and odd.create_time &gt;= #{createStartTime}
+            </if>
+            <if test="createEndTime != null and createEndTime != ''">
+                and odd.create_time &lt;= #{createEndTime}
+            </if>
+            <if test="deliveryTimeBegin != null">
+                and odd.delivery_time &gt;= #{deliveryTimeBegin}
+            </if>
+            <if test="deliveryTimeEnd != null">
+                and odd.delivery_time &lt;= #{deliveryTimeEnd}
+            </if>
+            <if test="createMonth != null and createMonth != ''">
+                and  date_format(odd.create_time, '%Y-%m') =#{createMonth}
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and exists(select oddd.delivery_order_id
+                from ord_dis_delivery_detail oddd
+                where oddd.delivery_order_id = odd.id
+                and oddd.goods_code = #{goodsCode})
+            </if>
+        </where>
+    </select>
+    <select id="findSumDeliveryDataIdList"
+            resultType="java.lang.Long">
+        select odd.id from ord_dis_delivery odd
+        <where>
+            odd.is_delete = 0
+            <if test="deliveryOrderNo != null and deliveryOrderNo != ''">
+                and odd.delivery_order_no = #{deliveryOrderNo}
+            </if>
+            <if test="deliveryStatusCode != null and deliveryStatusCode != ''">
+                and odd.delivery_status_code = #{deliveryStatusCode}
+            </if>
+            <if test="isReversalOrder != null">
+                and odd.is_reversal_order = #{isReversalOrder}
+            </if>
+            <if test="isReversal != null">
+                and odd.is_reversal = #{isReversal}
+            </if>
+            <if test="stockCodeList != null and stockCodeList.size() > 0">
+                and odd.stock_code in
+                <foreach collection="stockCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="stockCode != null and stockCode != ''">
+                and odd.stock_code = #{stockCode}
+            </if>
+            <if test="wrhCode != null and wrhCode != ''">
+                and odd.wrh_code = #{wrhCode}
+            </if>
+            <if test="distributionType != null and distributionType != ''">
+                and odd.distribution_type = #{distributionType}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and odd.store_code = #{storeCode}
+            </if>
+            <if test="storeCodeList != null and storeCodeList.size() > 0">
+                and odd.store_code in
+                <foreach collection="storeCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and odd.store_name like concat('%', #{storeName}, '%')
+            </if>
+            <if test="requestOrderNo != null and requestOrderNo != ''">
+                and odd.request_order_no = #{requestOrderNo}
+            </if>
+            <if test="hdDeliveryNo != null and hdDeliveryNo != ''">
+                and odd.hd_delivery_no = #{hdDeliveryNo}
+            </if>
+            <if test="logisticsNo != null and logisticsNo != ''">
+                and odd.logistics_no = #{logisticsNo}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and odd.biz_org_code = #{bizOrgCode}
+            </if>
+            <if test="createStartTime != null and createStartTime != '' and createEndTime != null and createEndTime != ''">
+                and odd.create_time between #{createStartTime} and #{createEndTime}
+            </if>
+            <if test="deliveryTimeBegin != null and deliveryTimeEnd != null">
+                and odd.delivery_time between #{deliveryTimeBegin} and #{deliveryTimeEnd}
+            </if>
+            <if test="createMonth != null and createMonth != ''">
+                and  date_format(odd.create_time, '%Y-%m') =#{createMonth}
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and exists(select oddd.delivery_order_id
+                from ord_dis_delivery_detail oddd
+                where oddd.delivery_order_id = odd.id
+                and oddd.goods_code = #{goodsCode})
+            </if>
+        </where>
+    </select>
+    <select id="findDeliveryOrderForReturnByPage"
+            resultType="com.edc.erp.disdeliveryorder.model.out.QueryDisDeliveryForReturnOut">
+        select
+        odd.id, odd.delivery_order_no,  odd.stock_code,  odd.receive_time
+        from ord_dis_delivery odd
+        <where>   odd.store_code = #{storeCode} and odd.delivery_status_code = #{deliveryStatusCode} and odd.is_reversal = 0 and odd.is_reversal_order = 0 and odd.is_delete = 0
+<!--            <if test="stockCodeList != null and stockCodeList.size() > 0">-->
+<!--                and odd.stock_code in-->
+<!--                <foreach collection="stockCodeList" item="item" open="(" close=")" separator=",">-->
+<!--                    #{item}-->
+<!--                </foreach>-->
+<!--            </if>-->
+<!--            <if test="stockCode != null and stockCode != ''">-->
+<!--                and odd.stock_code = #{stockCode}-->
+<!--            </if>-->
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and odd.biz_org_code = #{bizOrgCode}
+            </if>
+            <if test="receiveTimeBegin != null and receiveTimeEnd != null">
+                and odd.receive_time between #{receiveTimeBegin} and #{receiveTimeEnd}
+            </if>
+        </where>
+        order by odd.create_time desc,odd.id desc
+    </select>
+    <select id="findStoreDeliveryForAppReturnList"
+            resultType="com.edc.erp.disdeliveryorder.model.out.DisStoreDeliveryNoInfoForAppOut">
+        select id,delivery_order_no from ord_dis_delivery where store_code = #{storeCode} and is_reversal = 0 and is_reversal_order = 0
+        and delivery_status_code = 'received' and receive_time between #{minReceiveTime} and now() and is_delete = 0
+    </select>
+
+</mapper>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.common.mapper.AsyncTaskMapper">
+    <resultMap id="BaseResultMap" type="com.edc.erp.common.entity.AsyncTask">
+        <result property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="bizId" column="biz_id"/>
+        <result property="messageJson" column="message_json"/>
+        <result property="retryNo" column="retry_no"/>
+        <result property="nextRetryTime" column="next_retry_time"/>
+        <result property="returnResult" column="return_result"/>
+        <result property="execStatus" column="exec_status"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        id, type, biz_id, message_json, retry_no, next_retry_time, return_result, exec_status
+    </sql>
+
+    <sql id="Where_Template">
+        <if test="type != null and type != ''">
+            and type = #{type},
+        </if>
+        <if test="messageJson != null and messageJson != ''">
+            and message_json = #{messageJson},
+        </if>
+        <if test="retryNo != null">
+            and retry_no = #{retryNo},
+        </if>
+        <if test="nextRetryTime != null">
+            and next_retry_time = #{nextRetryTime},
+        </if>
+        <if test="returnResult != null and returnResult != ''">
+            and return_result = #{returnResult},
+        </if>
+        <if test="status != null and status != ''">
+            and exec_status = #{execStatus},
+        </if>
+    </sql>
+
+    <select id="findList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        opt_async_task
+        where
+        retry_no <![CDATA[<=]]> #{retryNo}
+        and next_retry_time <![CDATA[<=]]> NOW()
+        and exec_status in ('unexecuted','abnormal')
+    </select>
+    <select id="findTaskIdList" resultType="java.lang.Long">
+        select id from opt_async_task where retry_no <![CDATA[<=]]> #{retryNo} and next_retry_time <![CDATA[<=]]> NOW()
+        and exec_status in ('unexecuted','abnormal') and biz_org_code is null order by next_retry_time limit 50
+    </select>
+    <select id="getAsyncTaskByParameter" resultType="com.edc.erp.common.entity.AsyncTask">
+        select <include refid="Base_Column_List"/> from opt_async_task where id = #{id} and retry_no <![CDATA[<=]]> #{retryNo} and next_retry_time <![CDATA[<=]]> NOW()
+                                        and exec_status in ('unexecuted','abnormal')
+    </select>
+
+    <delete id="deleteTask">
+        delete from opt_async_task where type = #{taskType} and biz_id = #{bizId} and exec_status in ('unexecuted','abnormal')
+    </delete>
+
+    <select id="findTaskIdListByBizOrgCode" resultType="java.lang.Long">
+        select id from opt_async_task where 1 = 1
+        <if test="type != null and type != ''">
+            and type = #{type}
+        </if>
+        <if test="type == null or type == ''">
+            and type not in ('dirDeliveryDtsToErp','dirRequestToDelivery','dirDeliveryToDts')
+        </if>
+         and retry_no <![CDATA[<=]]> #{retryNo} and next_retry_time <![CDATA[<=]]> NOW()
+            and exec_status in ('unexecuted','abnormal') and biz_org_code = #{bizOrgCode} order by next_retry_time limit #{limitNum}
+    </select>
+    <select id="findAsyncTaskListByParameter" resultType="com.edc.erp.common.model.out.AsyncTaskQueryOut">
+        select
+        id, type, message_json, business_no, exception_message, remark, exec_status
+        from
+        opt_async_task
+        where 1 = 1
+        <if test="businessNo != null and businessNo != ''">
+            and business_no = #{businessNo}
+        </if>
+        <if test="remark != null and remark != ''">
+            and remark = #{remark}
+        </if>
+        <if test="type != null and type != ''">
+            and type = #{type}
+        </if>
+        <if test="isError != null and isError == 1">
+          <![CDATA[ and exec_status <> 'success' ]]>
+        </if>
+        and biz_org_code = #{bizOrgCode}
+        order by id desc
+    </select>
+    <select id="findNeedUpdateZkOrderNoList" resultType="com.edc.erp.common.entity.AsyncTask">
+        select <include refid="Base_Column_List"/>
+        from
+        opt_async_task
+        where biz_org_code = #{bizOrgCode} and type in ('zkSaveWholesaleReturn','zkSaveWholesaleShipment') and remark is null
+    </select>
+
+    <update id="updateRemarkById">
+        update opt_async_task set remark = #{remark} where id = #{id} and remark is null
+    </update>
+
+    <update id="batchUpdate">
+        <foreach collection="idList" item="item" index="index" separator=";">
+            update opt_async_task set retry_no = 1 , next_retry_time = DATE_ADD(now(), INTERVAL 1 MINUTE),return_result = null,exception_message = null
+            where id = #{item} and type = #{type} <![CDATA[ and exec_status <> 'success' ]]>
+        </foreach>
+    </update>
+
+    <select id="findNeedRetryTaskList" resultType="com.edc.erp.common.entity.AsyncTask">
+        select <include refid="Base_Column_List"/>
+        from
+        opt_async_task
+        where type = #{type} and business_no in
+        <foreach collection="businessNoList" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+        <![CDATA[ and exec_status <> 'success' ]]>
+    </select>
+</mapper>

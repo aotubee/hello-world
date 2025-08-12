@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.common.mapper.OrderProcessMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.common.entity.OrderProcess">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="orderTypeConfigId" column="order_type_config_id" jdbcType="BIGINT"/>
+        <result property="processNodeCode" column="process_node_code" jdbcType="VARCHAR"/>
+        <result property="processName" column="process_name" jdbcType="VARCHAR"/>
+        <result property="processCode" column="process_code" jdbcType="VARCHAR"/>
+        <result property="serialNumber" column="serial_number" jdbcType="INTEGER"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, order_type_config_id, process_node_code, process_name, process_code, serial_number, org_code, creator, create_time, updater, update_time, is_delete, biz_org_code    
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="orderTypeConfigId != null">
+                    and order_type_config_id = #{orderTypeConfigId}
+                </if>
+                    <if test="processNodeCode != null and processNodeCode != ''">
+                    and process_node_code = #{processNodeCode}
+                </if>
+                    <if test="processName != null and processName != ''">
+                    and process_name = #{processName}
+                </if>
+                    <if test="processCode != null and processCode != ''">
+                    and process_code = #{processCode}
+                </if>
+                    <if test="serialNumber != null">
+                    and serial_number = #{serialNumber}
+                </if>
+                    <if test="orgCode != null and orgCode != ''">
+                    and org_code = #{orgCode}
+                </if>
+                    <if test="creator != null and creator != ''">
+                    and creator = #{creator}
+                </if>
+                    <if test="createTime != null">
+                    and create_time = #{createTime}
+                </if>
+                    <if test="updater != null and updater != ''">
+                    and updater = #{updater}
+                </if>
+                    <if test="updateTime != null">
+                    and update_time = #{updateTime}
+                </if>
+                    <if test="isDelete != null">
+                    and is_delete = #{isDelete}
+                </if>
+                    <if test="bizOrgCode != null and bizOrgCode != ''">
+                    and biz_org_code = #{bizOrgCode}
+                </if>
+                </where>
+     </sql>
+
+    <select id="findProcessListByOrderTypeConfigId" resultMap="resultMap">
+        select <include refid="Base_Column_List"/>
+        from opt_order_process where
+        order_type_config_id = #{orderTypeConfigId,jdbcType=INTEGER}
+        and biz_org_code = #{bizOrgCode,jdbcType=VARCHAR}
+        and is_delete = 0
+        order by serial_number
+    </select>
+</mapper>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.dirrequestorder.mapper.OrdDirDelivRequestDetailMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.directly.dirrequestorder.entity.OrdDirDelivRequestDetail">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="requestOrderId" column="request_order_id" jdbcType="BIGINT"/>
+        <result property="goodsCode" column="goods_code" jdbcType="VARCHAR"/>
+        <result property="goodsName" column="goods_name" jdbcType="VARCHAR"/>
+        <result property="barCode" column="bar_code" jdbcType="VARCHAR"/>
+        <result property="goodsImage" column="goods_image" jdbcType="VARCHAR"/>
+        <result property="packageQuantity" column="package_quantity" jdbcType="DECIMAL"/>
+        <result property="quantity" column="quantity" jdbcType="DECIMAL"/>
+        <result property="requestUnitPrice" column="request_unit_price" jdbcType="DECIMAL"/>
+        <result property="requestOrderAmount" column="request_order_amount" jdbcType="DECIMAL"/>
+        <result property="originalUnitPrice" column="original_unit_price" jdbcType="DECIMAL"/>
+        <result property="specificationUnit" column="specification_unit" jdbcType="VARCHAR"/>
+        <result property="distributionSpecification" column="distribution_specification" jdbcType="VARCHAR"/>
+        <result property="distributionSpecificationUnit" column="distribution_specification_unit" jdbcType="VARCHAR"/>
+        <result property="distributionSpecificationNum" column="distribution_specification_num" jdbcType="DECIMAL"/>
+        <result property="smallSort" column="small_sort" jdbcType="VARCHAR"/>
+        <result property="stockCode" column="stock_code" jdbcType="VARCHAR"/>
+        <result property="activityNo" column="activity_no" jdbcType="VARCHAR"/>
+        <result property="distributionType" column="distribution_type" jdbcType="VARCHAR"/>
+        <result property="isGift" column="is_gift" jdbcType="INTEGER"/>
+        <result property="allowDistributionReturn" column="allow_distribution_return" jdbcType="INTEGER"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="wrhCode" column="wrh_code" jdbcType="VARCHAR"/>
+        <result property="goodsType" column="goods_type" jdbcType="VARCHAR"/>
+        <result property="baseGoodsCode" column="base_goods_code" jdbcType="VARCHAR"/>
+        <result property="invoiceType" column="invoice_type" jdbcType="VARCHAR"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, request_order_id, goods_code, goods_name, bar_code, goods_image, package_quantity, quantity, request_unit_price, request_order_amount, original_unit_price,
+specification_unit, distribution_specification, distribution_specification_unit, distribution_specification_num, small_sort, stock_code, activity_no, distribution_type,
+is_gift, allow_distribution_return, creator, create_time, updater, update_time, is_delete, remark, wrh_code,goods_type, base_goods_code,invoice_type
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="requestOrderId != null">
+                    and request_order_id = #{requestOrderId}
+                </if>
+                    <if test="goodsCode != null and goodsCode != ''">
+                    and goods_code = #{goodsCode}
+                </if>
+                    <if test="goodsName != null and goodsName != ''">
+                    and goods_name = #{goodsName}
+                </if>
+                    <if test="barCode != null and barCode != ''">
+                    and bar_code = #{barCode}
+                </if>
+                    <if test="goodsImage != null and goodsImage != ''">
+                    and goods_image = #{goodsImage}
+                </if>
+                    <if test="packageQuantity != null">
+                    and package_quantity = #{packageQuantity}
+                </if>
+                    <if test="quantity != null">
+                    and quantity = #{quantity}
+                </if>
+                    <if test="requestUnitPrice != null">
+                    and request_unit_price = #{requestUnitPrice}
+                </if>
+                    <if test="requestOrderAmount != null">
+                    and request_order_amount = #{requestOrderAmount}
+                </if>
+                    <if test="originalUnitPrice != null">
+                    and original_unit_price = #{originalUnitPrice}
+                </if>
+                    <if test="specificationUnit != null and specificationUnit != ''">
+                    and specification_unit = #{specificationUnit}
+                </if>
+                    <if test="distributionSpecification != null and distributionSpecification != ''">
+                    and distribution_specification = #{distributionSpecification}
+                </if>
+                    <if test="distributionSpecificationUnit != null and distributionSpecificationUnit != ''">
+                    and distribution_specification_unit = #{distributionSpecificationUnit}
+                </if>
+                    <if test="distributionSpecificationNum != null">
+                    and distribution_specification_num = #{distributionSpecificationNum}
+                </if>
+                    <if test="smallSort != null and smallSort != ''">
+                    and small_sort = #{smallSort}
+                </if>
+                    <if test="stockCode != null and stockCode != ''">
+                    and stock_code = #{stockCode}
+                </if>
+                    <if test="activityNo != null and activityNo != ''">
+                    and activity_no = #{activityNo}
+                </if>
+                    <if test="distributionType != null and distributionType != ''">
+                    and distribution_type = #{distributionType}
+                </if>
+                    <if test="isGift != null">
+                    and is_gift = #{isGift}
+                </if>
+                    <if test="allowDistributionReturn != null">
+                    and allow_distribution_return = #{allowDistributionReturn}
+                </if>
+                    <if test="creator != null and creator != ''">
+                    and creator = #{creator}
+                </if>
+                    <if test="createTime != null">
+                    and create_time = #{createTime}
+                </if>
+                    <if test="updater != null and updater != ''">
+                    and updater = #{updater}
+                </if>
+                    <if test="updateTime != null">
+                    and update_time = #{updateTime}
+                </if>
+                    <if test="isDelete != null">
+                    and is_delete = #{isDelete}
+                </if>
+                    <if test="remark != null and remark != ''">
+                    and remark = #{remark}
+                </if>
+                    <if test="wrhCode != null and wrhCode != ''">
+                    and wrh_code = #{wrhCode}
+                </if>
+                <if test="goodsType != null and goodsType != ''">
+                    and goods_type = #{goodsType}
+                </if>
+                <if test="baseGoodsCode != null and baseGoodsCode != ''">
+                    and base_goods_code = #{baseGoodsCode}
+                </if>
+                <if test="invoiceType != null and invoiceType != ''">
+                    and invoice_type = #{invoiceType}
+                </if>
+                </where>
+     </sql>
+
+    <select id="getSkuNumberById" resultType="java.math.BigDecimal">
+        select sum(quantity) from ord_dir_deliv_request_detail where request_order_id = #{requestOrderId} and is_delete = 0
+    </select>
+
+    <select id="findRequestOrderDetailListByPage"
+            resultType="com.edc.erp.directly.dirrequestorder.model.out.DirRequestOrderDetailOut">
+        select <include refid="Base_Column_List"/>,
+        case when base_goods_code is null then goods_code
+        else concat(base_goods_code,goods_code)
+        end as sort
+        from ord_dir_deliv_request_detail
+        where  request_order_id = #{requestOrderId} and is_delete = 0
+        <if test="goodsCode != null and goodsCode != ''">
+            and goods_code = #{goodsCode}
+        </if>
+        <if test="goodsName != null and goodsName != ''">
+            and goods_name like concat('%',#{goodsName},'%')
+        </if>
+        order by sort
+    </select>
+
+    <insert id="batchSave">
+        insert into ord_dir_deliv_request_detail
+        (request_order_id, goods_code, goods_name, bar_code, goods_image, package_quantity,
+        quantity, request_unit_price, request_order_amount, original_unit_price, specification_unit,
+        distribution_specification, distribution_specification_unit, distribution_specification_num,
+        small_sort, stock_code, activity_no, distribution_type, is_gift, allow_distribution_return,
+        creator, create_time, updater, update_time, is_delete, remark, wrh_code, goods_type, base_goods_code,invoice_type
+        )
+        values
+        <foreach collection="requestOrderDetailList" item="item" separator=",">
+            (#{item.requestOrderId,jdbcType=BIGINT}, #{item.goodsCode,jdbcType=VARCHAR}, #{item.goodsName,jdbcType=VARCHAR},
+            #{item.barCode,jdbcType=VARCHAR}, #{item.goodsImage,jdbcType=VARCHAR}, #{item.packageQuantity,jdbcType=DECIMAL},
+            #{item.quantity,jdbcType=DECIMAL}, #{item.requestUnitPrice,jdbcType=DECIMAL}, #{item.requestOrderAmount,jdbcType=DECIMAL},
+            #{item.originalUnitPrice,jdbcType=DECIMAL}, #{item.specificationUnit,jdbcType=VARCHAR},
+            #{item.distributionSpecification,jdbcType=VARCHAR}, #{item.distributionSpecificationUnit,jdbcType=VARCHAR},
+            #{item.distributionSpecificationNum,jdbcType=DECIMAL}, #{item.smallSort,jdbcType=VARCHAR},
+            #{item.stockCode,jdbcType=VARCHAR}, #{item.activityNo,jdbcType=VARCHAR}, #{item.distributionType,jdbcType=VARCHAR},
+            #{item.isGift,jdbcType=TINYINT}, #{item.allowDistributionReturn,jdbcType=TINYINT},
+            #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR},
+            #{item.updateTime,jdbcType=TIMESTAMP}, #{item.isDelete,jdbcType=TINYINT}, #{item.remark,jdbcType=VARCHAR},
+            #{item.wrhCode,jdbcType=VARCHAR}, #{item.goodsType,jdbcType=VARCHAR}, #{item.baseGoodsCode,jdbcType=VARCHAR},#{item.invoiceType})
+        </foreach>
+    </insert>
+
+    <select id="getGoodsItemNumber" resultType="java.lang.Integer">
+        select count(distinct goods_code) goodsItemNumber from ord_dir_deliv_request_detail where request_order_id = #{requestOrderId} and is_delete = 0
+    </select>
+</mapper>

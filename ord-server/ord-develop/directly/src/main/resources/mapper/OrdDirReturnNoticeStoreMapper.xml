@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.returnnoticeorder.mapper.OrdDirReturnNoticeStoreMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.directly.returnnoticeorder.entity.OrdDirReturnNoticeStore">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="returnNoticeOrderId" column="return_notice_order_id" jdbcType="BIGINT"/>
+        <result property="returnNoticeGoodsId" column="return_notice_goods_id" jdbcType="BIGINT"/>
+        <result property="storeCode" column="store_code" jdbcType="VARCHAR"/>
+        <result property="storeName" column="store_name" jdbcType="VARCHAR"/>
+        <result property="qty" column="qty" jdbcType="NUMERIC"/>
+        <result property="returnDeadline" column="return_deadline" jdbcType="VARCHAR"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, return_notice_order_id, return_notice_goods_id, store_code, store_name, qty ,return_deadline
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="returnNoticeOrderId != null">
+                    and return_notice_order_id = #{returnNoticeOrderId}
+                </if>
+                    <if test="returnNoticeGoodsId != null">
+                    and return_notice_goods_id = #{returnNoticeGoodsId}
+                </if>
+                    <if test="storeCode != null and storeCode != ''">
+                    and store_code = #{storeCode}
+                </if>
+                    <if test="storeName != null and storeName != ''">
+                    and store_name = #{storeName}
+                </if>
+                    <if test="qty != null">
+                    and qty = #{qty}
+                </if>
+                </where>
+     </sql>
+
+    <select id="findStoreInfo" resultType="com.edc.erp.directly.returnnoticeorder.model.out.OrdReturnNoticeStoreOut">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dir_return_notice_store
+        <where>
+        <if test="returnNoticeOrderId != null">
+            and return_notice_order_id = #{returnNoticeOrderId}
+        </if>
+        <if test="returnNoticeGoodsId != null">
+            and return_notice_goods_id = #{returnNoticeGoodsId}
+        </if>
+        <if test="storeCode != null and storeCode != ''">
+            and store_code = #{storeCode}
+        </if>
+        </where>
+    </select>
+
+
+    <select id="findReturnNoticeStoresByPage"
+            resultType="com.edc.erp.directly.returnnoticeorder.model.out.OrdReturnNoticeStoreOut">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dir_return_notice_store
+        <where>
+        <if test="returnNoticeOrderId != null">
+            and return_notice_order_id = #{returnNoticeOrderId,jdbcType=INTEGER}
+        </if>
+        <if test="returnNoticeGoodsId != null">
+            and return_notice_goods_id = #{returnNoticeGoodsId,jdbcType=INTEGER}
+        </if>
+        <if test="storeCode != null and storeCode != ''">
+            and store_code = #{storeCode,jdbcType=VARCHAR}
+        </if>
+        <if test="storeName != null and storeName != ''">
+            and store_name like concat('%', #{storeName,jdbcType=VARCHAR}, '%')
+        </if>
+        </where>
+        group by id
+    </select>
+
+    <select id="getMaxQtyByParameter" resultType="java.math.BigDecimal">
+        select odrns.qty
+        from ord_dir_return_notice_store odrns
+        LEFT JOIN ord_dir_return_notice_goods odtng on odrns.return_notice_goods_id = odtng.id
+        where
+        odrns.return_notice_order_id  = #{returnNoticeOrderId,jdbcType=INTEGER}
+        and odtng.goods_code = #{goodsCode,jdbcType=VARCHAR}
+        and odrns.store_code = #{storeCode,jdbcType=VARCHAR}
+    </select>
+</mapper>

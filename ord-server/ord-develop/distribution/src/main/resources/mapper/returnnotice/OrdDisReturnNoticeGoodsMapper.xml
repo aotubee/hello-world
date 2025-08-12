@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.returnnoticeorder.mapper.OrdDisReturnNoticeGoodsMapper">
+
+    <!-- 结果集 -->
+    <resultMap id="resultMap" type="com.edc.erp.returnnoticeorder.entity.OrdDisReturnNoticeGoods">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="returnNoticeOrderId" column="return_notice_order_id" jdbcType="BIGINT"/>
+        <result property="orgGoodsId" column="org_goods_id" jdbcType="INTEGER"/>
+        <result property="goodsCode" column="goods_code" jdbcType="VARCHAR"/>
+        <result property="barCode" column="bar_code" jdbcType="VARCHAR"/>
+        <result property="goodsName" column="goods_name" jdbcType="VARCHAR"/>
+        <result property="goodsImage" column="goods_image" jdbcType="VARCHAR"/>
+        <result property="line" column="line" jdbcType="DECIMAL"/>
+        <result property="brand" column="brand" jdbcType="VARCHAR"/>
+        <result property="goodsType" column="goods_type" jdbcType="VARCHAR"/>
+        <result property="sort" column="sort" jdbcType="VARCHAR"/>
+        <result property="sortName" column="sort_name" jdbcType="VARCHAR"/>
+        <result property="specification" column="specification" jdbcType="VARCHAR"/>
+        <result property="expiry" column="expiry" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id
+        , return_notice_order_id, org_goods_id, goods_code, bar_code, goods_name, goods_image, line,brand,goods_type,
+        sort,sort_name,specification,expiry
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Base_Where_Clause">
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="returnNoticeOrderId != null">
+                and return_notice_order_id = #{returnNoticeOrderId}
+            </if>
+            <if test="orgGoodsId != null">
+                and org_goods_id = #{orgGoodsId}
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and goods_code = #{goodsCode}
+            </if>
+            <if test="barCode != null and barCode != ''">
+                and bar_code = #{barCode}
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                and goods_name = #{goodsName}
+            </if>
+            <if test="goodsImage != null and goodsImage != ''">
+                and goods_image = #{goodsImage}
+            </if>
+            <if test="line != null">
+                and line = #{line}
+            </if>
+        </where>
+    </sql>
+    <select id="findGoodsOutByPage" resultType="com.edc.erp.returnnoticeorder.model.out.OrdReturnNoticeGoodsOut"
+            parameterType="com.edc.erp.returnnoticeorder.model.in.ReturnNoticeGoodsIn">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dis_return_notice_goods where 1=1
+        <if test="returnNoticeOrderId != null">
+            and return_notice_order_id = #{returnNoticeOrderId}
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and goods_code = #{goodsCode}
+        </if>
+        <if test="goodsName != null and goodsName != ''">
+            and goods_name = like concat('%', #{goodsName}, '%')
+        </if>
+        group by id
+    </select>
+
+    <select id="getGoodsStatusBusinessSwitchByStatusId" resultType="int">
+        select
+            is_dis_re_dis
+        from gc_goods_status_business_switch
+        where
+            is_delete=0
+        and biz_org_code=#{bizOrgCode,jdbcType=VARCHAR}
+        and goods_status_id =#{bizOrgCode,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findByReturnNoticeId" resultMap="resultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dis_return_notice_goods
+        where
+        return_notice_order_id=#{returnNoticeId,jdbcType=INTEGER}
+    </select>
+
+    <select id="getByReturnNoticeIdAndGoodsCode" resultMap="resultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        ord_dis_return_notice_goods
+        <where>
+        <if test="returnNoticeId != null">
+          and return_notice_order_id=#{returnNoticeId,jdbcType=INTEGER}
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and goods_code =#{goodsCode,jdbcType=VARCHAR}
+        </if>
+        </where>
+    </select>
+</mapper>

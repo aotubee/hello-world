@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.disdeliveryorder.mapper.OrdDisDeliveryOrderHeartRateMonitorMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.disdeliveryorder.entity.OrdDisDeliveryOrderHeartRateMonitor">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="disDeliveryOrderId" column="dis_delivery_order_id" jdbcType="INTEGER"/>
+        <result property="lastHeartbeatTime" column="last_heartbeat_time" jdbcType="TIMESTAMP"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, dis_delivery_order_id, last_heartbeat_time, org_code, biz_org_code, creator, create_time    
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="disDeliveryOrderId != null">
+                    and dis_delivery_order_id = #{disDeliveryOrderId}
+                </if>
+                    <if test="lastHeartbeatTime != null">
+                    and last_heartbeat_time = #{lastHeartbeatTime}
+                </if>
+                    <if test="orgCode != null and orgCode != ''">
+                    and org_code = #{orgCode}
+                </if>
+                    <if test="bizOrgCode != null and bizOrgCode != ''">
+                    and biz_org_code = #{bizOrgCode}
+                </if>
+                    <if test="creator != null and creator != ''">
+                    and creator = #{creator}
+                </if>
+                    <if test="createTime != null">
+                    and create_time = #{createTime}
+                </if>
+                </where>
+     </sql>
+    <select id="findNeedResetHeartList"
+            resultType="com.edc.erp.disdeliveryorder.entity.OrdDisDeliveryOrderHeartRateMonitor">
+        select <include refid="Base_Column_List"/> from ord_dis_delivery_order_heart_rate_monitor
+        where TIMESTAMPDIFF(MINUTE,last_heartbeat_time,now()) > #{heartRate}
+    </select>
+</mapper>

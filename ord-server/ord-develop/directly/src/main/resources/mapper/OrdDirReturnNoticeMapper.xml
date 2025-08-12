@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.returnnoticeorder.mapper.OrdDirReturnNoticeMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.directly.returnnoticeorder.entity.OrdDirReturnNotice">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="returnNoticeOrderNo" column="return_notice_order_no" jdbcType="VARCHAR"/>
+        <result property="returnType" column="return_type" jdbcType="VARCHAR"/>
+        <result property="returnWhy" column="return_why" jdbcType="VARCHAR"/>
+        <result property="skuCount" column="sku_count" jdbcType="INTEGER"/>
+        <result property="takeEffectTime" column="take_effect_time" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="returnDeadline" column="return_deadline" jdbcType="TIMESTAMP"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="isEffectiveImmediately" column="is_effective_immediately" jdbcType="INTEGER"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, return_notice_order_no, return_type, return_why, sku_count, take_effect_time, status, return_deadline, remark, org_code, biz_org_code, creator, create_time, updater, update_time, is_delete,is_effective_immediately
+    </sql>
+
+    <select id="findOrdReturnNoticeByPage"
+            resultType="com.edc.erp.directly.returnnoticeorder.model.out.OrdReturnNoticeOrderOut">
+        select
+        rno.id, rno.return_notice_order_no, rno.status,rno.sku_count,rno.return_type, rno.return_why,
+        rno.take_effect_time, rno.return_deadline,rno.remark,
+        rno.biz_org_code, rno.creator, rno.create_time, rno.updater, rno.update_time, rno.is_delete,
+        case when (select odr.return_notice_order_id
+        from ord_dir_return odr
+        where odr.store_code = #{storeCode,jdbcType=VARCHAR}
+        and odr.return_notice_order_id = rno.id
+        and odr.is_delete = 0 limit 1) > 0 then 1 else 0 END as isReturn
+        from
+        ord_dir_return_notice rno
+        <where>
+            and rno.is_delete=0
+        <if test="returnNoticeOrderNo != null and returnNoticeOrderNo != ''">
+            and rno.return_notice_order_no = #{returnNoticeOrderNo}
+        </if>
+        <if test="storeCode != null and storeCode != ''">
+            and exists (select 1 from ord_dir_return_notice_store rns where rno.id = rns.return_notice_order_id and
+            rns.store_code = #{storeCode})
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and exists (select 1 from ord_dir_return_notice_goods rng where rno.id = rng.return_notice_order_id and
+            rng.goods_code = #{goodsCode})
+        </if>
+        <if test="bizOrgCode != null and bizOrgCode != ''">
+            and rno.biz_org_code = #{bizOrgCode}
+        </if>
+        <if test="status != null and status != ''">
+            and rno.status = #{status}
+        </if>
+        <if test="beginTime != null and beginTime !='' and endTime != null and endTime !=''">
+            and rno.create_time between #{beginTime} and #{endTime}
+        </if>
+        <if test="takeEffectBeginTime != null and takeEffectBeginTime !='' and takeEffectEndTime != null and takeEffectEndTime !=''">
+            and rno.take_effect_time between #{takeEffectBeginTime} and #{takeEffectEndTime}
+        </if>
+        <if test="creator != null and creator != ''">
+            and rno.creator like concat('%', #{creator}, '%')
+        </if>
+        order by rno.create_time desc, rno.id desc
+        </where>
+    </select>
+
+    <select id="selectTakeEffectTime" resultMap="resultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        ord_dir_return_notice
+        <where>
+            <if test="isDelete != null">
+                and is_delete = #{isDelete}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="takeEffectTime != null">
+                <![CDATA[
+                and take_effect_time <= #{takeEffectTime,jdbcType=TIMESTAMP} and
+                return_deadline >=#{takeEffectTime,jdbcType=TIMESTAMP}
+                ]]>
+            </if>
+        </where>
+    </select>
+
+    <select id="checkReturnNoticeNo" resultMap="resultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+        ord_dir_return_notice
+        where
+        is_delete=0
+        and  biz_org_code=#{bizOrgCode,jdbcType=VARCHAR}
+        and  return_notice_order_no =#{returnNoticeOrderNo,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectOneByIdAndStoreCode"
+            resultType="com.edc.erp.directly.returnnoticeorder.model.out.OrdReturnNoticeOrderDetailOut">
+
+        select rno.id returnNoticeOrderId,rno.return_notice_order_no returnNoticeOrderNo, rno.return_type returnType,rno.create_time,
+        rno.take_effect_time takeEffectTime,  rno.remark,
+        (select odrns.return_deadline
+        from ord_dir_return_notice_store odrns
+        where odrns.return_notice_order_id = rno.id limit 1) as return_deadline
+        <if test="storeCode != null and storeCode != ''">
+            ,
+            exists (select odr.return_notice_order_id
+            from ord_dir_return odr
+            where odr.store_code = #{storeCode}
+            and odr.return_notice_order_id = rno.id
+            and odr.is_delete = 0) as isReturn
+        </if>
+        from ord_dir_return_notice rno
+        where rno.id = #{returnNoticeOrderId,jdbcType=INTEGER}
+        <if test="storeCode != null and storeCode != ''">
+            and exists(select odrns.return_notice_order_id
+            from ord_dir_return_notice_store odrns
+            where odrns.return_notice_order_id = rno.id
+            and odrns.store_code = #{storeCode})
+        </if>
+    </select>
+
+    <select id="findReturnNoticeGoodsByReturnNoticeOrderId"
+            resultType="com.edc.erp.directly.returnnoticeorder.model.out.OrdReturnNoticeGoodsOut">
+        select g.goods_code, g.bar_code, g.goods_name, g.goods_image,s.qty from ord_dir_return_notice_goods g
+        inner JOIN ord_dir_return_notice_store s on s.return_notice_order_id = g.return_notice_order_id  and s.return_notice_goods_id = g.id
+        where g.return_notice_order_id = #{returnNoticeOrderId} and s.store_code = #{storeCode}
+    </select>
+    <select id="getUnreturnedCount" resultType="java.lang.Integer">
+        select count(rno.id) from  ord_dir_return_notice rno
+        where rno.status = 'processed' and rno.return_deadline > now() and rno.biz_org_code = #{bizOrgCode}
+          and exists (select rns.store_code from ord_dir_return_notice_store rns where rno.id = rns.return_notice_order_id and
+            rns.store_code = #{storeCode})
+        and not exists(select odr.store_code
+                       from ord_dir_return odr
+                       where odr.store_code = #{storeCode}
+                         and odr.return_notice_order_id = rno.id
+                         and odr.is_delete = 0)
+    </select>
+</mapper>

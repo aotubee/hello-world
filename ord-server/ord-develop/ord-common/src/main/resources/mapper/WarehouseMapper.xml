@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.common.mapper.WarehouseMapper">
+
+<select id="getWarehousePrice" resultType="java.math.BigDecimal">
+    select stock_price from inv_stock_warehouse
+    where warehouse_code=#{wrhCode,jdbcType=VARCHAR} and stock_code=#{stockCode,jdbcType=VARCHAR}
+    and goods_code=#{goodsCode,jdbcType=VARCHAR} and biz_org_code=#{bizOrgCode,jdbcType=VARCHAR}
+    </select>
+
+<select id="getStockPrice" resultType="java.math.BigDecimal">
+    select stock_price from inv_stock_store
+    where store_code=#{storeCode,jdbcType=VARCHAR} and goods_code=#{goodsCode,jdbcType=VARCHAR} and biz_org_code=#{bizOrgCode,jdbcType=VARCHAR}
+    </select>
+
+<select id="checkStockIsWarehouseExist" resultType="java.lang.Integer">
+    select
+        lsi.id
+    from
+        logc_stock_info lsi
+            inner join logc_warehouse_info lwi on lwi.id = lsi.warehouse_id and lwi.is_delete=0
+    where
+        lsi.is_delete=0
+        and lwi.warehouse_code=#{warehouseCode,jdbcType=VARCHAR}
+        and lsi.stock_code=#{stockCode,jdbcType=VARCHAR}
+        and (lsi.biz_org_code = #{bizOrgCode}
+            or lsi.id in (select stock_id from logc_stock_org_auth where biz_org_code = #{bizOrgCode}))
+        and (lwi.biz_org_code = #{bizOrgCode}
+            or lwi.id in (select warehouse_id from logc_warehouse_org_auth where biz_org_code = #{bizOrgCode}))
+    </select>
+
+<select id="getStockNum" resultType="java.math.BigDecimal">
+    select business_qty from inv_stock_store
+    where store_code=#{storeCode,jdbcType=VARCHAR} and goods_code=#{goodsCode,jdbcType=VARCHAR} and biz_org_code=#{bizOrgCode,jdbcType=VARCHAR}
+    </select>
+
+<select id="getWarehouseNum" resultType="java.math.BigDecimal">
+    select business_qty from inv_stock_warehouse
+    where warehouse_code=#{wrhCode,jdbcType=VARCHAR} and stock_code=#{stockCode,jdbcType=VARCHAR}
+    and goods_code=#{goodsCode,jdbcType=VARCHAR} and biz_org_code=#{bizOrgCode,jdbcType=VARCHAR}
+    </select>
+    <select id="getPurchasePriceByGoodsAndVendorCode" resultType="java.math.BigDecimal">
+        SELECT
+            pag.price_including_tax
+        FROM
+            pur_agreement pa
+                INNER JOIN pur_vendor pv ON pa.vendor_id = pv.id AND pv.is_delete = 0
+                INNER JOIN pur_agreement_goods pag ON pa.id = pag.agreement_id
+                AND pa.is_delete = 0 AND pag.is_delete = 0
+        WHERE
+            pag.goods_code = #{goodsCode} AND pv.vendor_code = #{vendorCode}  AND pa.biz_org_code = #{bizOrgCode}
+          AND pag.start_date &lt;= #{day}
+          AND pag.end_date &gt;= #{day}
+          limit  1
+    </select>
+    <select id="findStockInv" resultType="com.edc.erp.common.model.out.stock.StockWarehouseOut">
+        select goods_code,business_qty from inv_stock_warehouse
+        where stock_code=#{stockCode} and goods_code in
+        <foreach collection="goodsCodeList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and biz_org_code=#{bizOrgCode}
+    </select>
+</mapper>

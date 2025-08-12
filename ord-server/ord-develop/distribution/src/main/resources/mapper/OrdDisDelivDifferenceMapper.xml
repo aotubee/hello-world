@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.disdifferenceorder.mapper.OrdDisDelivDifferenceMapper">
+
+    <!-- 结果集 -->
+    <resultMap id="resultMap" type="com.edc.erp.disdifferenceorder.entity.OrdDisDelivDifference">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="differenceNo" column="difference_no" jdbcType="VARCHAR"/>
+        <result property="hdDifferenceNo" column="hd_difference_no" jdbcType="VARCHAR"/>
+        <result property="differenceStatus" column="difference_status" jdbcType="VARCHAR"/>
+        <result property="isReversalOrder" column="is_reversal_order" jdbcType="INTEGER"/>
+        <result property="isReversal" column="is_reversal" jdbcType="INTEGER"/>
+        <result property="differenceType" column="difference_type" jdbcType="VARCHAR"/>
+        <result property="deliveryOrderNo" column="delivery_order_no" jdbcType="VARCHAR"/>
+        <result property="hdDeliveryNo" column="hd_delivery_no" jdbcType="VARCHAR"/>
+        <result property="position" column="position" jdbcType="VARCHAR"/>
+        <result property="logisticsNo" column="logistics_no" jdbcType="VARCHAR"/>
+        <result property="storeName" column="store_name" jdbcType="VARCHAR"/>
+        <result property="storeCode" column="store_code" jdbcType="VARCHAR"/>
+        <result property="totalApplyDifferenceQuantity" column="total_apply_difference_quantity" jdbcType="DECIMAL"/>
+        <result property="totalApplyDifferenceAmount" column="total_apply_difference_amount" jdbcType="DECIMAL"/>
+        <result property="totalApprovalDifferenceQuantity" column="total_approval_difference_quantity" jdbcType="DECIMAL"/>
+        <result property="totalApprovalDifferenceAmount" column="total_approval_difference_amount" jdbcType="DECIMAL"/>
+        <result property="deliveryTime" column="delivery_time" jdbcType="TIMESTAMP"/>
+        <result property="receiveTime" column="receive_time" jdbcType="TIMESTAMP"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="sourceNo" column="source_no" jdbcType="VARCHAR"/>
+        <result property="wrhCode" column="wrh_code" jdbcType="VARCHAR"/>
+        <result property="approvalTime" column="approval_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       oddd.id, oddd.difference_no, oddd.hd_difference_no, oddd.difference_status, oddd.is_reversal,oddd.is_reversal_order, oddd.difference_type,
+        oddd.logistics_no,oddd.delivery_order_no, oddd.hd_delivery_no, oddd.position, oddd.store_name, oddd.store_code, oddd.total_apply_difference_quantity,
+        oddd.total_apply_difference_amount, oddd.total_approval_difference_quantity, oddd.total_approval_difference_amount, oddd.delivery_time,
+        oddd.receive_time, oddd.remark, oddd.org_code, oddd.biz_org_code, oddd.creator, oddd.create_time, oddd.updater,
+        oddd.update_time, oddd.is_delete, oddd.source_no, oddd.wrh_code, oddd.approval_time
+    </sql>
+
+    <sql id="Base_Where_Clause">
+        <where>
+            oddd.is_delete= 0
+            <if test="differenceNo != null and differenceNo != ''">
+                and oddd.difference_no = #{differenceNo}
+            </if>
+
+            <if test="differenceStatus != null and differenceStatus != ''">
+                and oddd.difference_status = #{differenceStatus}
+            </if>
+
+            <if test="differenceType != null and differenceType != ''">
+                and oddd.difference_type = #{differenceType}
+            </if>
+            <if test="deliveryOrderNo != null and deliveryOrderNo != ''">
+                and oddd.delivery_order_no = #{deliveryOrderNo}
+            </if>
+            <if test="logisticsNo != null and logisticsNo != ''">
+                and oddd.logistics_no = #{logisticsNo}
+            </if>
+            <if test="position != null and position != ''">
+                and oddd.position = #{position}
+            </if>
+            <if test="stockCodeList != null and stockCodeList.size() > 0">
+                and oddd.position in
+                <foreach collection="stockCodeList" separator="," open="(" close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and oddd.store_name like concat('%', #{storeName}, '%')
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and oddd.store_code = #{storeCode}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and oddd.biz_org_code = #{bizOrgCode}
+            </if>
+            <if test="isReversal != null">
+                and oddd.is_reversal = #{isReversal}
+            </if>
+            <if test="isReversalOrder != null">
+                and oddd.is_reversal_order = #{isReversalOrder}
+            </if>
+            <if test="wrhCode != null and wrhCode != ''">
+                and oddd.wrh_code = #{wrhCode}
+            </if>
+            <if test="createStartTime != null and createStartTime != '' and createEndTime != null and createEndTime != ''">
+                and oddd.create_time between #{createStartTime} and #{createEndTime}
+            </if>
+            <if test="approvalTimeBegin != null">
+                and oddd.approval_time &gt;= #{approvalTimeBegin}
+            </if>
+            <if test="approvalTimeEnd != null">
+                and oddd.approval_time &lt;= #{approvalTimeEnd}
+            </if>
+            <if test="createMonth != null and createMonth != ''">
+                and  date_format(oddd.create_time, '%Y-%m') =#{createMonth}
+            </if>
+            <if test="storeCodeList != null and storeCodeList.size() > 0">
+                and oddd.store_code in
+                <foreach collection="storeCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and exists (select odddd.difference_order_id from ord_dis_deliv_difference_detail odddd where
+                odddd.difference_order_id = oddd.id and odddd.goods_code = #{goodsCode})
+            </if>
+        </where>
+    </sql>
+
+    <select id="findDifferenceOrdersByPage"
+            resultType="com.edc.erp.disdifferenceorder.model.out.DisDifferenceOrderOut">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dis_deliv_difference oddd
+        <include refid="Base_Where_Clause"/>
+        order by oddd.id desc
+    </select>
+    <select id="checkStoreInv" resultType="java.math.BigDecimal">
+        select business_qty from inv_stock_store
+        where store_code=#{storeCode} and goods_code=#{goodsCode} and biz_org_code=#{bizOrgCode}
+    </select>
+    <select id="checkStockInv" resultType="java.math.BigDecimal">
+        select business_qty from inv_stock_warehouse
+       where stock_code=#{stockCode} and goods_code=#{goodsCode} and biz_org_code=#{bizOrgCode}
+    </select>
+    <insert id="batchInsert">
+        insert into ord_dis_deliv_difference
+        (id, difference_no, hd_difference_no, difference_status, difference_type,
+        delivery_order_no, hd_delivery_no, `position`, store_name, store_code, total_apply_difference_quantity,
+        total_apply_difference_amount, total_approval_difference_quantity, total_approval_difference_amount,
+        delivery_time, receive_time, remark, org_code, biz_org_code, creator, logistics_no,create_time,
+        updater, update_time, is_delete, source_no, wrh_code, approval_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id,jdbcType=INTEGER}, #{item.differenceNo,jdbcType=VARCHAR},
+            #{item.hdDifferenceNo,jdbcType=VARCHAR},
+            #{item.differenceStatus,jdbcType=VARCHAR},
+            #{item.differenceType,jdbcType=VARCHAR}, #{item.deliveryOrderNo,jdbcType=VARCHAR},
+            #{item.hdDeliveryNo,jdbcType=VARCHAR}, #{item.position,jdbcType=VARCHAR},
+            #{item.storeName,jdbcType=VARCHAR},
+            #{item.storeCode,jdbcType=VARCHAR}, #{item.totalApplyDifferenceQuantity,jdbcType=DECIMAL},
+            #{item.totalApplyDifferenceAmount,jdbcType=DECIMAL},
+            #{item.totalApprovalDifferenceQuantity,jdbcType=DECIMAL},
+            #{item.totalApprovalDifferenceAmount,jdbcType=DECIMAL}, #{item.deliveryTime,jdbcType=TIMESTAMP},
+            #{item.receiveTime,jdbcType=TIMESTAMP}, #{item.remark,jdbcType=VARCHAR}, #{item.orgCode,jdbcType=VARCHAR},
+            #{item.bizOrgCode,jdbcType=VARCHAR}, #{item.creator,jdbcType=VARCHAR},
+            #{item.logisticsNo,jdbcType=VARCHAR},
+            #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.isDelete,jdbcType=TINYINT},
+            #{item.sourceNo,jdbcType=VARCHAR}, #{item.wrhCode,jdbcType=VARCHAR}, #{item.approvalTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+
+    <select id="findDisDifferenceOrders" resultType="com.edc.erp.disdifferenceorder.model.out.DisDifferenceOrderOut">
+        select <include refid="Base_Column_List"/>
+        from ord_dis_deliv_difference oddd
+        <where>
+            is_delete=0
+            <if test="storeCode != null and storeCode != ''">
+                and oddd.store_code = #{storeCode}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and oddd.biz_org_code = #{bizOrgCode}
+            </if>
+        </where>
+    </select>
+    <select id="getDifferenceNoByDeliveryNo" resultType="java.lang.String">
+        select GROUP_CONCAT(difference_no separator ',')
+        from ord_dis_deliv_difference
+        WHERE delivery_order_no = #{deliveryOrderNo} and biz_org_code = #{bizOrgCode} and is_delete = 0
+    </select>
+    <select id="getDeliveryNoByDiffNo" resultType="java.lang.String">
+        select delivery_order_no
+        from ord_dis_deliv_difference
+        WHERE difference_no = #{differenceOrderNo}
+          <if test="bizOrgCode != null and bizOrgCode != ''">
+              and biz_org_code = #{bizOrgCode}
+          </if>
+          and is_delete = 0
+    </select>
+    <select id="diffOrderSummary" resultType="com.edc.erp.disdifferenceorder.model.out.DisDiffOrderSummaryOut">
+        select
+        sum(oddd.total_apply_difference_quantity) as applyTotalQty,
+        sum(oddd.total_apply_difference_amount) as applyTotalAmount,
+        sum(oddd.total_approval_difference_quantity) as approvalTotalQty,
+        sum(oddd.total_approval_difference_amount) as approvalTotalAmount
+        from ord_dis_deliv_difference oddd
+        <include refid="Base_Where_Clause"/>
+    </select>
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.presale.mapper.OrdDisPresaleGoodsFlowMapper">
+
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id, store_code, store_name, goods_code, goods_name, bar_code, package_specification, business_type, qty,
+        actual_lowering, flow_date, source_no,qty_balance,creator,org_code,biz_org_code, create_time, creator,
+        update_time
+    </sql>
+    <select id="findPresaleGoodsFlowByPage" resultType="com.edc.erp.presale.model.out.PresaleGoodsFlowPageOut">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dis_presale_goods_flow
+        <where>
+            <if test="storeCode != null and storeCode != ''">
+                and store_code = #{storeCode}
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and goods_code = #{goodsCode}
+            </if>
+            <if test="barCode != null and barCode != ''">
+                and bar_code= #{barCode}
+            </if>
+            <if test="businessType != null and businessType != ''">
+                and business_type = #{businessType}
+            </if>
+            <if test="sourceNo != null and sourceNo != ''">
+                and source_no = #{sourceNo}
+            </if>
+            <if test="flowStartDate != null and flowStartDate != ''">
+                and flow_date <![CDATA[>=]]> #{flowStartDate}
+            </if>
+            <if test="flowEndDate != null and flowEndDate != ''">
+                and flow_date <![CDATA[<=]]> #{flowEndDate}
+            </if>
+            <if test="actualLowering != null and actualLowering != ''">
+                and actual_lowering = #{actualLowering}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and biz_org_code = #{bizOrgCode}
+            </if>
+            <if test="searchParam != null and searchParam != ''">
+                and (goods_code = #{searchParam} or goods_name like concat('%',#{searchParam},'%') or bar_code =
+                #{searchParam})
+            </if>
+            <if test="storeCodeList != null and storeCodeList.size() > 0">
+                and store_code in
+                <foreach collection="storeCodeList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by flow_date desc
+    </select>
+</mapper>

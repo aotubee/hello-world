@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.common.mapper.OrderTypeConfigMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.common.entity.OrderTypeConfig">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="orderTypeCode" column="order_type_code" jdbcType="VARCHAR"/>
+        <result property="orderTypeName" column="order_type_name" jdbcType="VARCHAR"/>
+        <result property="shortOrderType" column="short_order_type" jdbcType="VARCHAR"/>
+        <result property="orderBusinessType" column="order_business_type" jdbcType="VARCHAR"/>
+        <result property="goodsCombinationId" column="goods_combination_id" jdbcType="BIGINT"/>
+        <result property="truncationTimePoint" column="truncation_time_point" jdbcType="VARCHAR"/>
+        <result property="minimumOrderAmount" column="minimum_order_amount" jdbcType="DECIMAL"/>
+        <result property="orderPeriod" column="order_period" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, order_type_code, order_type_name, short_order_type, order_business_type, goods_combination_id, truncation_time_point, minimum_order_amount, order_period, remark, org_code, creator, create_time, updater, update_time, is_delete, biz_org_code    
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="orderTypeCode != null and orderTypeCode != ''">
+                    and order_type_code = #{orderTypeCode}
+                </if>
+                    <if test="orderTypeName != null and orderTypeName != ''">
+                    and order_type_name = #{orderTypeName}
+                </if>
+                    <if test="shortOrderType != null and shortOrderType != ''">
+                    and short_order_type = #{shortOrderType}
+                </if>
+                    <if test="orderBusinessType != null and orderBusinessType != ''">
+                    and order_business_type = #{orderBusinessType}
+                </if>
+                    <if test="goodsCombinationId != null">
+                    and goods_combination_id = #{goodsCombinationId}
+                </if>
+                    <if test="truncationTimePoint != null and truncationTimePoint != ''">
+                    and truncation_time_point = #{truncationTimePoint}
+                </if>
+                    <if test="minimumOrderAmount != null">
+                    and minimum_order_amount = #{minimumOrderAmount}
+                </if>
+                    <if test="orderPeriod != null and orderPeriod != ''">
+                    and order_period = #{orderPeriod}
+                </if>
+                    <if test="remark != null and remark != ''">
+                    and remark = #{remark}
+                </if>
+                    <if test="orgCode != null and orgCode != ''">
+                    and org_code = #{orgCode}
+                </if>
+                    <if test="creator != null and creator != ''">
+                    and creator = #{creator}
+                </if>
+                    <if test="createTime != null">
+                    and create_time = #{createTime}
+                </if>
+                    <if test="updater != null and updater != ''">
+                    and updater = #{updater}
+                </if>
+                    <if test="updateTime != null">
+                    and update_time = #{updateTime}
+                </if>
+                    <if test="isDelete != null">
+                    and is_delete = #{isDelete}
+                </if>
+                    <if test="bizOrgCode != null and bizOrgCode != ''">
+                    and biz_org_code = #{bizOrgCode}
+                </if>
+                </where>
+     </sql>
+    <select id="findOrderTypeIdByGoodsCombination" resultType="java.lang.Long">
+        select otc.id
+        from opt_order_type_config otc
+         LEFT JOIN opt_goods_combination gc on gc.order_type_config_id = otc.id
+        where gc.combination_type_code = #{combinationTypeCode} and gc.combination_value = #{combinationValue}
+          and otc.biz_org_code = #{bizOrgCode} and otc.is_delete = #{isDelete} and gc.is_delete = #{isDelete}
+    </select>
+
+</mapper>

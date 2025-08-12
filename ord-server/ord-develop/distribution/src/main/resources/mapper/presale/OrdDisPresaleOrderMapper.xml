@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.presale.mapper.OrdDisPresaleOrderMapper">
+
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id, presale_order_no, status, store_code, store_name, total_sku_qty, total_goods_qty, total_order_amount,
+        total_discount_amount,
+        total_pay_amount,  pay_time,creator,org_code,biz_org_code, create_time, updater,
+        update_time, is_delete
+    </sql>
+
+    <select id="findStorePresaleOrderForAppByPage"
+            resultType="com.edc.erp.model.out.DisStorePresaleOrderPageForAppOut">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dis_presale_order where store_code = #{storeCode}
+        <if test="status != null and status != ''">
+            and status = #{status}
+        </if>
+        <if test="createMonth != null and createMonth != ''">
+            and date_format(create_time, '%Y-%m') = #{createMonth}
+        </if>
+        and is_delete = 0 order by id desc
+    </select>
+    <select id="findStorePresaleOrderByPage" resultType="com.edc.erp.model.out.DisStorePresaleOrderInfoOut">
+        select
+        po.id, po.presale_order_no, po.status, po.store_code, po.store_name, po.total_sku_qty, po.total_goods_qty, po.total_order_amount,
+        po.total_discount_amount,
+        po.total_pay_amount,  po.pay_time,po.creator,po.org_code,po.biz_org_code, po.create_time, po.updater,
+        po.update_time, po.is_delete
+        from ord_dis_presale_order po
+        inner join ord_dis_presale_order_detail d on d.presale_order_id = po.id
+        where 1 = 1
+        <if test="storeCodeList != null and storeCodeList.size() > 0">
+            and po.store_code in
+            <foreach collection="storeCodeList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="storeCode != null and storeCode !=''">
+            and po.store_code = #{storeCode}
+        </if>
+        <if test="presaleOrderNo != null and presaleOrderNo != ''">
+            and po.presale_order_no = #{presaleOrderNo}
+        </if>
+        <if test="status != null and status != ''">
+            and po.status = #{status}
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and d.goods_code = #{goodsCode}
+        </if>
+        <if test="beginCreateTime != null and beginCreateTime != '' and endCreateTime != null and endCreateTime != ''">
+          and po.create_time between #{beginCreateTime} and #{endCreateTime}
+        </if>
+        <if test="bizOrgCode != null and bizOrgCode != ''">
+            and po.biz_org_code = #{bizOrgCode}
+        </if>
+        and po.is_delete = 0 GROUP BY po.id order by po.id desc
+    </select>
+</mapper>

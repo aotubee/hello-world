@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.presale.mapper.OrdDisPresaleAssetsDetailMapper">
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id, assets_id,status, goods_code, goods_name, bar_code,goods_image,package_specification
+        ,package_specification_num,package_unit,package_quantity,order_quantity,
+        surplus_quantity,surplus_package_quantity,presale_activity_id,presale_activity_no,begin_order_date,end_order_date,creator,org_code,biz_org_code,
+        create_time, updater, update_time, is_delete
+    </sql>
+
+    <!-- surplus_quantity 先行更新，紧接着surplus_package_quantity更新时候，surplus_quantity已经是更新后的值，所以不需要 surplus_quantity + #{updateSurplusQuantity} 做字段更新运算  -->
+    <!--                 MOD(CAST(surplus_quantity AS SIGNED),#{packageSpecificationNum}) = 0, -->
+    <update id="updateSurplusAndOrderQuantity">
+        update ord_dis_presale_assets_detail
+        set
+        surplus_quantity = surplus_quantity + #{updateSurplusQuantity},
+        <!--
+        surplus_package_quantity
+        = IF(
+                TRUNCATE(surplus_quantity MOD #{packageSpecificationNum},0) = 0,
+                surplus_quantity DIV #{packageSpecificationNum},
+                CONCAT(
+        surplus_quantity DIV #{packageSpecificationNum} , '+' , <![CDATA[  TRUNCATE( MOD(surplus_quantity ,#{packageSpecificationNum}) ,0)   ]]>
+                )
+          ),
+          -->
+        <if test="orderQuantity != null">
+            order_quantity = order_quantity + #{orderQuantity} ,
+            package_quantity = order_quantity DIV #{packageSpecificationNum},
+        </if>
+        update_time = now(),
+        updater = #{loginUsername}
+        where presale_activity_id = #{presaleActivityId} and assets_id = #{assetsId} and goods_code = #{goodsCode}
+        <if test="actualLowering != null and actualLowering != '' and actualLowering == 'reduce'">
+            and surplus_quantity - abs(#{updateSurplusQuantity}) >= 0
+        </if>
+    </update>
+    <update id="updateStatus">
+        update ord_dis_presale_assets_detail set status = #{updateStatus},updater = #{loginUsername},update_time = now()
+        where id = #{id} and status = #{nowStatus}
+    </update>
+    <select id="findPresaleAssetsDetailByPage"
+            resultType="com.edc.erp.presale.model.out.OrdDisPresaleAssetsDetailOut">
+        select
+        d.id,
+        d.status,
+        d.assets_id,
+        d.goods_code,
+        d.goods_name,
+        d.bar_code,
+        d.package_specification,
+        d.package_specification_num,
+        d.package_quantity,
+        d.order_quantity,
+        d.surplus_quantity,
+        ROUND(d.surplus_quantity / d.package_specification_num,2) as surplus_package_quantity,
+        d.presale_activity_id,
+        d.presale_activity_no,
+        d.begin_order_date,
+        d.end_order_date
+        from ord_dis_presale_assets_detail d
+        inner join ord_dis_presale_assets a on a.id = d.assets_id
+        where d.assets_id = #{assetsId}
+        <if test="presaleActivityNo != null and presaleActivityNo != ''">
+            and d.presale_activity_no = #{presaleActivityNo}
+        </if>
+        <if test="barCode != null and barCode != ''">
+            and d.bar_code = #{barCode}
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and d.goods_code = #{goodsCode}
+        </if>
+        <if test="status != null and status != ''">
+            and d.status = #{status}
+        </if>
+        <if test="beginOrderTime != null and beginOrderTime != '' and endOrderTime != null and endOrderTime != ''">
+            <![CDATA[
+                and d.begin_order_date >= #{beginOrderTime} and d.end_order_date <= #{endOrderTime}
+            ]]>
+        </if>
+        <if test="bizOrgCode != null and bizOrgCode != ''">
+            and a.biz_org_code = #{bizOrgCode}
+        </if>
+        and d.surplus_quantity != 0 order by d.end_order_date desc,d.presale_activity_no
+    </select>
+    <select id="getStoreAssetsDetail" resultType="com.edc.erp.presale.entity.OrdDisPresaleAssetsDetail">
+        select d.id,d.status, d.assets_id, d.goods_code, d.goods_name,
+        d.bar_code,d.package_specification,d.package_specification_num ,d.package_quantity,d.order_quantity,
+        d.surplus_quantity,d.presale_activity_id,d.presale_activity_no,d.begin_order_date,d.end_order_date
+        from ord_dis_presale_assets_detail d inner join ord_dis_presale_assets pa on pa.id = d.assets_id
+        where pa.store_code = #{storeCode} and d.goods_code = #{goodsCode} and #{orderCreateTime} between
+        d.begin_order_date and d.end_order_date
+        and d.is_delete = 0
+    </select>
+    <select id="findStorePresaleAssetsInfo" resultType="com.edc.erp.presale.model.out.OrdDisPresaleAssetsDetailExtOut">
+        select d.id, d.goods_code, d.goods_name, d.bar_code,d.goods_image,d.package_specification,d.package_unit,
+        ROUND(d.surplus_quantity / d.package_specification_num,2) as surplus_package_quantity,
+        d.package_quantity,d.goods_image,
+        d.order_quantity,d.surplus_quantity,d.presale_activity_id,d.presale_activity_no,d.begin_order_date,d.end_order_date
+        from ord_dis_presale_assets pa inner join ord_dis_presale_assets_detail d on d.assets_id = pa.id
+        where pa.store_code = #{storeCode} and d.is_delete = 0 order by end_order_date desc,presale_activity_no desc
+    </select>
+    <select id="findNeedUpdateStatusAssetsDetailList" resultType="java.lang.Long">
+        select id from ord_dis_presale_assets_detail
+        where (now() > begin_order_date and status = 'notStarted') or (now() > end_order_date and status = 'ordering')
+    </select>
+    <select id="getStoreGoodsAssetsDetail" resultType="com.edc.erp.presale.entity.OrdDisPresaleAssetsDetail">
+        select
+        d.id,
+        d.status,
+        d.assets_id,
+        d.goods_code,
+        d.goods_name,
+        d.bar_code,
+        d.package_specification,
+        d.package_specification_num ,
+        d.package_quantity,
+        d.order_quantity,
+        d.surplus_quantity,
+        d.presale_activity_id,
+        d.presale_activity_no,
+        d.begin_order_date,
+        d.package_unit,
+        d.end_order_date
+        from ord_dis_presale_assets_detail d inner join ord_dis_presale_assets pa on pa.id = d.assets_id
+        where pa.store_code = #{storeCode} and d.goods_code = #{goodsCode} and d.presale_activity_no =
+        #{presaleActivityNo}
+        and d.is_delete = 0
+    </select>
+    <select id="getStoreGoodsAssetsDetailList" resultType="com.edc.erp.presale.entity.OrdDisPresaleAssetsDetail">
+        select
+        d.id,
+        d.status,
+        d.assets_id,
+        d.goods_code,
+        d.goods_name,
+        d.bar_code,
+        d.package_specification,
+        d.package_specification_num,
+        d.package_unit,
+        d.package_quantity,
+        d.order_quantity,
+        d.surplus_quantity,
+        d.presale_activity_id,
+        d.presale_activity_no,
+        d.begin_order_date,
+        d.end_order_date
+        from ord_dis_presale_assets_detail d inner join ord_dis_presale_assets pa on pa.id = d.assets_id
+        where pa.store_code = #{storeCode} and d.goods_code = #{goodsCode} and d.is_delete = 0
+    </select>
+    <select id="findStoreGoodsAssetsDetailList" resultType="com.edc.erp.presale.entity.OrdDisPresaleAssetsDetail">
+        select
+            d.id,
+            d.status,
+            d.assets_id,
+            d.goods_code,
+            d.goods_name,
+            d.bar_code,
+            d.package_specification,
+            d.package_specification_num,
+            d.package_unit,
+            d.package_quantity,
+            d.order_quantity,
+            d.surplus_quantity,
+            d.presale_activity_id,
+            d.presale_activity_no,
+            d.begin_order_date,
+            d.end_order_date
+        from ord_dis_presale_assets_detail d inner join ord_dis_presale_assets pa on pa.id = d.assets_id
+        where pa.store_code = #{storeCode} and d.status = 'ordering' and d.is_delete = 0
+    </select>
+</mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.distribution.mapper.OrdDirOrderAllocationPoolMapper">
+    
+
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, status,store_code, store_name, truncation_date_time, delivery_cycle, goods_code, goods_name, distribution_spec,distribution_spec_num, goods_level,
+         base_display_quantity, average_daily_sales_quantity,compute_order_quantity,recommend_order_quantity,store_order_quantity,supplement_quantity,
+         supplement_package_quantity,remark,biz_org_code, creator, create_time, updater, update_time, is_delete
+    </sql>
+    <delete id="deleteById">
+        delete from ord_dir_order_allocation_pool where id = #{id}
+    </delete>
+    <select id="findStoreList" resultType="java.lang.String">
+        select store_code from ord_dir_order_allocation_pool group by store_code
+    </select>
+    <select id="findEmptyTruncationDateTimeListByStoreCode"
+            resultType="com.edc.erp.directly.distribution.entity.OrdDirOrderAllocationPool">
+        select <include refid="Base_Column_List"/> from ord_dir_order_allocation_pool where store_code = #{storeCode} and truncation_date_time is null and is_delete = 0
+    </select>
+
+    <select id="findStoreTruncationDateTimeList" resultType="com.edc.erp.directly.distribution.entity.OrdDirOrderAllocationPool">
+        select store_code,truncation_date_time,biz_org_code from ord_dir_order_allocation_pool where truncation_date_time is not null
+        group by store_code,truncation_date_time order by truncation_date_time,store_code,biz_org_code
+    </select>
+
+    <select id="findListByStoreCodeAndTruncationDateTime"
+            resultType="com.edc.erp.directly.distribution.entity.OrdDirOrderAllocationPool">
+        select <include refid="Base_Column_List"/> from ord_dir_order_allocation_pool where store_code = #{storeCode} and truncation_date_time = #{truncationDateTime}
+    </select>
+    <select id="findListByPage"
+            resultType="com.edc.erp.directly.distribution.model.out.OrdDirOrderAllocationPoolPageOut">
+        select
+        ap.id, ap.status,ap.store_code, ap.store_name, ap.truncation_date_time, ap.delivery_cycle, ap.goods_code, ap.goods_name, ap.distribution_spec,ap.distribution_spec_num, ap.goods_level,
+        ap.base_display_quantity, ap.average_daily_sales_quantity,ap.compute_order_quantity,ap.recommend_order_quantity,ap.store_order_quantity,ap.supplement_quantity,
+        ap.supplement_package_quantity,ap.remark,ap.biz_org_code, ap.creator, ap.create_time, ap.updater, ap.update_time, ap.is_delete,ss.business_qty
+            from ord_dir_order_allocation_pool ap
+        INNER JOIN gc_standard_goods_info sg on sg.goods_code = ap.goods_code and  sg.is_delete = 0
+        INNER JOIN gc_org_goods_info g on g.goods_id = sg.id and g.biz_org_code = ap.biz_org_code and  g.is_delete = 0
+        LEFT JOIN inv_stock_store ss on ss.store_code = ap.store_code and ss.goods_code = ap.goods_code and ss.biz_org_code = ap.biz_org_code
+        where 1 = 1
+        <if test="storeCode != null and storeCode != ''">
+            and ap.store_code = #{storeCode}
+        </if>
+        <if test="storeCodeList != null and storeCodeList.size() > 0">
+            and ap.store_code in
+            <foreach collection="storeCodeList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="storeName != null and storeName != ''">
+            and ap.store_name like concat('%',#{storeName},'%')
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and ap.goods_code = #{goodsCode}
+        </if>
+        <if test="goodsName != null and goodsName != ''">
+            and ap.goods_name like concat('%',#{goodsName},'%')
+        </if>
+        <if test="sortCodeList != null and sortCodeList.size() > 0">
+            and g.org_sort in
+            <foreach collection="sortCodeList" separator="," open="(" close=")" item="item">
+                #{item}
+            </foreach>
+        </if>
+        <if test="status != null and status != ''">
+            and ap.status = #{status}
+        </if>
+        <if test="supplementQuantity != null and operation != null and operation != ''">
+            and ap.supplement_quantity ${operation} #{supplementQuantity}
+        </if>
+        <if test="bizOrgCode != null and bizOrgCode != ''">
+            and ap.biz_org_code = #{bizOrgCode}
+        </if>
+        order by ap.truncation_date_time,ap.store_code,ap.supplement_quantity desc
+    </select>
+
+    <select id="findDirOrderAllocationPoolSortList" resultType="java.lang.String">
+        select g.org_sort from ord_dir_order_allocation_pool ap
+                                   INNER JOIN gc_standard_goods_info sg on sg.goods_code = ap.goods_code
+                                   INNER JOIN gc_org_goods_info g on g.goods_id = sg.id and g.biz_org_code = ap.biz_org_code
+        where ap.biz_org_code = #{bizOrgCode} and ap.is_delete = 0 and sg.is_delete = 0 and g.is_delete = 0
+        GROUP BY g.org_sort
+    </select>
+</mapper>

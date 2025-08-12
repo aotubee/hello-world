@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.dirdeliveryorder.mapper.OrdDirSalvageDelivPondDetailMapper">
+
+
+    <sql id="baseSql">
+        id,salvage_pond_id,store_code,first_order_time,delivery_order_id,stock_code,wrh_code,
+            allot_rule,room_pry,frozen_pry,
+          audit_type,  biz_org_code,org_code,creator,create_time,updater,update_time,is_delete
+    </sql>
+    <select id="findByDeliveryOrderIdList"
+            resultType="com.edc.erp.directly.dirdeliveryorder.model.out.OrdDirSalvageDelivPondDetailOut">
+        select <include refid="baseSql"/> from ord_dir_salvage_deliv_pond_detail where delivery_order_id in
+        <foreach collection="deliveryOrderIdList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and is_delete = 0
+    </select>
+
+    <select id="findDeliveryOrderIdListBySalvagePondId" resultType="java.lang.Long">
+        select delivery_order_id from ord_dir_salvage_deliv_pond_detail where salvage_pond_id = #{salvagePondId}
+    </select>
+</mapper>

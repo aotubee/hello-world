@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.common.mapper.OrdStoreInventorySupplyRateMapper">
+
+    <insert id="batchSave">
+        insert into ord_store_cycle_inventory_supply_rate
+        (order_cycle_time, store_code,delivery_order_id,goods_code, supply_rate, begin_inventory_quantity, allocation_quantity, creator, create_time)
+        values
+        <foreach collection="storeInventorySupplyRateList" item="item" separator=",">
+            (#{item.orderCycleTime,jdbcType=TIMESTAMP}, #{item.storeCode,jdbcType=VARCHAR}, #{item.deliveryOrderId,jdbcType=BIGINT},
+            #{item.goodsCode,jdbcType=VARCHAR},#{item.supplyRate,jdbcType=DECIMAL}, #{item.beginInventoryQuantity,jdbcType=DECIMAL},
+            #{item.allocationQuantity,jdbcType=DECIMAL},#{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+</mapper>

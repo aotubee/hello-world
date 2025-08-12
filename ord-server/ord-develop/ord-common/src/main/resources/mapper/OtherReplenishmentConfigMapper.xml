@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.common.mapper.OtherReplenishmentConfigMapper">
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id, store_code,store_name,goods_code, goods_name, creator, create_time, updater, update_time, is_delete, org_code, biz_org_code
+    </sql>
+    <select id="findOtherReplenishmentConfigList"
+            resultType="com.edc.erp.common.entity.OtherReplenishmentConfig">
+        select <include refid="Base_Column_List"/>
+        from gc_other_replenishment_config where biz_org_code = #{bizOrgCode} and store_code in
+        <foreach collection="storeCodeList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and is_delete = 0
+    </select>
+
+    <select id="findNeedOtherReplenishmentStoreList"
+            resultType="com.edc.erp.common.entity.OtherReplenishmentConfig">
+        select orc.id, orc.store_code,orc.store_name,orc.goods_code, orc.goods_name, orc.creator, orc.create_time, orc.updater,
+               orc.update_time, orc.is_delete, orc.org_code, orc.biz_org_code from gc_other_replenishment_config orc
+        INNER JOIN sc_store_info ssi ON orc.biz_org_code = ssi.biz_org_code AND orc.store_code = ssi.erp_store_code AND ssi.is_delete = 0
+        where orc.biz_org_code = #{bizOrgCode} and ssi.store_property = #{storeProperty}
+    </select>
+
+</mapper>

@@ -1,0 +1,351 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.16.160:8848
+        namespace: test
+  datasource:
+    jdbc-url: jdbc:mysql://192.168.16.160:3306/erp?characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+    username: root
+    password: Devdb100^%$#@!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    maximum-pool-size: 40
+    minimum-idle: 10
+  dss:
+    slave:
+      jdbc-url: jdbc:mysql://192.168.16.24:3306/datapush?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&allowMultiQueries=true&serverTimezone=GMT%2B8
+      username: datapush
+      password: everyd@y123
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      max-idle: 10
+      max-wait: 10000
+      min-idle: 5
+      initial-size: 5
+  redis:
+    host: 192.168.16.160
+    port: 6379
+    database: 0
+    password:
+    otherdbarray: 0,15
+
+async:
+  export:
+    enable: true
+    hostname: 192.168.88.30
+    port: 21
+    username: test
+    password: pass123
+    path: /down
+    redis-db: 15
+    threadPool:
+      corePoolSize: 10
+      maximumPoolSize: 20
+      keepAliveTime: 60
+      queueCapacity: 50
+
+mq:
+  producer:
+    enable: true
+    nameAddr: 192.168.16.160:9876
+    drive: com.edc.plugins.jms.mq.rocketmq.ApacheProducer
+    group: goods-to-erp-dev
+    # 通过MQ异步发送保存日志消息生产者
+    save-log-sender:
+      topic: save-log-test
+      tags: saveLogTest
+    # 中科同步大仓库存-发送者
+    zk-sync-stock-warehouse-sender:
+      topic: zk-sync-stock-warehouse-test
+      tags: zkSyncStockWarehouseTest
+#    # 订货单支付成功更新状态发送者
+#    update-order-paid-sender:
+#      topic: update-order-paid-test
+#      tags: updateOrderPaidTest
+    # 预售订单支付成功更新状态-发送者
+    update-presale-order-paid-sender:
+      topic: update-presale-order-paid-test
+      tags: updatePresaleOrderPaidTest
+    # 配货/配销产生效期库存调整单-发送者
+    take-delivery-adjust-expiry-sender:
+      topic: take-delivery-adjust-expiry-test
+      tags: takeDeliveryAdjustExpiryTest
+
+    #-------------直营发送者配置 begin --------------
+    # 待订货单状态更新至可创建要货单后消息发送者（要货单创建前）-发送者
+    dir-before-create-request-order-sender:
+      topic: dir-erp-order-test
+      tags: dirBeforeCreateRequestOrder
+    # 要货单创建成功后发送消息-发送者
+    dir-after-create-request-order-sender:
+      topic: dir-erp-order-test
+      tags: dirAfterCreateRequestOrder
+    # 直营首单铺货拆配货单-发送者
+    dir-first-to-delivery-sender:
+      topic: dir-erp-order-test
+      tags: dirFirstToDelivery
+    # 直营分货单生成订货单
+    dir-distribution-create-order-sender:
+      topic: dir-erp-order-test
+      tags: dirDistributionCreateOrder
+    # 直营配货单收货后生成直营配货差异单-发送者
+    dir-delivery-to-difference-sender:
+      topic: dir-erp-order-test
+      tags: dirDeliveryToDifference
+    # 采购订单回传配货单-发送者
+    dir-purchase-order-to-erp-sender:
+      topic: dir-erp-order-test
+      tags: dirPurchaseOrderToErp
+    # DTS配货单数据下发-发送者
+    dir-delivery-to-dts-sender:
+      topic: dir-erp-dts-test
+      tags: dirDeliveryToDts
+    # DTS配销差异单数据下发-发送者
+    dir-difference-order-to-dts-sender:
+      topic: dir-erp-dts-test
+      tags: dirDifferenceOrderToDts
+    # DTS直营退货单数据下发-发送者
+    dir-return-to-dts-sender:
+      topic: dir-erp-dts-test
+      tags: dirReturnToDts
+    # DTS配货单数据回传-发送者
+    dir-delivery-dts-to-erp-sender:
+      topic: dir-erp-dts-test
+      tags: dirDeliveryDtsToErp
+    # DTS直营退货单数据回传-发送者
+    dir-return-dts-to-erp-sender:
+      topic: dir-erp-dts-test
+      tags: dirReturnDtsToErp
+    # DTS直营差异单数据回传-发送者
+    dir-difference-dts-to-erp-sender:
+      topic: dir-erp-dts-test
+      tags: dirDifferenceDtsToErp
+    # 直营配货单数据文件执行-发送者
+    order-dir-delivery-data-file-sender:
+      topic: dir-erp-order-test
+      tags: orderDirDeliveryDataFile
+    #-------------直营发送者配置 end --------------
+
+
+    #-------------加盟发送者配置 begin --------------
+    # 加盟配货单数据文件执行-发送者
+    order-dis-delivery-data-file-sender:
+      topic: dis-erp-dts-test
+      tags: orderDisDeliveryDataFile
+    # 待订货单状态更新至可创建要货单后消息发送者（要货单创建前）
+    dis-before-create-request-order-sender:
+      topic: dis-erp-order-test
+      tags: disBeforeCreateRequestOrder
+    # 要货单创建成功后发送消息-发送者
+    dis-after-create-request-order-sender:
+      topic: dis-erp-order-test
+      tags: disAfterCreateRequestOrder
+    # 直营首单铺货拆配货单-发送者
+    dis-first-to-delivery-sender:
+      topic: dis-erp-order-test
+      tags: disFirstToDelivery
+    # 直营分货单生成订货单
+    dis-distribution-create-order-sender:
+      topic: dis-erp-order-test
+      tags: disDistributionCreateOrder
+    # 直营配货单收货后生成直营配货差异单-发送者
+    dis-delivery-to-difference-sender:
+      topic: dis-erp-order-test
+      tags: disDeliveryToDifference
+    # 采购订单回传配货单-发送者
+    dis-purchase-order-to-erp-sender:
+      topic: dis-erp-order-test
+      tags: disPurchaseOrderToErp
+    # DTS配货单数据下发-发送者
+    dis-delivery-to-dts-sender:
+      topic: dis-erp-dts-test
+      tags: disDeliveryToDts
+    # DTS配销差异单数据下发-发送者
+    dis-difference-order-to-dts-sender:
+      topic: dis-erp-dts-test
+      tags: disDifferenceOrderToDts
+    # DTS加盟退货单数据下发-发送者
+    dis-return-to-dts-sender:
+      topic: dis-erp-dts-test
+      tags: disReturnToDts
+    # DTS批发出货单数据下发-发送者
+    wholesale-shipment-to-dts-sender:
+      topic: dis-erp-dts-test
+      tags: wholesaleShipmentToDts
+    # DTS批发退货单数据下发-发送者
+    wholesale-return-to-dts-sender:
+      topic: dis-erp-dts-test
+      tags: wholesaleReturnToDts
+    # DTS配货单数据回传-发送者
+    dis-delivery-dts-to-erp-sender:
+      topic: dis-erp-dts-test
+      tags: disDeliveryDtsToErp
+    # DTS加盟退货单数据回传-发送者
+    dis-return-dts-to-erp-sender:
+      topic: dis-erp-dts-test
+      tags: disReturnDtsToErp
+    # DTS加盟差异单数据回传-发送者
+    dis-difference-dts-to-erp-sender:
+      topic: dis-erp-dts-test
+      tags: disDifferenceDtsToErp
+    # DTS批发单数据回传-发送者
+    wholesale-order-call-back-sender:
+      topic: dis-erp-dts-test
+      tags: wholesaleOrderCallBack
+    # DTS批发退数据回传-发送者
+    wholesale-re-order-call-back-sender:
+      topic: dis-erp-dts-test
+      tags: wholesaleReOrderCallBack
+    #    # 中科请求创建批发出货单-发送者
+    #    zk-create-wholesale-shipment-sender:
+    #      topic: dis-erp-order-test
+    #      tags: zKCreateWholesaleShipment
+    #    # 中科请求创建批发退货单-发送者
+    #    zk-create-wholesale-return-sender:
+    #      topic: dis-erp-order-test
+    #      tags: zKCreateWholesaleReturn
+    # 中科请求创建批发出货单回传中科-发送者
+    zk-wholesale-shipment-back-sender:
+      topic: dis-zk-wholesale-test
+      tags: zKWholesaleShipmentBack
+    # 中科请求创建批发退货单回传中科-发送者
+    zk-wholesale-return-back-sender:
+      topic: dis-zk-wholesale-test
+      tags: zKWholesaleReturnBack
+    # 批发出采购回传-发送者
+    handle-wholesale-shipment-purchase-back-sender:
+      topic: dis-erp-order-test
+      tags: handleWholesaleShipmentPurchaseBack
+      #-------------加盟发送者配置 end --------------
+
+    # HS批发单差异商品消息-发送者
+    hs-wholesale-diff-sender:
+      topic: hs-wholesale-data-test
+      tags: hsWholesaleDiff
+    # HS批发出物流回传-发送者
+    hs-wholesale-shipment-dts-back-sender:
+      topic: hs-wholesale-data-test
+      tags: hsWholesaleShipmentDtsBack
+    # HS批发退拒绝回传-发送者
+    hs-wholesale-refuse-return-sender:
+      topic: hs-wholesale-data-test
+      tags: hsWholesaleRefuseReturn
+    # HS批发退物流回传-发送者
+    hs-wholesale-return-dts-back-sender:
+      topic: hs-wholesale-data-test
+      tags: hsWholesaleReturnDtsBack
+
+
+  consumer:
+    #-------------直营消费者配置 begin --------------
+    # 直营ERP内部消息-消费者
+    handle-dir-erp-order:
+      enable: true
+      nameAddr: 192.168.16.160:9876
+      drive: com.edc.plugins.jms.mq.rocketmq.ApacheConsumer
+      group: dirErpOrder-test
+      topic: dir-erp-order-test
+
+    # 直营DTS-消费者
+    handle-dir-erp-dts:
+      enable: true
+      nameAddr: 192.168.16.160:9876
+      drive: com.edc.plugins.jms.mq.rocketmq.ApacheConsumer
+      group: dirErpDts-test
+      topic: dir-erp-dts-test
+    #-------------直营消费者配置 end --------------
+
+
+
+    #-------------加盟消费者配置 begin --------------
+    # 加盟ERP内部消息-消费者
+    handle-dis-erp-order:
+      enable: true
+      nameAddr: 192.168.16.160:9876
+      drive: com.edc.plugins.jms.mq.rocketmq.ApacheConsumer
+      group: disErpOrder-test
+      topic: dis-erp-order-test
+
+    # 加盟DTS-消费者
+    handle-dis-erp-dts:
+      enable: true
+      nameAddr: 192.168.16.160:9876
+      drive: com.edc.plugins.jms.mq.rocketmq.ApacheConsumer
+      group: disErpDts-test
+      topic: dis-erp-dts-test
+
+
+    # 中科消息-消费者
+    handle-zk-wholesale:
+      enable: true
+      nameAddr: 192.168.16.160:9876
+      drive: com.edc.plugins.jms.mq.rocketmq.ApacheConsumer
+      group: zkWholesale-test
+      topic: dis-zk-wholesale-test
+    #-------------加盟消费者配置 end --------------
+    #    update-order-paid-consumer:
+#      enable: true
+#      nameAddr: 192.168.16.160:9876
+#      drive: com.edc.plugins.jms.mq.rocketmq.ApacheConsumer
+#      group: update-order-paid-test
+#      topic: update-order-paid-test
+#      tags: updateOrderPaidTest
+    update-presale-order-paid-consumer:
+      enable: true
+      nameAddr: 192.168.16.160:9876
+      drive: com.edc.plugins.jms.mq.rocketmq.ApacheConsumer
+      group: update-presale-order-paid-test
+      topic: update-presale-order-paid-test
+      tags: updatePresaleOrderPaidTest
+
+
+spd:
+  frontNotifyBusinessUrl: http://125.76.225.59:30003/procurement/payCallBack/spdFrontPayCallBack
+  frontCallBackHtml: http://edc-cdn.oss-cn-beijing.aliyuncs.com/app/procurement/pp-callback-pay.html
+  merchantNo: 983708160001601
+  rechargeNotifyBusinessUrl: http://125.76.225.59:30003/procurement/payCallBack/spdRechargePayCallBack
+  directDeliveryNotifyBusinessUrl: http://125.76.225.59:30003/procurement/payCallBack/spdDirectDeliveryPayCallBack
+redisMq:
+  #ppServiceTopic: ppServiceTopic
+  disOrderTrackTopic: disOrderTrackTopic
+  dirOrderTrackTopic: dirOrderTrackTopic
+  erpOrdTopic: erpOrdTopic
+
+#预警服务db
+warningRedisDB: 0
+
+# 向物流发送常温接单汇总信息地址
+sendToLogisticsDingTalkRobotUrl: https://oapi.dingtalk.com/robot/send?access_token=04781ed57f1c6ffa05b08e3c633e2cee2bb3250442e852ed5057b0a3811846c2
+baoJiLogisticsDingTalkRobotUrl: https://oapi.dingtalk.com/robot/send?access_token=04781ed57f1c6ffa05b08e3c633e2cee2bb3250442e852ed5057b0a3811846c2
+noTransferOrderStoreUrl: https://oapi.dingtalk.com/robot/send?access_token=04781ed57f1c6ffa05b08e3c633e2cee2bb3250442e852ed5057b0a3811846c2
+dingTalk:
+  zzTransferOrderErrorNoticeUrl: https://oapi.dingtalk.com/robot/send?access_token=14bb3c7dfa80438fd3a5628098bb040231b9c08cf63619cb5df801d531a4c560
+  xaTransferOrderErrorNoticeUrl: https://oapi.dingtalk.com/robot/send?access_token=14bb3c7dfa80438fd3a5628098bb040231b9c08cf63619cb5df801d531a4c560
+
+# 异步任务调用
+asyn-task:
+  retry-max: 5
+  interval: "{
+      1: 0,
+      2: 5,
+      3: 10,
+      4: 15,
+      5: 20
+      }"
+
+#开启异步保存日志
+asyncLog:
+  isEnabled: true
+
+
+xxl:
+  job:
+    admin:
+      addresses: http://192.168.88.28:19998/xxl-job-admin
+    accessToken: default_token
+    executor:
+      appname: order-server
+      address:
+      ip:
+      port: 51022
+      logpath: /tmp/data/applogs/xxl-job/jobhandler
+      logretentiondays: 7

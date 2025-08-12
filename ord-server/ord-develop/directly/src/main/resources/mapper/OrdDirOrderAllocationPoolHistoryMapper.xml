@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.distribution.mapper.OrdDirOrderAllocationPoolHistoryMapper">
+    
+
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, status,store_code, store_name, truncation_date_time, delivery_cycle, goods_code, goods_name, distribution_spec,distribution_spec_num, goods_level,
+         base_display_quantity, average_daily_sales_quantity,compute_order_quantity,recommend_order_quantity,store_order_quantity,supplement_quantity,
+         supplement_package_quantity,remark,is_success,biz_org_code, creator, create_time, updater, update_time, is_delete
+    </sql>
+
+    <select id="findHistoryListByPage"
+            resultType="com.edc.erp.directly.distribution.entity.OrdDirOrderAllocationPoolHistory">
+        select <include refid="Base_Column_List"/> from ord_dir_order_allocation_pool_history where 1 = 1
+        <if test="storeCode != null and storeCode != ''">
+            and store_code = #{storeCode}
+        </if>
+        <if test="storeCodeList != null and storeCodeList.size() > 0">
+            and store_code in
+            <foreach collection="storeCodeList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="storeName != null and storeName != ''">
+            and store_name like concat('%',#{storeName},'%')
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and goods_code = #{goodsCode}
+        </if>
+        <if test="goodsName != null and goodsName != ''">
+            and goods_name like concat('%',#{goodsName},'%')
+        </if>
+        <if test="status != null and status != ''">
+            and status = #{status}
+        </if>
+        <if test="supplementQuantity != null and operation != null and operation != ''">
+            and supplement_quantity ${operation} #{supplementQuantity}
+        </if>
+        <if test="truncationDateTimeBegin != null and truncationDateTimeBegin != '' and truncationDateTimeEnd != null and truncationDateTimeEnd != ''">
+            and truncation_date_time between #{truncationDateTimeBegin} and #{truncationDateTimeEnd}
+        </if>
+        <if test="bizOrgCode != null and bizOrgCode != ''">
+            and biz_org_code = #{bizOrgCode}
+        </if>
+        order by truncation_date_time  desc,store_code desc ,supplement_quantity desc
+    </select>
+
+</mapper>

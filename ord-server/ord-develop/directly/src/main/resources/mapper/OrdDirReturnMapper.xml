@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.returnorder.mapper.OrdDirReturnMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.directly.returnorder.entity.OrdDirReturn">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="returnOrderNo" column="return_order_no" jdbcType="VARCHAR"/>
+        <result property="returnStatus" column="return_status" jdbcType="VARCHAR"/>
+        <result property="storeCode" column="store_code" jdbcType="VARCHAR"/>
+        <result property="distributionType" column="distribution_type" jdbcType="VARCHAR"/>
+        <result property="logisticsNo" column="logistics_no" jdbcType="VARCHAR"/>
+        <result property="storeName" column="store_name" jdbcType="VARCHAR"/>
+        <result property="wrhCode" column="wrh_code" jdbcType="VARCHAR"/>
+        <result property="stockCode" column="stock_code" jdbcType="VARCHAR"/>
+        <result property="skuCount" column="sku_count" jdbcType="INTEGER"/>
+        <result property="returnType" column="return_type" jdbcType="VARCHAR"/>
+        <result property="returnNoticeOrderId" column="return_notice_order_id" jdbcType="BIGINT"/>
+        <result property="submitTime" column="submit_time" jdbcType="TIMESTAMP"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+        <result property="applyReturnQuantity" column="apply_return_quantity" jdbcType="NUMERIC"/>
+        <result property="applyReturnAmount" column="apply_return_amount" jdbcType="NUMERIC"/>
+        <result property="auditReturnQuantity" column="audit_return_quantity" jdbcType="NUMERIC"/>
+        <result property="auditReturnAmount" column="audit_return_amount" jdbcType="NUMERIC"/>
+        <result property="actualReturnQuantity" column="actual_return_quantity" jdbcType="NUMERIC"/>
+        <result property="actualReturnAmount" column="actual_return_amount" jdbcType="NUMERIC"/>
+        <result property="isReversal" column="is_reversal" jdbcType="INTEGER"/>
+        <result property="isReversalOrder" column="is_reversal_order" jdbcType="INTEGER"/>
+        <result property="sourceReturnNo" column="source_return_no" jdbcType="VARCHAR"/>
+        <result property="storeArea" column="store_area" jdbcType="VARCHAR"/>
+        <result property="hdDeliveryNo" column="hd_delivery_no" jdbcType="VARCHAR"/>
+        <result property="hdReturnNo" column="hd_return_no" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="returnOrderReason" column="return_order_reason" jdbcType="VARCHAR"/>
+        <result property="receiveTime" column="receive_time" jdbcType="TIMESTAMP"/>
+        <result property="appRemark" column="app_remark" jdbcType="VARCHAR"/>
+        <result property="deliveryOrderNo" column="delivery_order_no" jdbcType="VARCHAR"/>
+        <result property="auditor" column="auditor" jdbcType="VARCHAR"/>
+        <result property="auditTime" column="audit_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, return_order_no, return_status, store_code,distribution_type, logistics_no, store_name, wrh_code, stock_code, sku_count, return_type, return_notice_order_id,
+        submit_time, org_code, biz_org_code, apply_return_quantity, apply_return_amount, audit_return_quantity, audit_return_amount, actual_return_quantity,
+        actual_return_amount, is_reversal, is_reversal_order, source_return_no, store_area, hd_delivery_no, hd_return_no, remark, create_time, is_delete,
+        updater, creator, update_time, return_order_reason, receive_time,app_remark,delivery_order_no,auditor,audit_time
+    </sql>
+
+    <select id="findBaseReturnOrderByPage" resultType="com.edc.erp.directly.returnorder.model.out.BaseReturnOrderOut">
+        select
+        odr.id,odr.logistics_no,
+        odr.return_order_no, odr.return_status, odr.store_code,odr.distribution_type, odr.store_name, odr.wrh_code,odr.stock_code, odr.sku_count, odr.return_type,
+        odr.return_notice_order_id, odr.submit_time, odr.org_code, odr.biz_org_code, odr.apply_return_quantity, odr.apply_return_amount,
+        odr.audit_return_quantity, odr.audit_return_amount, odr.actual_return_quantity, odr.actual_return_amount, odr.is_reversal,odr.is_reversal_order,
+        odr.source_return_no,odr.store_area,odr.hd_return_no, odr.remark, odr.create_time, odr.is_delete, odr.updater,
+        odr.creator, odr.update_time,odr.return_order_reason, odr.receive_time,odr.app_remark,odr.delivery_order_no
+        from ord_dir_return odr
+        <where>
+            and odr.is_delete = 0
+            <if test="returnOrderNo != null and returnOrderNo != ''">
+                and odr.return_order_no = #{returnOrderNo,jdbcType=VARCHAR}
+            </if>
+            <if test="returnStatus != null and returnStatus != ''">
+                and odr.return_status = #{returnStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="returnOrderReason !=null and returnOrderReason !=''">
+                and odr.return_order_reason = #{returnOrderReason,jdbcType=VARCHAR}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and odr.store_code = #{storeCode,jdbcType=VARCHAR}
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and odr.store_name like concat('%', #{storeName,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="returnType != null and returnType != ''">
+                and odr.return_type = #{returnType,jdbcType=VARCHAR}
+            </if>
+            <if test="wrhCode != null and wrhCode != ''">
+                and odr.wrh_code = #{wrhCode,jdbcType=VARCHAR}
+            </if>
+            <if test="stockCode != null and stockCode != ''">
+                and odr.stock_code = #{stockCode,jdbcType=VARCHAR}
+            </if>
+            <if test="stockCodeList != null and stockCodeList.size() > 0">
+                and odr.stock_code in
+                <foreach collection="stockCodeList" separator="," open="(" close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="(goodsCode != null and goodsCode != '') or (goodsName != null and goodsName != '') or (orgSorts != null and orgSorts.size > 0)">
+                and exists(select odrd.id from ord_dir_return_detail odrd where odrd.return_order_id = odr.id
+                <if test="goodsCode != null and goodsCode != ''">
+                    and odrd.goods_code=#{goodsCode,jdbcType=VARCHAR}
+                </if>
+                <if test="goodsName != null and goodsName != ''">
+                    and odrd.goods_name like concat('%', #{goodsName}, '%')
+                </if>
+                <if test="orgSorts != null and orgSorts.size > 0">
+                    and exists (select  1 from gc_org_goods_info gogi where odrd.org_goods_id = gogi.id and left(gogi.org_sort,2) in
+                    <foreach collection="orgSorts" item="sort" open="(" close=")" separator=",">
+                        #{sort}
+                    </foreach>
+                    )
+                </if>
+                and odrd.is_delete = 0)
+            </if>
+            <if test="isReversal != null">
+                and odr.is_reversal=#{isReversal,jdbcType=INTEGER}
+            </if>
+            <if test="isReversalOrder != null">
+                and odr.is_reversal_order=#{isReversalOrder,jdbcType=INTEGER}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and odr.biz_org_code=#{bizOrgCode,jdbcType=VARCHAR}
+            </if>
+            <if test="storeArea != null and storeArea != ''">
+                and odr.store_area = #{storeArea,jdbcType=VARCHAR}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and odr.create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and odr.create_time &lt;= #{endTime}
+            </if>
+            <if test="receiveTimeBegin != null">
+                and odr.receive_time &gt;= #{receiveTimeBegin}
+            </if>
+            <if test="receiveTimeEnd != null">
+                and odr.receive_time &lt;= #{receiveTimeEnd}
+            </if>
+            <if test="createMonth != null and createMonth != ''">
+                and date_format(odr.create_time, '%Y-%m') = #{createMonth}
+            </if>
+            <if test="logisticsNo != null and logisticsNo != ''">
+                and odr.logistics_no = #{logisticsNo}
+            </if>
+        </where>
+        order by odr.create_time desc,odr.id desc
+    </select>
+
+    <select id="getInvNum" resultType="java.math.BigDecimal">
+        select
+        business_qty
+        from inv_stock_warehouse
+        where
+        stock_code=#{stockCode,jdbcType=VARCHAR}
+        and goods_code=#{goodsCode,jdbcType=VARCHAR}
+        and warehouse_code=#{wrhCode,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findDirReturnOrder" resultType="com.edc.erp.directly.returnorder.model.out.BaseReturnOrderOut">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        ord_dir_return
+        <where>
+            <if test="returnStatus != null and returnStatus != ''">
+                and return_status = #{returnStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and store_code = #{storeCode,jdbcType=VARCHAR}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and biz_org_code=#{bizOrgCode,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="getInvStoreNum" resultType="java.math.BigDecimal">
+        select
+        business_qty
+        from inv_stock_store
+        where
+        store_code=#{storeCode,jdbcType=VARCHAR}
+        and biz_org_code=#{bizOrgCode,jdbcType=VARCHAR}
+        and goods_code=#{goodsCode,jdbcType=VARCHAR}
+    </select>
+    <select id="findListForAsyncExportByPage"
+            resultType="com.edc.erp.directly.returnorder.model.excel.AsyncExcelReturnOrderDetail">
+        select
+        odr.return_order_no, odr.biz_org_code, odr.wrh_code, odr.stock_code, odr.store_code, odr.store_name, odr.return_status, odr.return_type,
+        odr.return_order_reason, odr.creator, odr.create_time, odr.remark, odrd.line, odrd.goods_code, odrd.apply_return_quantity, odrd.apply_package_quantity,
+        odrd.return_unit_price, odrd.vendor_code, odrd.return_reason, odrd.audit_return_quantity, odrd.audit_package_quantity, odrd.audit_return_amount
+        from ord_dir_return odr
+        inner join ord_dir_return_detail odrd on odrd.return_order_id = odr.id and odrd.is_delete = 0
+        <where>
+            and odr.is_delete = 0
+            <if test="returnOrderNo != null and returnOrderNo != ''">
+                and odr.return_order_no = #{returnOrderNo,jdbcType=VARCHAR}
+            </if>
+            <if test="returnStatus != null and returnStatus != ''">
+                and odr.return_status = #{returnStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="returnOrderReason !=null and returnOrderReason !=''">
+                and odr.return_order_reason = #{returnOrderReason,jdbcType=VARCHAR}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and odr.store_code = #{storeCode,jdbcType=VARCHAR}
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and odr.store_name like concat('%', #{storeName,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="returnType != null and returnType != ''">
+                and odr.return_type = #{returnType,jdbcType=VARCHAR}
+            </if>
+            <if test="wrhCode != null and wrhCode != ''">
+                and odr.wrh_code = #{wrhCode,jdbcType=VARCHAR}
+            </if>
+            <if test="stockCode != null and stockCode != ''">
+                and odr.stock_code = #{stockCode,jdbcType=VARCHAR}
+            </if>
+            <if test="stockCodeList != null and stockCodeList.size() > 0">
+                and odr.stock_code in
+                <foreach collection="stockCodeList" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and odrd.goods_code=#{goodsCode,jdbcType=VARCHAR}
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                and odrd.goods_name like concat('%', #{goodsName}, '%')
+            </if>
+            <if test="isReversal != null">
+                and odr.is_reversal=#{isReversal,jdbcType=INTEGER}
+            </if>
+            <if test="isReversalOrder != null">
+                and odr.is_reversal_order=#{isReversalOrder,jdbcType=INTEGER}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and odr.biz_org_code=#{bizOrgCode,jdbcType=VARCHAR}
+            </if>
+            <if test="storeArea != null and storeArea != ''">
+                and odr.store_area = #{storeArea,jdbcType=VARCHAR}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                and odr.create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and odr.create_time &lt;= #{endTime}
+            </if>
+            <if test="receiveTimeBegin != null">
+                and odr.receive_time &gt;= #{receiveTimeBegin}
+            </if>
+            <if test="receiveTimeEnd != null">
+                and odr.receive_time &lt;= #{receiveTimeEnd}
+            </if>
+            <if test="createMonth != null and createMonth != ''">
+                and date_format(odr.create_time, '%Y-%m') = #{createMonth}
+            </if>
+            <if test="logisticsNo != null and logisticsNo != ''">
+                and odr.logistics_no = #{logisticsNo}
+            </if>
+        </where>
+        order by odr.id desc,odrd.line
+    </select>
+</mapper>

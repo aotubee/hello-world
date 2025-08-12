@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.presale.mapper.OrdDisPresaleOrderDetailMapper">
+    
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id,presale_order_id, goods_code, goods_name, goods_image, bar_code, presale_activity_id,presale_activity_no, package_unit, package_specification, distribution_price,
+         distribution_amount, pay_amount, package_specification_num,package_quantity,goods_quantity,is_gift,creator,create_time,updater, update_time,is_delete
+    </sql>
+
+    <insert id="batchSaveDisPresaleOrderDetailList">
+            INSERT INTO ord_dis_presale_order_detail
+            (presale_order_id,goods_code, goods_name, goods_image, bar_code,presale_activity_id, presale_activity_no, package_unit, package_specification, distribution_price,
+        distribution_amount, pay_amount, package_specification_num,package_quantity,goods_quantity,is_gift,creator,create_time,updater, update_time,is_delete)
+            values
+            <foreach collection="orderDetailList" item="item" separator=",">
+                (
+                #{item.presaleOrderId},#{item.goodsCode},#{item.goodsName},#{item.goodsImage},#{item.barCode},#{item.presaleActivityId},#{item.presaleActivityNo},
+                #{item.packageUnit},#{item.packageSpecification},#{item.distributionPrice},#{item.distributionAmount},
+                #{item.payAmount},#{item.packageSpecificationNum},#{item.packageQuantity},#{item.goodsQuantity},#{item.isGift}, #{item.creator},
+                 #{item.createTime},#{item.updater},#{item.updateTime},#{item.isDelete}
+                )
+            </foreach>
+    </insert>
+    <select id="findListByOrderId" resultType="com.edc.erp.presale.entity.OrdDisPresaleOrderDetail">
+        select <include refid="Base_Column_List"/> from ord_dis_presale_order_detail where presale_order_id = #{id}
+    </select>
+    <select id="sumBasePackageQuantityByActivityIdAndGoodsCode" resultType="java.math.BigDecimal">
+        select sum(pd.package_quantity) from ord_dis_presale_order_detail pd inner join ord_dis_presale_order p on p.id = pd.presale_order_id
+        where pd.presale_activity_id = #{presaleActivityId} and pd.goods_code = #{goodsCode} and p.store_code = #{storeCode} and pd.is_gift = 0 and p.status in ('paying','paid','waitPayment')
+        and p.is_delete = 0 and pd.is_delete = 0
+    </select>
+
+</mapper>

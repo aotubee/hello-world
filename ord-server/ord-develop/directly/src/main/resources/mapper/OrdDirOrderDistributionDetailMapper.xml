@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.distribution.mapper.OrdDirOrderDistributionDetailMapper">
+
+    <!-- 结果集 -->
+    <resultMap id="resultMap" type="com.edc.erp.directly.distribution.entity.OrdDirOrderDistributionDetail">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="distributionOrderId" column="distribution_order_id" jdbcType="BIGINT"/>
+        <result property="distributionQuantity" column="distribution_quantity" jdbcType="DECIMAL"/>
+        <result property="packingNumber" column="packing_number" jdbcType="DECIMAL"/>
+        <result property="goodsCode" column="goods_code" jdbcType="VARCHAR"/>
+        <result property="storeCode" column="store_code" jdbcType="VARCHAR"/>
+        <result property="distributionAmount" column="distribution_amount" jdbcType="DECIMAL"/>
+        <result property="goodsName" column="goods_name" jdbcType="VARCHAR"/>
+        <result property="originalPrice" column="original_price" jdbcType="DECIMAL"/>
+        <result property="distributionSpecification" column="distribution_specification" jdbcType="VARCHAR"/>
+        <result property="wrhInvQty" column="wrh_inv_qty" jdbcType="DECIMAL"/>
+        <result property="storeName" column="store_name" jdbcType="VARCHAR"/>
+        <result property="storeArea" column="store_area" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id
+        , distribution_order_id, distribution_quantity, packing_number, goods_code, store_code, distribution_amount,
+        goods_name, original_price, distribution_specification, wrh_inv_qty, store_name, store_area,creator, create_time, updater, update_time, is_delete
+    </sql>
+
+    <!-- 别名 -->
+    <sql id="Base_Column_One">
+        ododd.id,
+        ododd.distribution_order_id,
+        ododd.distribution_quantity,
+        ododd.packing_number,
+        ododd.goods_code,
+        ododd.store_code,
+        ododd.distribution_amount,
+        ododd.goods_name,
+        ododd.original_price,
+        ododd.distribution_specification,
+        ododd.wrh_inv_qty,
+        ododd.store_name,
+        ododd.creator,
+        ododd.create_time,
+        ododd.updater,
+        ododd.update_time,
+        ododd.is_delete
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Base_Where_Clause">
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="distributionOrderId != null">
+                and distribution_order_id = #{distributionOrderId}
+            </if>
+            <if test="distributionQuantity != null">
+                and distribution_quantity = #{distributionQuantity}
+            </if>
+            <if test="packingNumber != null">
+                and packing_number = #{packingNumber}
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and goods_code = #{goodsCode}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and store_code = #{storeCode}
+            </if>
+            <if test="distributionAmount != null">
+                and distribution_amount = #{distributionAmount}
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                and goods_name = #{goodsName}
+            </if>
+            <if test="originalPrice != null">
+                and original_price = #{originalPrice}
+            </if>
+            <if test="distributionSpecification != null and distributionSpecification != ''">
+                and distribution_specification = #{distributionSpecification}
+            </if>
+            <if test="wrhInvQty != null">
+                and wrh_inv_qty = #{wrhInvQty}
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and store_name = #{storeName}
+            </if>
+            <if test="storeArea != null and storeArea != ''">
+                and store_area = #{storeArea}
+            </if>
+            <if test="creator != null and creator != ''">
+                and creator = #{creator}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updater != null and updater != ''">
+                and updater = #{updater}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="isDelete != null">
+                and is_delete = #{isDelete}
+            </if>
+        </where>
+    </sql>
+    <update id="batchUpdateDistributionQuantity">
+        <foreach collection="detailList" item="item" index="index" separator=";">
+            update ord_dir_order_distribution_detail
+            <set>
+                <if test="item.packingNumber != null">
+                    packing_number = #{item.packingNumber},
+                </if>
+                <if test="item.distributionQuantity != null">
+                    distribution_quantity = #{item.distributionQuantity},
+                </if>
+                <if test="item.distributionAmount != null">
+                    distribution_amount = #{item.distributionAmount},
+                </if>
+                <if test="item.updater != null and item.updater != ''">
+                    updater = #{item.updater},
+                </if>
+                <if test="item.updateTime != null">
+                    update_time =  #{item.updateTime},
+                </if>
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+    <update id="batchDelete">
+        delete from ord_dir_order_distribution_detail where id in
+        <foreach collection="detailList" item="item" index="index" open="(" close=")" separator=",">
+          #{item.id}
+        </foreach>
+    </update>
+    <!-- 统计分货单总数量  -->
+    <select id="sumTotalDistributionQuantity" resultType="java.math.BigDecimal">
+        SELECT
+            SUM(distribution_quantity)
+        FROM
+            ord_dir_order_distribution_detail
+        <where>
+            is_delete = 0
+            <if test="distributionOrderId != null">
+                and distribution_order_id = #{distributionOrderId}
+            </if>
+
+        </where>
+    </select>
+
+    <!-- 查询直营分货门店商品 -->
+    <select id="findByPage" resultType="com.edc.erp.directly.distribution.model.out.OrdDirOrderDistributionDetailOut">
+        SELECT
+            <include refid="Base_Column_One" />,
+            odod.distribution_order_no
+        FROM
+            ord_dir_order_distribution_detail ododd
+        INNER JOIN
+            ord_dir_order_distribution odod on odod.id = ododd.distribution_order_id and odod.is_delete = 0
+        <where>
+            ododd.is_delete = 0
+            <if test="distributionOrderId != null">
+                and ododd.distribution_order_id = #{distributionOrderId}
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and ododd.goods_code = #{goodsCode}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and ododd.store_code = #{storeCode}
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                and ododd.goods_name LIKE CONCAT('%',#{goodsName},'%')
+            </if>
+            <if test="storeName != null and storeName != ''">
+                and ododd.store_name LIKE CONCAT('%',#{storeName},'%')
+            </if>
+            <if test="distributionOrderNo != null and distributionOrderNo != ''">
+                and odod.distribution_order_no = #{distributionOrderNo}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and odod.biz_org_code = #{bizOrgCode}
+            </if>
+        </where>
+    </select>
+
+    <!--  批量保存明细  -->
+    <insert id="batchSave">
+        insert into ord_dir_order_distribution_detail
+        (distribution_order_id, distribution_quantity, packing_number, goods_code, store_code,
+        distribution_amount, goods_name, original_price, distribution_specification, wrh_inv_qty,
+        store_name, store_area,creator, create_time, updater, update_time)
+        values
+        <foreach collection="details" item="item" separator=",">
+            (#{item.distributionOrderId,jdbcType=BIGINT}, #{item.distributionQuantity,jdbcType=DECIMAL},
+            #{item.packingNumber,jdbcType=DECIMAL}, #{item.goodsCode,jdbcType=VARCHAR}, #{item.storeCode,jdbcType=VARCHAR},
+            #{item.distributionAmount,jdbcType=DECIMAL}, #{item.goodsName,jdbcType=VARCHAR},
+            #{item.originalPrice,jdbcType=DECIMAL}, #{item.distributionSpecification,jdbcType=VARCHAR},
+            #{item.wrhInvQty,jdbcType=DECIMAL}, #{item.storeName,jdbcType=VARCHAR}, #{item.storeArea}, #{item.creator,jdbcType=VARCHAR},
+            #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+</mapper>

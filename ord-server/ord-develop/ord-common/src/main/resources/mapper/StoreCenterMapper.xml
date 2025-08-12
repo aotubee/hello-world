@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.common.mapper.StoreCenterMapper">
+
+<select id="getNameByCode" resultType="java.lang.String">
+    select
+        area_name
+    from
+        sc_store_area
+    where
+        is_delete=0
+    and biz_org_code =#{bizOrgCode,jdbcType=VARCHAR}
+    and area_code=#{storeArea,jdbcType=VARCHAR}
+
+    </select>
+    <select id="getIsIndependentAccountingByCode" resultType="java.lang.Integer">
+        select
+            is_independent_accounting
+        from
+        csr_client_wholesale_config
+        where client_code = #{clientCode} and biz_org_code = #{bizOrgCode,jdbcType=VARCHAR} and is_delete = 0 limit 1
+    </select>
+    <select id="findEnableAppStoreCodeListByPropertyAndOrg" resultType="java.lang.String">
+        select ssi.erp_store_code from
+        sc_store_info ssi
+        where ssi.store_property = #{storeProperty} and ssi.biz_org_code = #{bizOrgCode} and ssi.is_delete = 0
+        and exists (
+            select store_code from opt_app_user oau where oau.store_code = ssi.erp_store_code and oau.biz_org_code = ssi.biz_org_code and oau.is_enable = 1  and oau.is_delete = 0
+            )
+    </select>
+    <select id="getIsCanEditPrice" resultType="java.lang.Integer">
+        select
+            is_can_edit_price
+        from
+            csr_client_wholesale_config
+        where client_code = #{clientCode} and biz_org_code = #{bizOrgCode,jdbcType=VARCHAR} and is_delete = 0 limit 1
+    </select>
+    <select id="getClientInfoByCode" resultType="com.edc.erp.common.model.entity.ClientInfo">
+        select
+            id, client_code, client_name, client_type, client_address, client_id_number, contact_person, contact_phone, email, financial_code, is_delete, is_enable,
+            distribution_way, org_code, biz_org_code
+        from
+            csr_client_info
+        where client_code = #{clientCode} and biz_org_code = #{bizOrgCode,jdbcType=VARCHAR} and is_delete = 0 and is_enable = 0 limit 1
+    </select>
+</mapper>

@@ -1,42 +1,10 @@
 pipeline {
     agent any
-    options {
-        timeout(time: 10, unit: 'MINUTES')  // 添加超时控制（[[18]](#__18)）
+    environment {
+        app = "ord-server"  // 替换为您的应用名称
     }
     stages {
-        stage('环境准备') {  // 新增前置检查阶段
-            steps {
-                script {
-                    echo "===== 开始执行时间：${new Date()} ====="
-                    echo "当前工作目录：${env.WORKSPACE}"
-                }
-            }
-        }
-        
-        stage('测试SSH基础连接') {  // 分解为独立验证阶段
-            steps {
-                sshPublisher(
-                    publishers: [
-                        sshPublisherDesc(
-                            configName: 'node-84',
-                            verbose: true,  // 开启详细日志（[[20]](#__20)）
-                            transfers: [
-                                sshTransfer(
-                                    execCommand: '''
-                                        echo "### 连接基本信息 ###"
-                                        echo "用户：$(whoami)"
-                                        echo "主机名：$(hostname)"
-                                        echo "内核版本：$(uname -a)"
-                                    '''
-                                )
-                            ]
-                        )
-                    ]
-                )
-            }
-        }
-
-        stage('验证文件操作') {  // 新增文件操作验证阶段
+        stage('Deploy JAR') {
             steps {
                 sshPublisher(
                     publishers: [
@@ -44,7 +12,33 @@ pipeline {
                             configName: 'node-84',
                             transfers: [
                                 sshTransfer(
-                                    execCommand: ' echo "20250801" > /tmp/test.txt;cat /tmp/test.txt '
+                                    sourceFiles: "${app}/target/*.jar",
+                                    removePrefix: "${app}/target/",
+                                    remoteDirectory: "${app}",
+                                    execCommand: """
+                                        # 查找最新JAR文件
+                                        start_jar=\$(find /home/admin/app/${app}/*.jar | xargs ls -td | grep ${app}.*.jar | head -n 1)
+                                        
+                                        # 备份当前JAR
+                                        cp -a \$start_jar \$start_jar-\$(date +%Y%m%d%H%M%S)
+                                        
+                                        # 停止正在运行的服务
+                                        NowPid=\$(ps -ef|grep -v grep|grep jar|grep ${app}|awk '{print \$2}')
+                                        if [ -n "\$NowPid" ]; then
+                                            kill -9 \$NowPid
+                                        fi
+                                        
+                                        # 准备日志目录
+                                        log_dir="/tmp/log/${app}"
+                                        mkdir -p \$log_dir
+                                        touch \$log_dir/${app}.log
+                                        
+                                        # 启动新服务
+                                        nohup java -Xmx512m -Xms512m -Djava.security.egd=file:/dev/./urandom \\
+                                                   -jar \$start_jar \\
+                                                   --spring.profiles.active=uat \\
+                                                   >> \$log_dir/${app}.log 2>&1 &
+                                    """
                                 )
                             ]
                         )
@@ -54,4 +48,3 @@ pipeline {
         }
     }
 }
-

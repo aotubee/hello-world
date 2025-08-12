@@ -1,0 +1,87 @@
+package com.edc.erp.directly.distribution.entity;
+
+
+import java.util.Date;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+
+
+/**
+ * 直营订单追踪表(OrdDirOrderTrack)实体类
+ *
+ * @author fxw
+ * @since 2022-11-18 18:46:57
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Table(name = "ord_dir_order_track")
+@ApiModel(value = "OrdDirOrderTrack", description = "直营订单追踪表")
+public class OrdDirOrderTrack implements Serializable{
+    
+    private static final long serialVersionUID = 1L;
+    
+    /** 主键 */
+    @ApiModelProperty(name = "id", value = "主键")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    /** 门店代码 */
+    @ApiModelProperty(name = "storeCode", value = "门店代码")
+    private String storeCode;
+
+    /** 订单编号 */
+    @ApiModelProperty(name = "orderNo", value = "订单编号")
+    private String orderNo;
+
+    /** 订单状态 */
+    @ApiModelProperty(name = "orderStatus", value = "订单状态")
+    private String orderStatus;
+
+    /** 跟踪日志 */
+    @ApiModelProperty(name = "trackLog", value = "跟踪日志")
+    private String trackLog;
+
+    /** 业务类型 */
+    @ApiModelProperty(name = "businessType", value = "业务类型")
+    private String businessType;
+
+    /** 备注 */
+    @ApiModelProperty(name = "remark", value = "备注")
+    private String remark;
+
+    /** 公司代码 */
+    @ApiModelProperty(name = "orgCode", value = "公司代码")
+    private String orgCode;
+
+    /** 业务组织代码 */
+    @ApiModelProperty(name = "bizOrgCode", value = "业务组织代码")
+    private String bizOrgCode;
+
+    /** 部门id */
+    @ApiModelProperty(name = "deptId", value = "部门id")
+    private Integer deptId;
+
+    /** 创建人 */
+    @ApiModelProperty(name = "creator", value = "创建人")
+    private String creator;
+
+    /** 创建时间 */
+    @ApiModelProperty(name = "createTime", value = "创建时间")
+    private LocalDateTime createTime;
+
+}

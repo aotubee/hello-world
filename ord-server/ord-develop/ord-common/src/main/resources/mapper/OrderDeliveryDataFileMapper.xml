@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.common.mapper.OrderDeliveryDataFileMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.common.entity.OrdDeliveryDataFile">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
+        <result property="fileId" column="file_id" jdbcType="VARCHAR"/>
+        <result property="businessType" column="business_type" jdbcType="VARCHAR"/>
+        <result property="fileType" column="file_type" jdbcType="VARCHAR"/>
+        <result property="execStatus" column="exec_status" jdbcType="VARCHAR"/>
+        <result property="beginTime" column="begin_time" jdbcType="TIMESTAMP"/>
+        <result property="overTime" column="over_time" jdbcType="TIMESTAMP"/>
+        <result property="errFileId" column="err_file_id" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, file_name, file_id, business_type, file_type, exec_status, begin_time, over_time, err_file_id, remark, org_code ,biz_org_code, creator, create_time, updater, update_time, is_delete
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                is_delete=0
+                <if test="id != null">
+                    and id = #{id}
+                </if>
+                <if test="businessType != null and businessType != ''">
+                    and business_type = #{businessType}
+                </if>
+                <if test="fileType != null and fileType != ''">
+                    and file_type = #{fileType}
+                </if>
+                <if test="execStatus != null and execStatus != ''">
+                    and exec_status = #{execStatus}
+                </if>
+                <if test="startTime != null">
+                    <![CDATA[and begin_time >= #{startTime}]]>
+                </if>
+                <if test="endTime != null">
+                    <![CDATA[and begin_time <= #{endTime}]]>
+                </if>
+                <if test="bizOrgCode != null and bizOrgCode != ''">
+                    and biz_org_code = #{bizOrgCode}
+                </if>
+            </where>
+     </sql>
+
+    <select id="findByPage" resultType="com.edc.erp.common.model.out.datafile.OrdDeliveryDataFileOut" parameterType="com.edc.erp.common.model.in.datafile.OrdDeliveryDataFileIn">
+        select <include refid="Base_Column_List"/>
+        from ord_delivery_data_file
+        <include refid="Base_Where_Clause"/>
+        order by id desc
+    </select>
+</mapper>

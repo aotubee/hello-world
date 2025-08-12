@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.distribution.mapper.OrdDisOrderTrackMapper">
+    <!-- 结果集 -->
+    <resultMap id="resultMap" type="com.edc.erp.distribution.entity.OrdDisOrderTrack">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="storeCode" column="store_code" jdbcType="VARCHAR"/>
+        <result property="orderNo" column="order_no" jdbcType="VARCHAR"/>
+        <result property="orderStatus" column="order_status" jdbcType="VARCHAR"/>
+        <result property="trackLog" column="track_log" jdbcType="VARCHAR"/>
+        <result property="businessType" column="business_type" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+        <result property="deptId" column="dept_id" jdbcType="INTEGER"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id,
+        store_code,
+        order_no,
+        order_status,
+        track_log,
+        business_type,
+        remark,
+        org_code,
+        biz_org_code,
+        dept_id,
+        creator,
+        create_time
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Base_Where_Clause">
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and store_code = #{storeCode}
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                and order_no = #{orderNo}
+            </if>
+            <if test="orderStatus != null and orderStatus != ''">
+                and order_status = #{orderStatus}
+            </if>
+            <if test="trackLog != null and trackLog != ''">
+                and track_log = #{trackLog}
+            </if>
+            <if test="businessType != null and businessType != ''">
+                and business_type = #{businessType}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="orgCode != null and orgCode != ''">
+                and org_code = #{orgCode}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and biz_org_code = #{bizOrgCode}
+            </if>
+            <if test="deptId != null">
+                and dept_id = #{deptId}
+            </if>
+            <if test="creator != null and creator != ''">
+                and creator = #{creator}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </sql>
+
+    <select id="findOrderTrackOutListByParameters" resultType="com.edc.erp.distribution.model.out.DisOrderTrackOut">
+        select <include refid="Base_Column_List"/>
+        from ord_dis_order_track
+        where order_no =#{orderNo,jdbcType=VARCHAR}
+        and store_code = #{storeCode,jdbcType=VARCHAR}
+        and business_type = #{businessType,jdbcType=VARCHAR}
+        order by id desc
+    </select>
+</mapper>

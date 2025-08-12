@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.disdifferenceorder.mapper.OrdDisDelivDifferenceDetailMapper">
+
+    <!-- 结果集 -->
+    <resultMap id="resultMap" type="com.edc.erp.disdifferenceorder.entity.OrdDisDelivDifferenceDetail">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="differenceOrderId" column="difference_order_id" jdbcType="INTEGER"/>
+        <result property="goodsCode" column="goods_code" jdbcType="VARCHAR"/>
+        <result property="barCode" column="bar_code" jdbcType="VARCHAR"/>
+        <result property="goodsName" column="goods_name" jdbcType="VARCHAR"/>
+        <result property="goodsImage" column="goods_image" jdbcType="VARCHAR"/>
+        <result property="line" column="line" jdbcType="INTEGER"/>
+        <result property="deliveryQuantity" column="delivery_quantity" jdbcType="DECIMAL"/>
+        <result property="deliveryPackageQuantity" column="delivery_package_quantity" jdbcType="DECIMAL"/>
+        <result property="arrivalQuantity" column="arrival_quantity" jdbcType="DECIMAL"/>
+        <result property="arrivalPackageQuantity" column="arrival_package_quantity" jdbcType="DECIMAL"/>
+        <result property="distributionUnitPrice" column="distribution_unit_price" jdbcType="DECIMAL"/>
+        <result property="applyDifferenceQuantity" column="apply_difference_quantity" jdbcType="DECIMAL"/>
+        <result property="applyDifferenceAmount" column="apply_difference_amount" jdbcType="DECIMAL"/>
+        <result property="approvalDifferenceQuantity" column="approval_difference_quantity" jdbcType="DECIMAL"/>
+        <result property="differenceAmount" column="difference_amount" jdbcType="DECIMAL"/>
+        <result property="distributionSpecification" column="distribution_specification" jdbcType="VARCHAR"/>
+        <result property="distributionSpecificationUnit" column="distribution_specification_unit" jdbcType="VARCHAR"/>
+        <result property="goodsType" column="goods_type" jdbcType="VARCHAR"/>
+        <result property="vendorCode" column="vendor_code" jdbcType="VARCHAR"/>
+        <result property="approvalDifferenceExceptTaxAmount" column="approval_difference_except_tax_amount"
+                jdbcType="DECIMAL"/>
+        <result property="approvalDifferenceTaxAmount" column="approval_difference_tax_amount" jdbcType="DECIMAL"/>
+        <result property="wrhPrice" column="wrh_price" jdbcType="DECIMAL"/>
+        <result property="wrhCostAmount" column="wrh_cost_amount" jdbcType="DECIMAL"/>
+        <result property="wrhExceptTaxAmount" column="wrh_except_tax_amount" jdbcType="DECIMAL"/>
+        <result property="wrhTaxAmount" column="wrh_tax_amount" jdbcType="DECIMAL"/>
+        <result property="storeStockPrice" column="store_stock_price" jdbcType="DECIMAL"/>
+        <result property="storeCostAmount" column="store_cost_amount" jdbcType="DECIMAL"/>
+        <result property="storeExceptTaxAmount" column="store_except_tax_amount" jdbcType="DECIMAL"/>
+        <result property="storeTaxAmount" column="store_tax_amount" jdbcType="DECIMAL"/>
+        <result property="sellTax" column="sell_tax" jdbcType="DECIMAL"/>
+        <result property="distributionPrice" column="distribution_price" jdbcType="DECIMAL"/>
+        <result property="isGift" column="is_gift" jdbcType="INTEGER"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="invoiceType" column="invoice_type" jdbcType="VARCHAR"/>
+        <result property="expiry" column="expiry" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, difference_order_id, goods_code, bar_code, goods_name, goods_image, line, delivery_quantity, delivery_package_quantity,
+         arrival_quantity, arrival_package_quantity, distribution_unit_price, apply_difference_quantity, apply_difference_amount,
+         approval_difference_quantity, difference_amount, distribution_specification, distribution_specification_unit,vendor_code,
+         goods_type, approval_difference_except_tax_amount, approval_difference_tax_amount, wrh_price, wrh_cost_amount,
+         wrh_except_tax_amount, wrh_tax_amount, store_stock_price, store_cost_amount, store_except_tax_amount, store_tax_amount,
+         sell_tax, distribution_price, is_gift, creator, create_time, updater, update_time, is_delete,invoice_type,expiry
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Base_Where_Clause">
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="differenceOrderId != null">
+                and difference_order_id = #{differenceOrderId}
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and goods_code = #{goodsCode}
+            </if>
+            <if test="barCode != null and barCode != ''">
+                and bar_code = #{barCode}
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                and goods_name = #{goodsName}
+            </if>
+            <if test="goodsImage != null and goodsImage != ''">
+                and goods_image = #{goodsImage}
+            </if>
+            <if test="line != null">
+                and line = #{line}
+            </if>
+            <if test="deliveryQuantity != null">
+                and delivery_quantity = #{deliveryQuantity}
+            </if>
+            <if test="deliveryPackageQuantity != null">
+                and delivery_package_quantity = #{deliveryPackageQuantity}
+            </if>
+            <if test="arrivalQuantity != null">
+                and arrival_quantity = #{arrivalQuantity}
+            </if>
+            <if test="arrivalPackageQuantity != null">
+                and arrival_package_quantity = #{arrivalPackageQuantity}
+            </if>
+            <if test="distributionUnitPrice != null">
+                and distribution_unit_price = #{distributionUnitPrice}
+            </if>
+            <if test="applyDifferenceQuantity != null">
+                and apply_difference_quantity = #{applyDifferenceQuantity}
+            </if>
+            <if test="applyDifferenceAmount != null">
+                and apply_difference_amount = #{applyDifferenceAmount}
+            </if>
+            <if test="approvalDifferenceQuantity != null">
+                and approval_difference_quantity = #{approvalDifferenceQuantity}
+            </if>
+            <if test="differenceAmount != null">
+                and difference_amount = #{differenceAmount}
+            </if>
+            <if test="distributionSpecification != null and distributionSpecification != ''">
+                and distribution_specification = #{distributionSpecification}
+            </if>
+            <if test="distributionSpecificationUnit != null and distributionSpecificationUnit != ''">
+                and distribution_specification_unit = #{distributionSpecificationUnit}
+            </if>
+            <if test="goodsType != null and goodsType != ''">
+                and goods_type = #{goodsType}
+            </if>
+            <if test="vendorCode != null and vendorCode != ''">
+                and vendor_code = #{vendorCode}
+            </if>
+            <if test="approvalDifferenceExceptTaxAmount != null">
+                and approval_difference_except_tax_amount = #{approvalDifferenceExceptTaxAmount}
+            </if>
+            <if test="approvalDifferenceTaxAmount != null">
+                and approval_difference_tax_amount = #{approvalDifferenceTaxAmount}
+            </if>
+            <if test="wrhPrice != null">
+                and wrh_price = #{wrhPrice}
+            </if>
+            <if test="wrhCostAmount != null">
+                and wrh_cost_amount = #{wrhCostAmount}
+            </if>
+            <if test="wrhExceptTaxAmount != null">
+                and wrh_except_tax_amount = #{wrhExceptTaxAmount}
+            </if>
+            <if test="wrhTaxAmount != null">
+                and wrh_tax_amount = #{wrhTaxAmount}
+            </if>
+            <if test="storeStockPrice != null">
+                and store_stock_price = #{storeStockPrice}
+            </if>
+            <if test="storeCostAmount != null">
+                and store_cost_amount = #{storeCostAmount}
+            </if>
+            <if test="storeExceptTaxAmount != null">
+                and store_except_tax_amount = #{storeExceptTaxAmount}
+            </if>
+            <if test="storeTaxAmount != null">
+                and store_tax_amount = #{storeTaxAmount}
+            </if>
+            <if test="sellTax != null">
+                and sell_tax = #{sellTax}
+            </if>
+            <if test="distributionPrice != null">
+                and distribution_price = #{distributionPrice}
+            </if>
+            <if test="isGift != null">
+                and is_gift = #{isGift}
+            </if>
+            <if test="creator != null and creator != ''">
+                and creator = #{creator}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updater != null and updater != ''">
+                and updater = #{updater}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="isDelete != null">
+                and is_delete = #{isDelete}
+            </if>
+            <if test="invoiceType != null and invoiceType != ''">
+                and invoice_type = #{invoiceType}
+            </if>
+        </where>
+    </sql>
+    <select id="findDifferenceOrderDtlListByPage"
+            resultType="com.edc.erp.disdifferenceorder.model.out.OrdDisDelivDifferenceDetailOut">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dis_deliv_difference_detail
+        <where>
+            difference_order_id=#{diffOrderId}
+            <if test="goodsCode != null and goodsCode != ''">
+                and goods_code = #{goodsCode}
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                and goods_name like concat('%',#{goodsName},'%')
+            </if>
+        </where>
+    </select>
+    <insert id="batchSave">
+        insert into ord_dis_deliv_difference_detail
+        (id, difference_order_id, goods_code, bar_code, goods_name, goods_image, line, delivery_quantity,
+        delivery_package_quantity, arrival_quantity, arrival_package_quantity, distribution_unit_price,
+        apply_difference_quantity, apply_difference_amount, approval_difference_quantity,
+        difference_amount, distribution_specification, distribution_specification_unit,vendor_code,
+        goods_type, approval_difference_except_tax_amount, approval_difference_tax_amount,
+        wrh_price, wrh_cost_amount, wrh_except_tax_amount, wrh_tax_amount, store_stock_price,
+        store_cost_amount, store_except_tax_amount, store_tax_amount, sell_tax, distribution_price,
+        is_gift, creator, create_time, updater, update_time, is_delete,invoice_type,expiry)
+        values
+        <foreach collection="disDelivDifferenceDetails" item="item" separator=",">
+            (#{item.id,jdbcType=INTEGER}, #{item.differenceOrderId,jdbcType=INTEGER}, #{item.goodsCode,jdbcType=VARCHAR},
+            #{item.barCode,jdbcType=VARCHAR}, #{item.goodsName,jdbcType=VARCHAR}, #{item.goodsImage,jdbcType=VARCHAR},
+            #{item.line,jdbcType=INTEGER}, #{item.deliveryQuantity,jdbcType=DECIMAL}, #{item.deliveryPackageQuantity,jdbcType=DECIMAL},
+            #{item.arrivalQuantity,jdbcType=DECIMAL}, #{item.arrivalPackageQuantity,jdbcType=DECIMAL},
+            #{item.distributionUnitPrice,jdbcType=DECIMAL}, #{item.applyDifferenceQuantity,jdbcType=DECIMAL},
+            #{item.applyDifferenceAmount,jdbcType=DECIMAL}, #{item.approvalDifferenceQuantity,jdbcType=DECIMAL},
+            #{item.differenceAmount,jdbcType=DECIMAL}, #{item.distributionSpecification,jdbcType=VARCHAR},
+            #{item.distributionSpecificationUnit,jdbcType=VARCHAR}, #{item.vendorCode,jdbcType=VARCHAR},#{item.goodsType,jdbcType=VARCHAR},
+            #{item.approvalDifferenceExceptTaxAmount,jdbcType=DECIMAL}, #{item.approvalDifferenceTaxAmount,jdbcType=DECIMAL},
+            #{item.wrhPrice,jdbcType=DECIMAL}, #{item.wrhCostAmount,jdbcType=DECIMAL}, #{item.wrhExceptTaxAmount,jdbcType=DECIMAL},
+            #{item.wrhTaxAmount,jdbcType=DECIMAL}, #{item.storeStockPrice,jdbcType=DECIMAL},
+            #{item.storeCostAmount,jdbcType=DECIMAL}, #{item.storeExceptTaxAmount,jdbcType=DECIMAL},
+            #{item.storeTaxAmount,jdbcType=DECIMAL}, #{item.sellTax,jdbcType=DECIMAL}, #{item.distributionPrice,jdbcType=DECIMAL},
+            #{item.isGift,jdbcType=TINYINT}, #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.isDelete,jdbcType=TINYINT},
+            #{item.invoiceType},#{item.expiry}
+            )
+        </foreach>
+    </insert>
+
+    <update id="batchUpdate">
+        <foreach collection="ordDisDelivDifferenceDetails" item="item" index="index" separator=";">
+            update ord_dis_deliv_difference_detail
+           <set>
+               <if test="item.arrivalQuantity != null">
+                   arrival_quantity = #{item.arrivalQuantity,jdbcType=DECIMAL},
+               </if>
+               <if test="item.arrivalPackageQuantity != null">
+                   arrival_package_quantity = #{item.arrivalPackageQuantity,jdbcType=DECIMAL},
+               </if>
+               <if test="item.distributionUnitPrice != null">
+                   distribution_unit_price = #{item.distributionUnitPrice,jdbcType=DECIMAL},
+               </if>
+               <if test="item.applyDifferenceQuantity != null">
+                   apply_difference_quantity = #{item.applyDifferenceQuantity,jdbcType=DECIMAL},
+               </if>
+               <if test="item.applyDifferenceAmount != null">
+                   apply_difference_amount = #{item.applyDifferenceAmount,jdbcType=DECIMAL},
+               </if>
+               <if test="item.approvalDifferenceQuantity != null">
+                   approval_difference_quantity = #{item.approvalDifferenceQuantity,jdbcType=DECIMAL},
+               </if>
+               <if test="item.differenceAmount != null">
+                   difference_amount = #{item.differenceAmount,jdbcType=DECIMAL},
+               </if>
+               <if test="item.distributionSpecification != null">
+                   distribution_specification = #{item.distributionSpecification,jdbcType=VARCHAR},
+               </if>
+               <if test="item.distributionSpecificationUnit != null">
+                   distribution_specification_unit = #{item.distributionSpecificationUnit,jdbcType=VARCHAR},
+               </if>
+               <if test="item.vendorCode != null">
+                   vendor_code = #{item.vendorCode,jdbcType=VARCHAR},
+               </if>
+               <if test="item.goodsType != null">
+                   goods_type = #{item.goodsType,jdbcType=VARCHAR},
+               </if>
+               <if test="item.approvalDifferenceExceptTaxAmount != null">
+                   approval_difference_except_tax_amount = #{item.approvalDifferenceExceptTaxAmount,jdbcType=DECIMAL},
+               </if>
+               <if test="item.approvalDifferenceTaxAmount != null">
+                   approval_difference_tax_amount = #{item.approvalDifferenceTaxAmount,jdbcType=DECIMAL},
+               </if>
+               <if test="item.wrhPrice != null">
+                   wrh_price = #{item.wrhPrice,jdbcType=DECIMAL},
+               </if>
+               <if test="item.wrhCostAmount != null">
+                   wrh_cost_amount = #{item.wrhCostAmount,jdbcType=DECIMAL},
+               </if>
+               <if test="item.wrhExceptTaxAmount != null">
+                   wrh_except_tax_amount = #{item.wrhExceptTaxAmount,jdbcType=DECIMAL},
+               </if>
+               <if test="item.wrhTaxAmount != null">
+                   wrh_tax_amount = #{item.wrhTaxAmount,jdbcType=DECIMAL},
+               </if>
+               <if test="item.storeStockPrice != null">
+                   store_stock_price = #{item.storeStockPrice,jdbcType=DECIMAL},
+               </if>
+               <if test="item.storeCostAmount != null">
+                   store_cost_amount = #{item.storeCostAmount,jdbcType=DECIMAL},
+               </if>
+               <if test="item.storeExceptTaxAmount != null">
+                   store_except_tax_amount = #{item.storeExceptTaxAmount,jdbcType=DECIMAL},
+               </if>
+               <if test="item.storeTaxAmount != null">
+                   store_tax_amount = #{item.storeTaxAmount,jdbcType=DECIMAL},
+               </if>
+               <if test="item.sellTax != null">
+                   sell_tax = #{item.sellTax,jdbcType=DECIMAL},
+               </if>
+               <if test="item.distributionPrice != null">
+                   distribution_price = #{item.distributionPrice,jdbcType=DECIMAL},
+               </if>
+               <if test="item.isGift != null">
+                   is_gift = #{item.isGift,jdbcType=TINYINT},
+               </if>
+               <if test="item.updater != null">
+                   updater = #{item.updater,jdbcType=VARCHAR},
+               </if>
+               <if test="item.invoiceType != null and item.invoiceType != ''">
+                   invoice_type = #{item.invoiceType,jdbcType=VARCHAR},
+               </if>
+               <if test="item.expiry != null and item.expiry != ''">
+                   expiry = #{item.expiry,jdbcType=VARCHAR},
+               </if>
+                update_time = now()
+           </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+    <select id="getGoodsSize" resultType="java.lang.Integer">
+        select count(*) from ord_dis_deliv_difference_detail where difference_order_id = #{id} and is_delete=0
+    </select>
+
+    <select id="findDifferenceOrderDtlById"
+            resultType="com.edc.erp.disdifferenceorder.model.out.OrdDisDelivDifferenceDetailOut">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dis_deliv_difference_detail
+        where
+        difference_order_id=#{diffOrderId}
+    </select>
+</mapper>

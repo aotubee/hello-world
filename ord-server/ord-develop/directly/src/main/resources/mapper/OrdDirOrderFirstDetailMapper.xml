@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.dirfirstorder.mapper.OrdDirOrderFirstDetailMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.directly.dirfirstorder.entity.OrdDirOrderFirstDetail">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="firstOrderId" column="first_order_id" jdbcType="BIGINT"/>
+        <result property="goodsCode" column="goods_code" jdbcType="VARCHAR"/>
+        <result property="goodsName" column="goods_name" jdbcType="VARCHAR"/>
+        <result property="num" column="num" jdbcType="INTEGER"/>
+        <result property="amount" column="amount" jdbcType="DECIMAL"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, first_order_id, goods_code, goods_name, num, amount, creator, create_time, updater, update_time, is_delete    
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="firstOrderId != null">
+                    and first_order_id = #{firstOrderId}
+                </if>
+                    <if test="goodsCode != null and goodsCode != ''">
+                    and goods_code = #{goodsCode}
+                </if>
+                    <if test="goodsName != null and goodsName != ''">
+                    and goods_name = #{goodsName}
+                </if>
+                    <if test="num != null">
+                    and num = #{num}
+                </if>
+                    <if test="amount != null">
+                    and amount = #{amount}
+                </if>
+                    <if test="creator != null and creator != ''">
+                    and creator = #{creator}
+                </if>
+                    <if test="createTime != null">
+                    and create_time = #{createTime}
+                </if>
+                    <if test="updater != null and updater != ''">
+                    and updater = #{updater}
+                </if>
+                    <if test="updateTime != null">
+                    and update_time = #{updateTime}
+                </if>
+                    <if test="isDelete != null">
+                    and is_delete = #{isDelete}
+                </if>
+                </where>
+     </sql>
+
+    <insert id="batchInsertFirstOrderDetail">
+        insert into ord_dir_order_first_detail
+        (first_order_id, goods_code, goods_name, num, amount, creator, create_time, updater, update_time, is_delete )
+        values
+        <foreach collection="firstOrderDetailList" item="item" separator=",">
+            (#{firstOrderId},#{item.goodsCode},#{item.goodsName},#{item.num},#{item.amount},
+            #{userName},now(),#{userName},now(),0)
+        </foreach>
+    </insert>
+
+    <select id="findOrdDisOrderFirstDetailByPage"
+            resultType="com.edc.erp.directly.dirfirstorder.model.out.OrdDirOrderFirstDetailOut">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dir_order_first_detail
+        <where>
+            is_delete=0
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="firstOrderId != null">
+                and first_order_id = #{firstOrderId}
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and goods_code = #{goodsCode}
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                and goods_name like concat('%', #{goodsName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <update id="batchUpdateNum">
+        <foreach collection="detailList" item="item" index="index" separator=";">
+            update ord_dir_order_first_detail
+            <set>
+                <if test="item.num != null">
+                    num = #{item.num},
+                </if>
+                <if test="item.amount != null">
+                    amount = #{item.amount},
+                </if>
+                <if test="item.updater != null and item.updater != ''">
+                    updater = #{item.updater},
+                </if>
+                <if test="item.updateTime != null">
+                    update_time =  #{item.updateTime},
+                </if>
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+    <update id="batchDelete">
+        delete from ord_dir_order_first_detail where id in
+        <foreach collection="detailList" item="item" index="index" open="(" close=")" separator=",">
+            #{item.id}
+        </foreach>
+    </update>
+</mapper>

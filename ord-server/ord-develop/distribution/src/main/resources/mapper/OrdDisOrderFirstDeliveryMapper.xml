@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.disfirstorder.mapper.OrdDisOrderFirstDeliveryMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.disfirstorder.entity.OrdDisOrderFirstDelivery">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="firstOrderId" column="first_order_id" jdbcType="INTEGER"/>
+        <result property="deliveryOrderId" column="delivery_order_id" jdbcType="INTEGER"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, first_order_id, delivery_order_id, creator, create_time    
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="firstOrderId != null">
+                    and first_order_id = #{firstOrderId}
+                </if>
+                    <if test="deliveryOrderId != null">
+                    and delivery_order_id = #{deliveryOrderId}
+                </if>
+                    <if test="creator != null and creator != ''">
+                    and creator = #{creator}
+                </if>
+                    <if test="createTime != null">
+                    and create_time = #{createTime}
+                </if>
+                </where>
+     </sql>
+    <insert id="batchSave">
+        insert into ord_dis_order_first_delivery
+        (first_order_id, delivery_order_id, creator, create_time)
+        values
+        <foreach collection="deliveryOrderIds" item="item" separator=",">
+            (#{firstOrderId}, #{item}, #{userName}, now())
+        </foreach>
+    </insert>
+
+    <select id="getFirstOrderIdByDeliveryOrderId" resultType="java.lang.Long">
+        select first_order_id from ord_dis_order_first_delivery where delivery_order_id = #{deliveryOrderId}
+    </select>
+</mapper>

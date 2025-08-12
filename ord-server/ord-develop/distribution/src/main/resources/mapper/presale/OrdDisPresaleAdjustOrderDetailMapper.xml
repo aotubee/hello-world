@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.presale.mapper.OrdDisPresaleAdjustOrderDetailMapper">
+    <resultMap id="BaseResultMap" type="com.edc.erp.presale.entity.OrdDisPresaleAdjustOrderDetail">
+        <result column="id" property="id"/>
+        <result column="adjust_order_id" property="adjustOrderId"/>
+        <result column="goods_code" property="goodsCode"/>
+        <result column="goods_name" property="goodsName"/>
+        <result column="bar_code" property="barCode"/>
+        <result column="adjust_qty" property="adjustQty"/>
+        <result column="before_qty" property="beforeQty"/>
+        <result column="goods_type" property="goodsType"/>
+        <result column="package_specification" property="packageSpecification"/>
+        <result column="package_specification_num" property="packageSpecificationNum"/>
+        <result column="package_unit" property="packageUnit"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" property="createTime"/>
+        <result column="updater" property="updater"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="presale_activity_no" property="presaleActivityNo"/>
+    </resultMap>
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id,
+        adjust_order_id,
+        goods_code,
+        goods_name,
+        bar_code,
+        adjust_qty,
+        before_qty,
+        goods_type,
+        package_specification,
+        package_specification_num,
+        package_unit,
+        creator,
+        create_time,
+        updater,
+        update_time,
+        is_delete,
+        presale_activity_no
+    </sql>
+
+    <insert id="batchInsert">
+        INSERT INTO ord_dis_presale_adjust_order_detail
+        (adjust_order_id,goods_code, goods_name, bar_code, adjust_qty, before_qty,
+        goods_type,package_specification,package_specification_num,
+        package_unit,creator,create_time,updater, update_time,is_delete, presale_activity_no)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.adjustOrderId},#{item.goodsCode}, #{item.goodsName}, #{item.barCode}, #{item.adjustQty},
+            #{item.beforeQty},
+            #{item.goodsType},#{item.packageSpecification},#{item.packageSpecificationNum},
+            #{item.packageUnit},#{item.creator},#{item.createTime},#{item.updater},
+            #{item.updateTime},#{item.isDelete},
+            #{item.presaleActivityNo})
+        </foreach>
+    </insert>
+</mapper>

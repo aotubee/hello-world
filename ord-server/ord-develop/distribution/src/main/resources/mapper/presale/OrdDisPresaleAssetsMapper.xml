@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.presale.mapper.OrdDisPresaleAssetsMapper">
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id, store_code, store_name,
+        <!--        total_sku_qty, total_surplus_goods_qty, -->
+        creator,org_code,biz_org_code,
+        create_time, updater, update_time, is_delete
+    </sql>
+
+    <select id="getOrdDisPresaleAssetsByStoreCode" resultType="com.edc.erp.presale.entity.OrdDisPresaleAssets">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dis_presale_assets where store_code = #{storeCode} and is_delete = 0
+    </select>
+    <select id="findStorePresaleAssetsByPage"
+            resultType="com.edc.erp.presale.model.out.OrdDisPresaleAssetsPageOut">
+        select
+        pa.id,
+        pa.store_code,
+        pa.store_name,
+        <!--        pa.total_sku_qty,-->
+        <!--        pa.total_surplus_goods_qty,-->
+        (select count(1) from ord_dis_presale_assets_detail pad where pad.assets_id = pa.id) as total_sku_qty,
+        (select IFNULL(sum(pad.surplus_quantity),0) from ord_dis_presale_assets_detail pad where pad.assets_id = pa.id) as total_surplus_goods_qty,
+        pa.creator,
+        pa.org_code,
+        pa.biz_org_code,
+        pa.create_time,
+        pa.updater,
+        pa.update_time,
+        pa.is_delete
+        from ord_dis_presale_assets pa
+        where 1 = 1
+        <if test="storeCodeList != null and storeCodeList.size() > 0">
+            and pa.store_code in
+            <foreach collection="storeCodeList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="storeCode != null and storeCode !=''">
+            and pa.store_code = #{storeCode}
+        </if>
+        <if test="storeName != null and storeName !=''">
+            and pa.store_name like concat('%',#{storeName},'%')
+        </if>
+        <if test="goodsCode != null and goodsCode !=''">
+            and exists(select 1 from ord_dis_presale_assets_detail pad where pad.assets_id = pa.id and pad.goods_code =
+            #{goodsCode})
+        </if>
+        and pa.biz_org_code = #{bizOrgCode} and pa.is_delete = 0
+    </select>
+
+
+</mapper>

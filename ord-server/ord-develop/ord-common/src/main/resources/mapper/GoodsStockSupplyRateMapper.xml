@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.common.mapper.GoodsStockSupplyRateMapper">
+
+    <select id="findGoodsStockSupplyRate" resultType="com.edc.erp.common.model.out.stock.GoodsStockSupplyRateOut">
+        select sw.goods_code,sw.stock_code,sw.business_qty,b.totalQuantity,ROUND(FORMAT(sw.business_qty / b.totalQuantity, 4), 4) as supplyRate
+        from inv_stock_warehouse sw INNER JOIN
+             (
+                 select a.goods_code,a.position,sum(a.quantity) as totalQuantity  from
+                     (
+                        select rd.goods_code,rd.position,rd.quantity,rd.package_quantity
+                        from ord_dir_order_cycle rc
+                        INNER JOIN ord_dir_order ro on ro.order_cycle_id = rc.id
+                        INNER JOIN ord_dir_order_detail rd on rd.order_id = ro.id
+                        INNER JOIN logc_stock_info si on si.stock_code = rd.position
+                        where rc.truncation_date_time = #{truncationDateTime} and si.is_allow_negative_stocks = 0
+                        and ro.order_status_code = 'submit'
+                        and si.stock_code in
+                        <foreach collection="stockCodeList" item="item" separator="," open="(" close=")">
+                            #{item}
+                        </foreach>
+                        UNION ALL
+                        select sd.goods_code,sd.position,sd.quantity,sd.package_quantity
+                        from ord_dis_order_cycle sc
+                        INNER JOIN ord_dis_order so on so.order_cycle_id = sc.id
+                        INNER JOIN ord_dis_order_detail sd on sd.order_id = so.id
+                        INNER JOIN logc_stock_info si on si.stock_code = sd.position
+                        where sc.truncation_date_time = #{truncationDateTime} and si.is_allow_negative_stocks = 0
+                        and so.order_status_code = 'paid'
+                        and si.stock_code in
+                        <foreach collection="stockCodeList" item="item" separator="," open="(" close=")">
+                            #{item}
+                        </foreach>
+                     ) as a GROUP BY a.goods_code,a.position order by a.goods_code
+             ) as b on b.goods_code = sw.goods_code and b.position = sw.stock_code ORDER BY sw.update_time desc
+    </select>
+</mapper>

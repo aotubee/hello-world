@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.presale.mapper.OrdDisPresaleActivityGoodsMapper">
+    
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, presale_activity_id, goods_code, goods_name, bar_code, goods_image, package_unit, package_specification,
+         package_specification_num, package_quantity, is_gift,creator, create_time, updater, update_time, is_delete
+    </sql>
+
+    <insert id="batchSavePresaleActivityGoods">
+        INSERT INTO ord_dis_presale_activity_goods
+        (presale_activity_id, goods_code, goods_name, bar_code, goods_image, package_unit, package_specification,
+        package_specification_num, package_quantity, is_gift,creator, create_time, updater, update_time, is_delete)
+        values
+        <foreach collection="ordDisPresaleActivityGoodsList" item="item" separator=",">
+            (
+                #{item.presaleActivityId},#{item.goodsCode},#{item.goodsName},#{item.barCode},#{item.goodsImage},
+                #{item.packageUnit},#{item.packageSpecification},#{item.packageSpecificationNum},
+                #{item.packageQuantity},#{item.isGift},#{item.creator},#{item.createTime},#{item.updater},#{item.updateTime},#{item.isDelete}
+            )
+        </foreach>
+    </insert>
+    <delete id="deleteByActivityId">
+        delete from ord_dis_presale_activity_goods where presale_activity_id = #{activityId}
+    </delete>
+</mapper>

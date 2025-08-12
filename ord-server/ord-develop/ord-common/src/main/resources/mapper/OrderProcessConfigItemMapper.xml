@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.common.mapper.OrderProcessConfigItemMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.common.entity.OrderProcessConfigItem">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="itemName" column="item_name" jdbcType="VARCHAR"/>
+        <result property="itemCode" column="item_code" jdbcType="VARCHAR"/>
+        <result property="orderProcessConfigId" column="order_process_config_id" jdbcType="BIGINT"/>
+        <result property="itemType" column="item_type" jdbcType="INTEGER"/>
+        <result property="itemValue" column="item_value" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, item_name, item_code, order_process_config_id, item_type, item_value, creator, create_time, is_delete    
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="itemName != null and itemName != ''">
+                    and item_name = #{itemName}
+                </if>
+                    <if test="itemCode != null and itemCode != ''">
+                    and item_code = #{itemCode}
+                </if>
+                    <if test="orderProcessConfigId != null">
+                    and order_process_config_id = #{orderProcessConfigId}
+                </if>
+                    <if test="itemType != null">
+                    and item_type = #{itemType}
+                </if>
+                    <if test="itemValue != null and itemValue != ''">
+                    and item_value = #{itemValue}
+                </if>
+                    <if test="creator != null and creator != ''">
+                    and creator = #{creator}
+                </if>
+                    <if test="createTime != null">
+                    and create_time = #{createTime}
+                </if>
+                    <if test="isDelete != null">
+                    and is_delete = #{isDelete}
+                </if>
+                </where>
+     </sql>
+
+    <select id="findItemListByOrderProcessConfigId" resultMap="resultMap">
+        select opci.id, opci.item_name, opci.item_code, opci.order_process_config_id, opci.item_type, opci.item_value, opci.creator, opci.create_time, opci.is_delete
+        from opt_order_process_config_item opci
+        inner join opt_order_process_config oopc
+        on oopc.id = opci.order_process_config_id
+        inner join opt_order_process oop
+        on oop.id = oopc.order_process_id
+        where
+        opci.is_delete = 0
+        and oopc.is_delete = 0
+        and oop.is_delete = 0
+        and opci.order_process_config_id = #{id,jdbcType=BIGINT}
+        and oop.biz_org_code = #{bizOrgCode,jdbcType=VARCHAR} and opci.is_delete = 0
+    </select>
+
+    <select id="findConfigItemListByParameter" resultMap="resultMap">
+        select i.id,item_name,i.item_code,i.order_process_config_id,i.item_type,i.item_value,p.biz_org_code,i.creator,i.create_time,i.is_delete
+        from opt_order_process_config_item i
+        inner join opt_order_process_config c on c.id = i.order_process_config_id
+        inner join opt_order_process p on p.id = c.order_process_id
+        where p.order_type_config_id = #{orderTypeConfigId} and p.process_code = #{processCode} and c.process_config_code = #{processCodeConfigCode,jdbcType=VARCHAR}
+        and p.biz_org_code = #{bizOrgCode,jdbcType=VARCHAR} and p.is_delete = 0
+        and c.is_delete = 0 and i.is_delete = 0
+    </select>
+</mapper>

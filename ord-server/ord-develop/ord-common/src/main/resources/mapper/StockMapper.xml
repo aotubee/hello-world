@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.common.mapper.StockMapper">
+    <select id="getStockBusinessSwitchStatus" resultType="java.lang.Integer">
+        select lsbs.${column} from logc_stock_business_switch lsbs
+        INNER JOIN logc_stock_info lsi ON lsbs.stock_code = lsi.stock_code and lsi.biz_org_code = lsbs.biz_org_code
+        where lsbs.is_delete = 0 and lsbs.stock_code = #{stockCode} and (lsi.biz_org_code = #{bizOrgCode}
+            or lsi.id in (select stock_id from logc_stock_org_auth where biz_org_code = #{bizOrgCode}))
+    </select>
+    <select id="getTransInfo" resultType="com.edc.erp.common.model.out.stock.StockInfoOut">
+        select lsi.id, lsi.stock_code, lsi.stock_name, lsi.is_enable,lwi.warehouse_code,lwi.warehouse_name, lsi.is_delete,lsi.biz_org_code,lsi.org_code
+        from logc_stock_info lsi
+        inner join logc_warehouse_info lwi on lwi.id = lsi.warehouse_id and lwi.is_delete=0
+        where
+            lsi.is_delete=0
+          and lsi.stock_code=#{stockCode,jdbcType=VARCHAR}
+        order by lsi.is_delete limit 1
+    </select>
+
+
+</mapper>

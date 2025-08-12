@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.mapper.DirOrderProcessConfigMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.directly.entity.DirOrderProcessConfig">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="processConfigName" column="process_config_name" jdbcType="VARCHAR"/>
+        <result property="processConfigCode" column="process_config_code" jdbcType="VARCHAR"/>
+        <result property="orderProcessId" column="order_process_id" jdbcType="BIGINT"/>
+        <result property="isRadio" column="is_radio" jdbcType="INTEGER"/>
+        <result property="serialNumber" column="serial_number" jdbcType="INTEGER"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, process_config_name, process_config_code, order_process_id, is_radio, serial_number, creator, create_time, is_delete    
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="processConfigName != null and processConfigName != ''">
+                    and process_config_name = #{processConfigName}
+                </if>
+                    <if test="processConfigCode != null and processConfigCode != ''">
+                    and process_config_code = #{processConfigCode}
+                </if>
+                    <if test="orderProcessId != null">
+                    and order_process_id = #{orderProcessId}
+                </if>
+                    <if test="isRadio != null">
+                    and is_radio = #{isRadio}
+                </if>
+                    <if test="serialNumber != null">
+                    and serial_number = #{serialNumber}
+                </if>
+                    <if test="creator != null and creator != ''">
+                    and creator = #{creator}
+                </if>
+                    <if test="createTime != null">
+                    and create_time = #{createTime}
+                </if>
+                    <if test="isDelete != null">
+                    and is_delete = #{isDelete}
+                </if>
+                </where>
+     </sql>
+
+    <select id="findConfigListByOrderProcessId" resultType="com.edc.erp.directly.model.out.DirOrderProcessConfigOut">
+        select opc.id, opc.process_config_name, opc.process_config_code, opc.order_process_id, opc.is_radio, opc.serial_number, opc.creator, opc.create_time, opc.is_delete
+        from opt_dir_order_process_config opc
+        left join opt_dir_order_process oop
+        on opc.order_process_id = oop.id
+        where oop.id = #{id,jdbcType=BIGINT} and oop.biz_org_code = #{bizOrgCode,jdbcType=VARCHAR} and opc.is_delete = 0
+    </select>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.disdeliveryorder.mapper.OrdDisSalvageDelivPondMapper">
+
+
+    <sql id="baseSql">
+        id,order_type_config_id,truncation_date_time,salvage_time,salvage_status,wait_execution_total,
+            execution_total,org_code, biz_org_code, creator,create_time, updater, update_time,is_delete
+    </sql>
+
+
+    <select id="getOrdDisSalvageDelivPond"
+            resultType="com.edc.erp.disdeliveryorder.entity.OrdDisSalvageDelivPond">
+        select <include refid="baseSql"/> from ord_dis_salvage_deliv_pond where order_type_config_id = #{orderTypeConfigId}
+        and truncation_date_time = #{truncationDateTime} and biz_org_code = #{bizOrgCode}
+    </select>
+    <select id="findListForAutoSalvage"
+            resultType="com.edc.erp.disdeliveryorder.entity.OrdDisSalvageDelivPond">
+            select <include refid="baseSql"/> from ord_dis_salvage_deliv_pond where truncation_date_time BETWEEN #{beginTruncationDateTime}
+            and #{endTruncationDateTime} and salvage_status in
+            <foreach collection="salvageStatusList" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+            and salvage_time <![CDATA[ <= #{executeTime}   ]]> and is_delete = 0
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and biz_org_code = #{bizOrgCode}
+            </if>
+    </select>
+    <select id="findNeedRepeatExecuteSalvageList"
+            resultType="com.edc.erp.disdeliveryorder.entity.OrdDisSalvageDelivPond">
+        <![CDATA[
+            select s.id,s.order_type_config_id,s.truncation_date_time,s.salvage_time,s.salvage_status,s.wait_execution_total,
+            s.execution_total,s.org_code, s.biz_org_code, s.creator,s.create_time, s.updater, s.update_time,s.is_delete
+            from ord_dis_salvage_deliv_pond s INNER JOIN
+            (
+                select salvage_pond_id,count(*) AS maxCount from ord_dis_salvage_deliv_pond_detail
+                where salvage_pond_id is not null and is_delete = 0 GROUP BY salvage_pond_id
+            ) a on a.salvage_pond_id = s.id
+            where s.salvage_status = #{salvageStatus} and s.biz_org_code = #{bizOrgCode}
+              and s.truncation_date_time between #{beginTime} and now() and s.execution_total < a.maxCount and s.is_delete = 0
+        ]]>
+    </select>
+</mapper>

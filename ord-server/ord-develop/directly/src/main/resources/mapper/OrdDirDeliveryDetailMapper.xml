@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.dirdeliveryorder.mapper.OrdDirDeliveryDetailMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.directly.dirdeliveryorder.entity.OrdDirDeliveryDetail">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="deliveryOrderId" column="delivery_order_id" jdbcType="BIGINT"/>
+        <result property="goodsCode" column="goods_code" jdbcType="VARCHAR"/>
+        <result property="barCode" column="bar_code" jdbcType="VARCHAR"/>
+        <result property="goodsName" column="goods_name" jdbcType="VARCHAR"/>
+        <result property="goodsImage" column="goods_image" jdbcType="VARCHAR"/>
+        <result property="smallSort" column="small_sort" jdbcType="VARCHAR"/>
+        <result property="line" column="line" jdbcType="INTEGER"/>
+        <result property="orgGoodsId" column="org_goods_id" jdbcType="INTEGER"/>
+        <result property="orderQuantity" column="order_quantity" jdbcType="DECIMAL"/>
+        <result property="orderPackageQuantity" column="order_package_quantity" jdbcType="DECIMAL"/>
+        <result property="orderUnitPrice" column="order_unit_price" jdbcType="DECIMAL"/>
+        <result property="orderAmount" column="order_amount" jdbcType="DECIMAL"/>
+        <result property="distributionQuantity" column="distribution_quantity" jdbcType="DECIMAL"/>
+        <result property="distributionPackageQuantity" column="distribution_package_quantity" jdbcType="DECIMAL"/>
+        <result property="distributionUnitPrice" column="distribution_unit_price" jdbcType="DECIMAL"/>
+        <result property="distributionAmount" column="distribution_amount" jdbcType="DECIMAL"/>
+        <result property="deliveryQuantity" column="delivery_quantity" jdbcType="DECIMAL"/>
+        <result property="deliveryPackageQuantity" column="delivery_package_quantity" jdbcType="DECIMAL"/>
+        <result property="deliveryAmount" column="delivery_amount" jdbcType="DECIMAL"/>
+        <result property="arrivalQuantity" column="arrival_quantity" jdbcType="DECIMAL"/>
+        <result property="arrivalPackageQuantity" column="arrival_package_quantity" jdbcType="DECIMAL"/>
+        <result property="arrivalAmount" column="arrival_amount" jdbcType="DECIMAL"/>
+        <result property="distributionSpecificationNum" column="distribution_specification_num" jdbcType="DECIMAL"/>
+        <result property="distributionType" column="distribution_type" jdbcType="VARCHAR"/>
+        <result property="distributionSpecification" column="distribution_specification" jdbcType="VARCHAR"/>
+        <result property="distributionSpecificationUnit" column="distribution_specification_unit" jdbcType="VARCHAR"/>
+        <result property="isGift" column="is_gift" jdbcType="INTEGER"/>
+        <result property="goodsType" column="goods_type" jdbcType="VARCHAR"/>
+        <result property="distributionExceptTaxAmount" column="distribution_except_tax_amount" jdbcType="DECIMAL"/>
+        <result property="distributionTaxAmount" column="distribution_tax_amount" jdbcType="DECIMAL"/>
+        <result property="wrhPrice" column="wrh_price" jdbcType="DECIMAL"/>
+        <result property="wrhCostAmount" column="wrh_cost_amount" jdbcType="DECIMAL"/>
+        <result property="wrhExceptTaxAmount" column="wrh_except_tax_amount" jdbcType="DECIMAL"/>
+        <result property="wrhTaxAmount" column="wrh_tax_amount" jdbcType="DECIMAL"/>
+        <result property="storeStockPrice" column="store_stock_price" jdbcType="DECIMAL"/>
+        <result property="storeCostAmount" column="store_cost_amount" jdbcType="DECIMAL"/>
+        <result property="storeExceptTaxAmount" column="store_except_tax_amount" jdbcType="DECIMAL"/>
+        <result property="storeTaxAmount" column="store_tax_amount" jdbcType="DECIMAL"/>
+        <result property="sellTax" column="sell_tax" jdbcType="DECIMAL"/>
+        <result property="distributionPrice" column="distribution_price" jdbcType="DECIMAL"/>
+        <result property="stockoutQuantity" column="stockout_quantity" jdbcType="DECIMAL"/>
+        <result property="vendorCode" column="vendor_code" jdbcType="VARCHAR"/>
+        <result property="expirationDate" column="expiration_date" jdbcType="VARCHAR"/>
+        <result property="produceDate" column="produce_date" jdbcType="TIMESTAMP"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="purchaseNo" column="purchase_no" jdbcType="VARCHAR"/>
+        <result property="orderPriority" column="order_priority" jdbcType="VARCHAR"/>
+        <result property="carryForwardCycle" column="carry_forward_cycle" jdbcType="VARCHAR"/>
+        <result property="baseGoodsCode" column="base_goods_code" jdbcType="VARCHAR"/>
+        <result property="invoiceType" column="invoice_type" jdbcType="VARCHAR"/>
+        <result property="expiry" column="expiry" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, delivery_order_id, goods_code, bar_code, goods_name, goods_image, small_sort, line, org_goods_id, order_quantity, order_package_quantity,
+order_unit_price, order_amount, distribution_quantity, distribution_package_quantity, distribution_unit_price, distribution_amount, delivery_quantity,
+delivery_package_quantity, delivery_amount, arrival_quantity, arrival_package_quantity, arrival_amount, distribution_specification_num, distribution_type,
+distribution_specification, distribution_specification_unit, is_gift, goods_type, distribution_except_tax_amount, distribution_tax_amount, wrh_price,
+wrh_cost_amount, wrh_except_tax_amount, wrh_tax_amount, store_stock_price, store_cost_amount, store_except_tax_amount, store_tax_amount, sell_tax,
+distribution_price, stockout_quantity, vendor_code,expiration_date,produce_date, creator, create_time, updater, update_time, is_delete, remark, purchase_no, order_priority,
+carry_forward_cycle, base_goods_code,invoice_type,expiry
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="deliveryOrderId != null">
+                    and delivery_order_id = #{deliveryOrderId}
+                </if>
+                    <if test="goodsCode != null and goodsCode != ''">
+                    and goods_code = #{goodsCode}
+                </if>
+                    <if test="barCode != null and barCode != ''">
+                    and bar_code = #{barCode}
+                </if>
+                    <if test="goodsName != null and goodsName != ''">
+                    and goods_name = #{goodsName}
+                </if>
+                    <if test="goodsImage != null and goodsImage != ''">
+                    and goods_image = #{goodsImage}
+                </if>
+                    <if test="smallSort != null and smallSort != ''">
+                    and small_sort = #{smallSort}
+                </if>
+                    <if test="line != null and line != ''">
+                    and line = #{line}
+                </if>
+                    <if test="orgGoodsId != null">
+                    and org_goods_id = #{orgGoodsId}
+                </if>
+                    <if test="orderQuantity != null">
+                    and order_quantity = #{orderQuantity}
+                </if>
+                    <if test="orderPackageQuantity != null">
+                    and order_package_quantity = #{orderPackageQuantity}
+                </if>
+                    <if test="orderUnitPrice != null">
+                    and order_unit_price = #{orderUnitPrice}
+                </if>
+                    <if test="orderAmount != null">
+                    and order_amount = #{orderAmount}
+                </if>
+                    <if test="distributionQuantity != null">
+                    and distribution_quantity = #{distributionQuantity}
+                </if>
+                    <if test="distributionPackageQuantity != null">
+                    and distribution_package_quantity = #{distributionPackageQuantity}
+                </if>
+                    <if test="distributionUnitPrice != null">
+                    and distribution_unit_price = #{distributionUnitPrice}
+                </if>
+                    <if test="distributionAmount != null">
+                    and distribution_amount = #{distributionAmount}
+                </if>
+                    <if test="deliveryQuantity != null">
+                    and delivery_quantity = #{deliveryQuantity}
+                </if>
+                    <if test="deliveryPackageQuantity != null">
+                    and delivery_package_quantity = #{deliveryPackageQuantity}
+                </if>
+                    <if test="deliveryAmount != null">
+                    and delivery_amount = #{deliveryAmount}
+                </if>
+                    <if test="arrivalQuantity != null">
+                    and arrival_quantity = #{arrivalQuantity}
+                </if>
+                    <if test="arrivalPackageQuantity != null">
+                    and arrival_package_quantity = #{arrivalPackageQuantity}
+                </if>
+                    <if test="arrivalAmount != null">
+                    and arrival_amount = #{arrivalAmount}
+                </if>
+                    <if test="distributionSpecificationNum != null">
+                    and distribution_specification_num = #{distributionSpecificationNum}
+                </if>
+                    <if test="distributionType != null and distributionType != ''">
+                    and distribution_type = #{distributionType}
+                </if>
+                    <if test="distributionSpecification != null and distributionSpecification != ''">
+                    and distribution_specification = #{distributionSpecification}
+                </if>
+                    <if test="distributionSpecificationUnit != null and distributionSpecificationUnit != ''">
+                    and distribution_specification_unit = #{distributionSpecificationUnit}
+                </if>
+                    <if test="isGift != null">
+                    and is_gift = #{isGift}
+                </if>
+                    <if test="goodsType != null and goodsType != ''">
+                    and goods_type = #{goodsType}
+                </if>
+                    <if test="distributionExceptTaxAmount != null">
+                    and distribution_except_tax_amount = #{distributionExceptTaxAmount}
+                </if>
+                    <if test="distributionTaxAmount != null">
+                    and distribution_tax_amount = #{distributionTaxAmount}
+                </if>
+                    <if test="wrhPrice != null">
+                    and wrh_price = #{wrhPrice}
+                </if>
+                    <if test="wrhCostAmount != null">
+                    and wrh_cost_amount = #{wrhCostAmount}
+                </if>
+                    <if test="wrhExceptTaxAmount != null">
+                    and wrh_except_tax_amount = #{wrhExceptTaxAmount}
+                </if>
+                    <if test="wrhTaxAmount != null">
+                    and wrh_tax_amount = #{wrhTaxAmount}
+                </if>
+                    <if test="storeStockPrice != null">
+                    and store_stock_price = #{storeStockPrice}
+                </if>
+                    <if test="storeCostAmount != null">
+                    and store_cost_amount = #{storeCostAmount}
+                </if>
+                    <if test="storeExceptTaxAmount != null">
+                    and store_except_tax_amount = #{storeExceptTaxAmount}
+                </if>
+                    <if test="storeTaxAmount != null">
+                    and store_tax_amount = #{storeTaxAmount}
+                </if>
+                    <if test="sellTax != null">
+                    and sell_tax = #{sellTax}
+                </if>
+                    <if test="distributionPrice != null">
+                    and distribution_price = #{distributionPrice}
+                </if>
+                    <if test="stockoutQuantity != null">
+                    and stockout_quantity = #{stockoutQuantity}
+                </if>
+                    <if test="vendorCode != null and vendorCode != ''">
+                    and vendor_code = #{vendorCode}
+                </if>
+                <if test="expirationDate != null and expirationDate != ''">
+                    and expiration_date = #{expirationDate}
+                </if>
+                <if test="produceDate != null">
+                    and produce_date = #{produceDate}
+                </if>
+                    <if test="creator != null and creator != ''">
+                    and creator = #{creator}
+                </if>
+                    <if test="createTime != null">
+                    and create_time = #{createTime}
+                </if>
+                    <if test="updater != null and updater != ''">
+                    and updater = #{updater}
+                </if>
+                    <if test="updateTime != null">
+                    and update_time = #{updateTime}
+                </if>
+                    <if test="isDelete != null">
+                    and is_delete = #{isDelete}
+                </if>
+                    <if test="remark != null and remark != ''">
+                    and remark = #{remark}
+                </if>
+                    <if test="purchaseNo != null and purchaseNo != ''">
+                    and purchase_no = #{purchaseNo}
+                </if>
+                    <if test="orderPriority != null and orderPriority != ''">
+                    and order_priority = #{orderPriority}
+                </if>
+                <if test="carryForwardCycle != null and carryForwardCycle != ''">
+                    and carry_forward_cycle = #{carryForwardCycle}
+                </if>
+                <if test="invoiceType != null and invoiceType != ''">
+                    and invoice_type = #{invoiceType}
+                </if>
+                </where>
+     </sql>
+
+    <insert id="batchSave">
+        insert into ord_dir_delivery_detail
+        (delivery_order_id, goods_code, bar_code, goods_name, goods_image, small_sort, line,
+        org_goods_id, order_quantity, order_package_quantity, order_unit_price, order_amount,
+        distribution_quantity, distribution_package_quantity, distribution_unit_price,
+        distribution_amount, delivery_quantity, delivery_package_quantity, delivery_amount,
+        arrival_quantity, arrival_package_quantity, arrival_amount, distribution_specification_num,
+        distribution_type, distribution_specification, distribution_specification_unit,
+        is_gift, goods_type, distribution_except_tax_amount, distribution_tax_amount, wrh_price,
+        wrh_cost_amount, wrh_except_tax_amount, wrh_tax_amount, store_stock_price, store_cost_amount,
+        store_except_tax_amount, store_tax_amount, sell_tax, distribution_price, stockout_quantity,
+        vendor_code, expiration_date,produce_date,creator, create_time, updater, update_time, is_delete, remark, purchase_no,
+        order_priority, carry_forward_cycle, base_goods_code,invoice_type,expiry)
+        values
+        <foreach collection="dirDeliveryDetails" item="item" separator=",">
+            (#{item.deliveryOrderId,jdbcType=BIGINT}, #{item.goodsCode,jdbcType=VARCHAR}, #{item.barCode,jdbcType=VARCHAR},
+            #{item.goodsName,jdbcType=VARCHAR}, #{item.goodsImage,jdbcType=VARCHAR}, #{item.smallSort,jdbcType=VARCHAR},
+            #{item.line,jdbcType=INTEGER}, #{item.orgGoodsId,jdbcType=INTEGER}, #{item.orderQuantity,jdbcType=DECIMAL},
+            #{item.orderPackageQuantity,jdbcType=DECIMAL}, #{item.orderUnitPrice,jdbcType=DECIMAL},
+            #{item.orderAmount,jdbcType=DECIMAL}, #{item.distributionQuantity,jdbcType=DECIMAL},
+            #{item.distributionPackageQuantity,jdbcType=DECIMAL}, #{item.distributionUnitPrice,jdbcType=DECIMAL},
+            #{item.distributionAmount,jdbcType=DECIMAL}, #{item.deliveryQuantity,jdbcType=DECIMAL},
+            #{item.deliveryPackageQuantity,jdbcType=DECIMAL}, #{item.deliveryAmount,jdbcType=DECIMAL},
+            #{item.arrivalQuantity,jdbcType=DECIMAL}, #{item.arrivalPackageQuantity,jdbcType=DECIMAL},
+            #{item.arrivalAmount,jdbcType=DECIMAL}, #{item.distributionSpecificationNum,jdbcType=DECIMAL},
+            #{item.distributionType,jdbcType=VARCHAR}, #{item.distributionSpecification,jdbcType=VARCHAR},
+            #{item.distributionSpecificationUnit,jdbcType=VARCHAR}, #{item.isGift,jdbcType=TINYINT},
+            #{item.goodsType,jdbcType=VARCHAR}, #{item.distributionExceptTaxAmount,jdbcType=DECIMAL},
+            #{item.distributionTaxAmount,jdbcType=DECIMAL}, #{item.wrhPrice,jdbcType=DECIMAL},
+            #{item.wrhCostAmount,jdbcType=DECIMAL}, #{item.wrhExceptTaxAmount,jdbcType=DECIMAL},
+            #{item.wrhTaxAmount,jdbcType=DECIMAL}, #{item.storeStockPrice,jdbcType=DECIMAL},
+            #{item.storeCostAmount,jdbcType=DECIMAL}, #{item.storeExceptTaxAmount,jdbcType=DECIMAL},
+            #{item.storeTaxAmount,jdbcType=DECIMAL}, #{item.sellTax,jdbcType=DECIMAL}, #{item.distributionPrice,jdbcType=DECIMAL},
+            #{item.stockoutQuantity,jdbcType=DECIMAL}, #{item.vendorCode,jdbcType=VARCHAR},#{item.expirationDate,jdbcType=VARCHAR},#{item.produceDate,jdbcType=TIMESTAMP},
+            #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR},
+            #{item.updateTime,jdbcType=TIMESTAMP}, #{item.isDelete,jdbcType=TINYINT}, #{item.remark,jdbcType=VARCHAR},
+            #{item.purchaseNo,jdbcType=VARCHAR}, #{item.orderPriority,jdbcType=VARCHAR}, #{item.carryForwardCycle,jdbcType=VARCHAR},
+            #{item.baseGoodsCode,jdbcType=VARCHAR},#{item.invoiceType},#{item.expiry}
+            )
+        </foreach>
+    </insert>
+    <insert id="updateBatchByDtsDtlList">
+        INSERT INTO ord_dir_delivery_detail(id, delivery_order_id, goods_code, bar_code, goods_name, goods_image, small_sort, line,
+        org_goods_id, order_quantity, order_package_quantity, order_unit_price, order_amount,
+        distribution_quantity, distribution_package_quantity, distribution_unit_price,
+        distribution_amount, delivery_quantity, delivery_package_quantity, delivery_amount,
+        arrival_quantity, arrival_package_quantity, arrival_amount, distribution_specification_num,
+        distribution_type, distribution_specification, distribution_specification_unit,
+        is_gift, goods_type, distribution_except_tax_amount, distribution_tax_amount, wrh_price,
+        wrh_cost_amount, wrh_except_tax_amount, wrh_tax_amount, store_stock_price, store_cost_amount,
+        store_except_tax_amount, store_tax_amount, sell_tax, distribution_price, stockout_quantity,
+        vendor_code, expiration_date,produce_date,creator, create_time, updater, update_time, is_delete, remark, purchase_no,
+        order_priority,carry_forward_cycle, base_goods_code,invoice_type,expiry)
+        values
+        <foreach collection="updateDtlList" separator="," item="item" index="index">
+            (#{item.id},
+            #{item.deliveryOrderId,jdbcType=BIGINT}, #{item.goodsCode,jdbcType=VARCHAR}, #{item.barCode,jdbcType=VARCHAR},
+            #{item.goodsName,jdbcType=VARCHAR}, #{item.goodsImage,jdbcType=VARCHAR}, #{item.smallSort,jdbcType=VARCHAR},
+            #{item.line,jdbcType=INTEGER}, #{item.orgGoodsId,jdbcType=INTEGER}, #{item.orderQuantity,jdbcType=DECIMAL},
+            #{item.orderPackageQuantity,jdbcType=DECIMAL}, #{item.orderUnitPrice,jdbcType=DECIMAL},
+            #{item.orderAmount,jdbcType=DECIMAL}, #{item.distributionQuantity,jdbcType=DECIMAL},
+            #{item.distributionPackageQuantity,jdbcType=DECIMAL}, #{item.distributionUnitPrice,jdbcType=DECIMAL},
+            #{item.distributionAmount,jdbcType=DECIMAL}, #{item.deliveryQuantity,jdbcType=DECIMAL},
+            #{item.deliveryPackageQuantity,jdbcType=DECIMAL}, #{item.deliveryAmount,jdbcType=DECIMAL},
+            #{item.arrivalQuantity,jdbcType=DECIMAL}, #{item.arrivalPackageQuantity,jdbcType=DECIMAL},
+            #{item.arrivalAmount,jdbcType=DECIMAL}, #{item.distributionSpecificationNum,jdbcType=DECIMAL},
+            #{item.distributionType,jdbcType=VARCHAR}, #{item.distributionSpecification,jdbcType=VARCHAR},
+            #{item.distributionSpecificationUnit,jdbcType=VARCHAR}, #{item.isGift,jdbcType=TINYINT},
+            #{item.goodsType,jdbcType=VARCHAR}, #{item.distributionExceptTaxAmount,jdbcType=DECIMAL},
+            #{item.distributionTaxAmount,jdbcType=DECIMAL}, #{item.wrhPrice,jdbcType=DECIMAL},
+            #{item.wrhCostAmount,jdbcType=DECIMAL}, #{item.wrhExceptTaxAmount,jdbcType=DECIMAL},
+            #{item.wrhTaxAmount,jdbcType=DECIMAL}, #{item.storeStockPrice,jdbcType=DECIMAL},
+            #{item.storeCostAmount,jdbcType=DECIMAL}, #{item.storeExceptTaxAmount,jdbcType=DECIMAL},
+            #{item.storeTaxAmount,jdbcType=DECIMAL}, #{item.sellTax,jdbcType=DECIMAL}, #{item.distributionPrice,jdbcType=DECIMAL},
+            #{item.stockoutQuantity,jdbcType=DECIMAL}, #{item.vendorCode,jdbcType=VARCHAR},#{item.expirationDate,jdbcType=VARCHAR},#{item.produceDate,jdbcType=TIMESTAMP},
+            #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR},
+            #{item.updateTime,jdbcType=TIMESTAMP}, #{item.isDelete,jdbcType=TINYINT}, #{item.remark,jdbcType=VARCHAR},
+            #{item.purchaseNo,jdbcType=VARCHAR}, #{item.orderPriority,jdbcType=VARCHAR},
+            #{item.carryForwardCycle,jdbcType=VARCHAR}, #{item.baseGoodsCode,jdbcType=VARCHAR},#{item.invoiceType},#{item.expiry})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        delivery_quantity = values(delivery_quantity),
+        delivery_package_quantity = values(delivery_package_quantity),
+        delivery_amount = values(delivery_amount),
+        stockout_quantity = values(stockout_quantity),
+        wrh_price = values(wrh_price),
+        wrh_cost_amount = values(wrh_cost_amount),
+        wrh_except_tax_amount = values(wrh_except_tax_amount),
+        wrh_tax_amount = values(wrh_tax_amount),
+        update_time = values(update_time),
+        distribution_price = values(distribution_price),
+        store_stock_price = values(store_stock_price),
+        store_cost_amount = values(store_cost_amount),
+        store_except_tax_amount = values(store_except_tax_amount),
+        store_tax_amount = values(store_tax_amount),
+        expiration_date = values(expiration_date),
+        produce_date = values(produce_date),
+        update_time = values(update_time),
+        updater = values(updater)
+    </insert>
+    <update id="batchUpdate">
+        <foreach collection="ordDirDeliveryDetails" item="item" index="index" separator=";">
+            update ord_dir_delivery_detail
+            <set>
+                <if test="item.purchaseNo != null and item.purchaseNo != ''">
+                    purchase_no = #{item.purchaseNo},
+                </if>
+                <if test="item.carryForwardCycle != null and item.carryForwardCycle != ''">
+                    carry_forward_cycle = #{item.carryForwardCycle},
+                </if>
+                <if test="item.distributionQuantity!=null">
+                    distribution_quantity = #{item.distributionQuantity},
+                </if>
+                <if test="item.distributionPackageQuantity !=null">
+                    distribution_package_quantity = #{item.distributionPackageQuantity},
+                </if>
+                <if test="item.distributionAmount != null">
+                    distribution_amount = #{item.distributionAmount},
+                </if>
+                <if test="item.distributionExceptTaxAmount != null">
+                    distribution_except_tax_amount = #{item.distributionExceptTaxAmount,jdbcType=DECIMAL},
+                </if>
+                <if test="item.distributionTaxAmount != null">
+                    distribution_tax_amount = #{item.distributionTaxAmount,jdbcType=DECIMAL},
+                </if>
+                <if test="item.wrhCostAmount != null">
+                    wrh_cost_amount = #{item.wrhCostAmount,jdbcType=DECIMAL},
+                </if>
+                <if test="item.wrhExceptTaxAmount != null">
+                    wrh_except_tax_amount = #{item.wrhExceptTaxAmount,jdbcType=DECIMAL},
+                </if>
+                <if test="item.wrhTaxAmount != null">
+                    wrh_tax_amount = #{item.wrhTaxAmount,jdbcType=DECIMAL},
+                </if>
+                <if test="item.storeCostAmount != null">
+                    store_cost_amount = #{item.storeCostAmount,jdbcType=DECIMAL},
+                </if>
+                <if test="item.storeExceptTaxAmount != null">
+                    store_except_tax_amount = #{item.storeExceptTaxAmount,jdbcType=DECIMAL},
+                </if>
+                <if test="item.distributionAmount != null">
+                    store_tax_amount = #{item.storeTaxAmount,jdbcType=DECIMAL},
+                </if>
+                <if test="item.expiry != null and item.expiry != ''">
+                    expiry = #{item.expiry},
+                </if>
+                update_time = now()
+            </set>
+            where id  = #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+    <update id="batchUpdateDistributionInfo">
+        <foreach collection="dirDeliveryDetailList" item="item" index="index" separator=";">
+            update ord_dir_delivery_detail
+            set
+            distribution_quantity = #{item.distributionQuantity},
+            distribution_package_quantity = #{item.distributionPackageQuantity},
+            distribution_amount = #{item.distributionAmount},
+            updater = #{item.updater},
+            update_time = #{item.updateTime},
+            distribution_except_tax_amount = #{item.distributionExceptTaxAmount,jdbcType=DECIMAL},
+            distribution_tax_amount = #{item.distributionTaxAmount,jdbcType=DECIMAL},
+            wrh_cost_amount = #{item.wrhCostAmount,jdbcType=DECIMAL},
+            wrh_except_tax_amount = #{item.wrhExceptTaxAmount,jdbcType=DECIMAL},
+            wrh_tax_amount = #{item.wrhTaxAmount,jdbcType=DECIMAL},
+            store_cost_amount = #{item.storeCostAmount,jdbcType=DECIMAL},
+            store_except_tax_amount = #{item.storeExceptTaxAmount,jdbcType=DECIMAL},
+            store_tax_amount = #{item.storeTaxAmount,jdbcType=DECIMAL}
+            where id = #{item.id} and is_delete = 0
+        </foreach>
+    </update>
+
+    <update id="batchUpdateDeliveryInfo">
+        <foreach collection="disDeliveryDetailList" item="item" index="index" separator=";">
+            update ord_dir_delivery_detail
+            set
+            delivery_quantity = #{item.deliveryQuantity},
+            delivery_package_quantity = #{item.deliveryPackageQuantity},
+            delivery_amount = #{item.deliveryAmount},
+            updater = #{item.updater},
+            update_time = #{item.updateTime},
+            wrh_price = #{item.wrhPrice,jdbcType=DECIMAL},
+            wrh_cost_amount = #{item.wrhCostAmount,jdbcType=DECIMAL},
+            wrh_except_tax_amount = #{item.wrhExceptTaxAmount,jdbcType=DECIMAL},
+            wrh_tax_amount = #{item.wrhTaxAmount,jdbcType=DECIMAL},
+            distribution_price = #{item.distributionPrice,jdbcType=DECIMAL},
+            store_cost_amount = #{item.storeCostAmount,jdbcType=DECIMAL},
+            store_except_tax_amount = #{item.storeExceptTaxAmount,jdbcType=DECIMAL},
+            store_tax_amount = #{item.storeTaxAmount,jdbcType=DECIMAL}
+            where id = #{item.id} and is_delete = 0
+        </foreach>
+    </update>
+    <update id="batchUpdateNotStock">
+        update ord_dir_delivery_detail
+        set updater = #{operator},
+            update_time = now(),
+            wrh_cost_amount = 0,
+            wrh_except_tax_amount = 0,
+            wrh_tax_amount = 0,
+            store_cost_amount = 0,
+            store_except_tax_amount = 0,
+            store_tax_amount = 0
+        where delivery_order_id = #{deliveryOrderId} and (distribution_quantity is null or distribution_quantity = 0)
+    </update>
+
+    <select id="findStockInfoByCode" resultType="com.edc.erp.common.model.out.stock.StockInfoOut">
+        SELECT
+        lsi.id AS stockId,
+        lsi.stock_code,
+        lsi.stock_name,
+        lsi.warehouse_id,
+        lsi.biz_org_code
+        FROM
+        logc_stock_info lsi
+        INNER JOIN
+        logc_stock_business_switch lsbs ON lsbs.stock_code = lsi.stock_code and lsbs.${isOutReturn}
+        <where>
+            lsi.is_delete = 0
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and (lsi.biz_org_code = #{bizOrgCode}
+                or lsi.id in (select stock_id from logc_stock_org_auth where biz_org_code = #{bizOrgCode}))
+            </if>
+            <if test="isEnable != null">
+                and lsi.is_enable = #{isEnable}
+            </if>
+            <if test="stockCode != null and stockCode != ''">
+                and lsi.stock_code = #{stockCode,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="getDetail" resultType="com.edc.erp.directly.dirdeliveryorder.entity.OrdDirDeliveryDetail">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dir_delivery_detail
+        where delivery_order_id=#{deliveryOrderId} and is_delete = 0 limit 1
+    </select>
+
+    <select id="findDeliveryOrderDetailsByPage"
+            resultType="com.edc.erp.directly.dirdeliveryorder.model.out.DirDeliveryOrderDetailsOut">
+        select
+        <include refid="Base_Column_List"/>,
+        case when base_goods_code is null then goods_code
+        else concat(base_goods_code,goods_code)
+        end as sort
+        from ord_dir_delivery_detail
+        <where>
+            is_delete=0 and delivery_order_id=#{deliveryOrderId}
+            <if test="goodsCode != null and goodsCode != ''">
+                and goods_code = #{goodsCode}
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                and goods_name  like CONCAT('%',#{goodsName},'%')
+            </if>
+        </where>
+        order by sort
+    </select>
+
+    <select id="findTransferDeliveryOrderDetails"
+            resultType="com.edc.erp.common.model.out.TransferDeliveryOrderDetailOut">
+        select oddd.id,oddd.goods_code,oddd.line,oddd.distribution_quantity,
+        oddd.order_quantity,oddd.sell_tax,oddd.vendor_code,
+        oddd.carry_forward_cycle,odd.order_priority,odd.stock_code,odd.wrh_code warehouseCode,odd.biz_org_code
+        from ord_dir_delivery_detail oddd
+        inner join ord_dir_delivery odd
+        on odd.id = oddd.delivery_order_id
+        where oddd.is_delete = 0
+        and odd.is_delete = 0
+        AND odd.order_priority IS NOT NULL
+        <if test="ordDirDeliveryIds != null and ordDirDeliveryIds.size() != 0">
+            and oddd.delivery_order_id in
+            <foreach collection="ordDirDeliveryIds" item="id" open="(" separator="," close=")">
+                #{id,jdbcType=BIGINT}
+            </foreach>
+        </if>
+    </select>
+    <select id="findTakeDirDeliveryOrderGoodsListByDeliveryOrderId"
+            resultType="com.edc.erp.directly.dirdeliveryorder.model.in.TakeDirDeliveryOrderGoodsIn">
+        select id deliveryOrderDetailsId,delivery_quantity arrivalQuantity,goods_code,expiry from ord_dir_delivery_detail
+        where delivery_order_id = #{deliveryOrderId} and delivery_quantity is not null and is_delete = 0
+    </select>
+    <select id="findGoodsNameAndPreviewListByDeliveryOrderId"
+            resultType="com.edc.erp.directly.dirdeliveryorder.model.out.DirOrderGoodsPreviewOut">
+        select goods_name name,goods_image goodsImage from ord_dir_delivery_detail
+        where delivery_order_id = #{deliveryOrderId} and is_gift = 0 and is_delete = 0 group by goods_name,goods_image,goods_code
+    </select>
+    <select id="findListByTakeDirDelivery"
+            resultType="com.edc.erp.directly.dirdeliveryorder.entity.OrdDirDeliveryDetail">
+        select t.id, t.delivery_order_id, t.goods_code, t.bar_code, t.goods_name, t.goods_image, t.line, t.order_quantity, t.arrival_quantity,
+        t.arrival_package_quantity, t.delivery_quantity, t.delivery_package_quantity, t.distribution_quantity, t.distribution_package_quantity,
+        t.distribution_specification_num, t.distribution_specification,  t.distribution_specification_unit,
+          t.is_gift, t.creator, t.create_time, t.line, t.base_goods_code,t.expiry
+        from ord_dir_delivery_detail t left join ord_dir_delivery o on o.id = t.delivery_order_id
+        where t.delivery_order_id = #{deliveryOrderId} and t.is_delete = 0 and o.delivery_status_code = #{deliveryStatusCode}
+        <if test="goodsName != null and goodsName !=''">
+            and t.goods_name like CONCAT('%',#{goodsName},'%')
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and t.goods_code = #{goodsCode}
+        </if>
+        <if test="barCode != null and barCode != ''">
+            and t.bar_code = #{barCode}
+        </if>
+        order by t.line,t.id
+    </select>
+    <select id="findOrdDirDeliveryDetail"
+            resultType="com.edc.erp.directly.dirdeliveryorder.entity.OrdDirDeliveryDetail">
+        SELECT
+        oddd.id, oddd.delivery_order_id, oddd.goods_code, oddd.bar_code, oddd.goods_name, oddd.goods_image,
+        oddd.small_sort, oddd.line, oddd.org_goods_id, oddd.order_quantity, oddd.order_package_quantity,
+        oddd.order_unit_price, oddd.order_amount, oddd.distribution_quantity, oddd.distribution_package_quantity,
+        oddd.distribution_unit_price, oddd.distribution_amount, oddd.delivery_quantity, oddd.delivery_package_quantity,
+        oddd.delivery_amount, oddd.arrival_quantity, oddd.arrival_package_quantity, oddd.arrival_amount,
+        oddd.distribution_specification_num, oddd.distribution_type, oddd.distribution_specification, oddd.distribution_specification_unit,
+        oddd.is_gift, oddd.goods_type, oddd.distribution_except_tax_amount, oddd.distribution_tax_amount, oddd.wrh_price,
+        oddd.wrh_cost_amount, oddd.wrh_except_tax_amount, oddd.wrh_tax_amount, oddd.store_stock_price, oddd.store_cost_amount,
+        oddd.store_except_tax_amount, oddd.store_tax_amount, oddd.sell_tax, oddd.distribution_price, oddd.stockout_quantity,
+        oddd.vendor_code, oddd.creator, oddd.create_time, oddd.updater, oddd.update_time, oddd.is_delete, oddd.remark,
+        oddd.purchase_no, oddd.order_priority, oddd.carry_forward_cycle, oddd.base_goods_code
+        FROM
+        ord_dir_delivery_detail oddd
+        INNER JOIN
+        ord_dir_delivery odd ON oddd.delivery_order_id = odd.id AND odd.is_delete = 0
+        WHERE
+        oddd.is_delete = 0
+        AND oddd.purchase_no IS NULL
+        <if test="distributionType != null and distributionType != ''">
+            AND odd.distribution_type = #{distributionType}
+        </if>
+        <if test="deliveryStatusCode != null and deliveryStatusCode != ''">
+            AND odd.delivery_status_code = #{deliveryStatusCode}
+        </if>
+        <if test="vendorCode != null and vendorCode != ''">
+            AND oddd.vendor_code = #{vendorCode}
+        </if>
+        <if test="orderPriority != null and orderPriority != ''">
+            AND oddd.order_priority = #{orderPriority}
+        </if>
+        <if test="carryForwardCycle != null and carryForwardCycle != ''">
+            AND oddd.carry_forward_cycle = #{carryForwardCycle}
+        </if>
+    </select>
+
+    <!--  统计所有配货单明细实收数量和实收金额  -->
+    <select id="countTotalQuantityAndAmount" resultType="com.edc.erp.directly.dirdeliveryorder.entity.OrdDirDeliveryDetail">
+<!--        SELECT SUM(arrival_quantity) AS arrivalQuantity,SUM(arrival_amount) AS arrivalAmount FROM ord_dir_delivery_detail WHERE is_delete = 0 AND delivery_order_id IN (SELECT id FROM ord_dir_delivery odd WHERE odd.is_delete = 0 AND odd.biz_org_code = #{bizOrgCode})-->
+        SELECT
+            SUM( arrival_quantity ) AS arrivalQuantity,
+            SUM( arrival_amount ) AS arrivalAmount
+        FROM
+        ord_dir_delivery_detail oddd
+        INNER JOIN(
+            SELECT
+                id
+            FROM
+                ord_dir_delivery odd
+            <where>
+                odd.is_delete = 0
+                <if test="bizOrgCode != null and bizOrgCode != ''">
+                    AND odd.biz_org_code = #{bizOrgCode}
+                </if>
+            </where>
+
+        ) od
+        ON od.id = oddd.delivery_order_id
+    </select>
+    <select id="sumArrivalData"
+            resultType="com.edc.erp.directly.dirdeliveryorder.model.out.DirDeliveryOrderArrivalDataOut">
+        SELECT
+            SUM( arrival_quantity ) AS totalArrivalQuantity,
+            SUM( arrival_amount ) AS totalArrivalAmount
+        FROM
+            ord_dir_delivery_detail  where delivery_order_id = #{deliveryOrderId} and is_delete = 0
+    </select>
+    <select id="sumArrivalDataByDeliveryOrderIdList"
+            resultType="com.edc.erp.directly.dirdeliveryorder.model.out.DirDeliveryOrderArrivalDataOut">
+        SELECT
+        SUM( arrival_quantity ) AS totalArrivalQuantity,
+        SUM( arrival_amount ) AS totalArrivalAmount
+        FROM
+        ord_dir_delivery_detail
+        where delivery_order_id in
+        <foreach collection="deliveryOrderIdList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and is_delete = 0
+    </select>
+    <select id="findPrintDtlByDeliveryId"
+            resultType="com.edc.erp.directly.dirdeliveryorder.model.out.DirDeliveryOrderDtlPrintOut">
+        select
+            id, delivery_order_id, goods_code, bar_code, goods_name, line, delivery_quantity, delivery_package_quantity,order_unit_price,
+            delivery_amount, distribution_specification, distribution_specification_unit,order_quantity,order_package_quantity,distribution_unit_price,expiration_date,produce_date
+        from ord_dir_delivery_detail where delivery_order_id = #{deliveryOrderId} and is_delete = 0
+    </select>
+    <select id="findDetailSupplyRateList"
+            resultType="com.edc.erp.directly.dirdeliveryorder.entity.OrdDirDeliveryDetail">
+        select d.id, d.delivery_order_id, d.goods_code, d.bar_code, d.goods_name, d.goods_image, d.small_sort, d.line, d.org_goods_id, IFNULL(cis.allocation_quantity,d.order_quantity) as order_quantity, d.order_package_quantity,
+               d.order_unit_price, d.order_amount, d.distribution_quantity, d.distribution_package_quantity, d.distribution_unit_price, d.distribution_amount, d.delivery_quantity,
+               d.delivery_package_quantity, d.delivery_amount, d.arrival_quantity, d.arrival_package_quantity, d.arrival_amount, d.distribution_specification_num, d.distribution_type,
+               d.distribution_specification, d.distribution_specification_unit, d.is_gift, d.goods_type, d.distribution_except_tax_amount, d.distribution_tax_amount, d.wrh_price,
+               d.wrh_cost_amount, d.wrh_except_tax_amount, d.wrh_tax_amount, d.store_stock_price, d.store_cost_amount, d.store_except_tax_amount, d.store_tax_amount, d.sell_tax,
+               d.distribution_price, d.stockout_quantity, d.vendor_code, d.expiration_date, d.produce_date, d.creator, d.create_time, d.updater, d.update_time, d.is_delete, d.remark,
+               d.purchase_no, d.order_priority, d.carry_forward_cycle, d.base_goods_code
+        from ord_dir_delivery_detail d
+                 INNER JOIN ord_store_cycle_inventory_supply_rate cis on cis.goods_code = d.goods_code
+        where d.delivery_order_id = #{deliveryOrderId} and cis.order_cycle_time =#{orderCycleTime} and cis.store_code = #{storeCode}
+    </select>
+    <select id="findDetailListForReturnOrder"
+            resultType="com.edc.erp.directly.dirdeliveryorder.model.out.DirDeliveryDetailListForReturnOut">
+        select goods_code,expiry,arrival_quantity from ord_dir_delivery_detail where delivery_order_id = #{deliveryOrderId} and is_delete = 0
+    </select>
+
+
+</mapper>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.distribution.mapper.OrdDisOrderCycleMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.distribution.entity.OrdDisOrderCycle">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="storeCode" column="store_code" jdbcType="VARCHAR"/>
+        <result property="orderTypeConfigId" column="order_type_config_id" jdbcType="BIGINT"/>
+        <result property="shortOrderType" column="short_order_type" jdbcType="VARCHAR"/>
+        <result property="truncationDateTime" column="truncation_date_time" jdbcType="TIMESTAMP"/>
+        <result property="minimumOrderAmount" column="minimum_order_amount" jdbcType="DECIMAL"/>
+        <result property="firstOrderTime" column="first_order_time" jdbcType="BIGINT"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, store_code, order_type_config_id, short_order_type, truncation_date_time, minimum_order_amount,first_order_time, org_code, biz_org_code, creator, create_time, updater, update_time, is_delete
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="storeCode != null and storeCode != ''">
+                    and store_code = #{storeCode}
+                </if>
+                    <if test="orderTypeConfigId != null">
+                    and order_type_config_id = #{orderTypeConfigId}
+                </if>
+                    <if test="shortOrderType != null and shortOrderType != ''">
+                    and short_order_type = #{shortOrderType}
+                </if>
+                    <if test="truncationDateTime != null">
+                    and truncation_date_time = #{truncationDateTime}
+                </if>
+                    <if test="minimumOrderAmount != null">
+                    and minimum_order_amount = #{minimumOrderAmount}
+                </if>
+                <if test="firstOrderTime != null">
+                    and first_order_time = #{firstOrderTime}
+                </if>
+                <if test="orgCode != null and orgCode != ''">
+                    and org_code = #{orgCode}
+                </if>
+                    <if test="bizOrgCode != null and bizOrgCode != ''">
+                    and biz_org_code = #{bizOrgCode}
+                </if>
+                    <if test="creator != null and creator != ''">
+                    and creator = #{creator}
+                </if>
+                    <if test="createTime != null">
+                    and create_time = #{createTime}
+                </if>
+                    <if test="updater != null and updater != ''">
+                    and updater = #{updater}
+                </if>
+                    <if test="updateTime != null">
+                    and update_time = #{updateTime}
+                </if>
+                    <if test="isDelete != null">
+                    and is_delete = #{isDelete}
+                </if>
+                </where>
+     </sql>
+    <select id="findOrderCycleListBetweenCreateTime"
+            resultType="com.edc.erp.distribution.entity.OrdDisOrderCycle">
+        select <include refid="Base_Column_List"/> from ord_dis_order_cycle
+                where truncation_date_time between #{beginTime} and #{endTime} and biz_org_code = #{bizOrgCode} and is_delete = 0
+                and exists
+                (
+                    select order_cycle_id from ord_dis_order where is_delete = 0
+                    <if test="orderStatusCodeList != null and orderStatusCodeList.size() > 0">
+                        and order_status_code in
+                        <foreach collection="orderStatusCodeList" separator="," open="(" close=")" item="item">
+                            #{item}
+                        </foreach>
+                    </if>
+                     and biz_org_code = #{bizOrgCode} and ord_dis_order.order_cycle_id = ord_dis_order_cycle.id
+                )
+                order by truncation_date_time,create_time
+    </select>
+
+
+    <select id="findOrderCycleOrderListByAppQueryOrderIn"
+            resultType="com.edc.erp.distribution.model.out.DisOrderCycleOrderOut">
+        select c.id as orderCycleId,c.short_order_type,c.minimum_order_amount,c.truncation_date_time,
+        o.id as orderId,o.order_no,o.order_status_code,o.order_amount,o.preferential_amount,
+        o.source_code,o.create_time,o.store_code,o.order_identification
+        from ord_dis_order o INNER JOIN ord_dis_order_cycle c on c.id = o.order_cycle_id
+        where c.store_code = #{storeCode} and o.store_code = #{storeCode} and c.biz_org_code = #{bizOrgCode} and o.is_delete = 0 and c.is_delete = 0
+        <if test="null != beginTime and '' != beginTime and null != endTime and '' != endTime">
+            and c.truncation_date_time BETWEEN #{beginTime} and #{endTime}
+        </if>
+        <if test="null != beginTime and '' != beginTime">
+            and c.truncation_date_time > #{beginTime}
+        </if>
+        <if test="orderIdentification != null and orderIdentification != ''">
+            and o.order_identification = #{orderIdentification}
+        </if>
+        <if test="null != orderStatusCodeList and orderStatusCodeList.size() > 0">
+            and o.order_status_code in
+            <foreach collection="orderStatusCodeList" separator="," open="(" close=")" item="item">
+                #{item}
+            </foreach>
+        </if>
+        order by c.truncation_date_time desc,o.create_time desc
+    </select>
+    <select id="findByOrderIds" resultType="com.edc.erp.distribution.entity.OrdDisOrderCycle">
+        select odoc.id,
+               odoc.store_code,
+               odoc.order_type_config_id,
+               odoc.short_order_type,
+               odoc.truncation_date_time,
+               odoc.minimum_order_amount,
+               odoc.first_order_time,
+               odoc.org_code,
+               odoc.biz_org_code,
+               odoc.creator,
+               odoc.create_time,
+               odoc.updater,
+               odoc.update_time,
+               odoc.is_delete from ord_dis_order odo INNER JOIN ord_dis_order_cycle odoc on odo.order_cycle_id = odoc.id and odoc.is_delete = 0
+        WHERE odo.is_delete = 0 and odo.id in
+        <foreach collection="ids.split(',')" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.distribution.mapper.OrdDirOrderMapper">
+    <!-- 结果集 -->
+    <resultMap id="resultMap" type="com.edc.erp.directly.distribution.entity.OrdDirOrder">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="sumbitTime" column="sumbit_time" jdbcType="TIMESTAMP"/>
+        <result property="storeCode" column="store_code" jdbcType="VARCHAR"/>
+        <result property="orderNo" column="order_no" jdbcType="VARCHAR"/>
+        <result property="orderStatusCode" column="order_status_code" jdbcType="VARCHAR"/>
+        <result property="orderAmount" column="order_amount" jdbcType="NUMERIC"/>
+        <result property="preferentialAmount" column="preferential_amount" jdbcType="NUMERIC"/>
+        <result property="sourceCode" column="source_code" jdbcType="VARCHAR"/>
+        <result property="cutOffTime" column="cut_off_time" jdbcType="TIMESTAMP"/>
+        <result property="requestOrderId" column="request_order_id" jdbcType="BIGINT"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="submitter" column="submitter" jdbcType="VARCHAR"/>
+        <result property="orderCycleId" column="order_cycle_id" jdbcType="BIGINT"/>
+        <result property="discountAmount" column="discount_amount" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id,
+        sumbit_time,
+        store_code,
+        order_no,
+        order_status_code,
+        order_amount,
+        preferential_amount,
+        source_code,
+        cut_off_time,
+        request_order_id,
+        org_code,
+        biz_org_code,
+        creator,
+        create_time,
+        updater,
+        update_time,
+        is_delete,
+        submitter,
+        order_cycle_id,
+        discount_amount
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Base_Where_Clause">
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="sumbitTime != null">
+                and sumbit_time = #{sumbitTime}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and store_code = #{storeCode}
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                and order_no = #{orderNo}
+            </if>
+            <if test="orderStatusCode != null and orderStatusCode != ''">
+                and order_status_code = #{orderStatusCode}
+            </if>
+            <if test="orderAmount != null">
+                and order_amount = #{orderAmount}
+            </if>
+            <if test="preferentialAmount != null">
+                and preferential_amount = #{preferentialAmount}
+            </if>
+            <if test="sourceCode != null and sourceCode != ''">
+                and source_code = #{sourceCode}
+            </if>
+            <if test="cutOffTime != null">
+                and cut_off_time = #{cutOffTime}
+            </if>
+            <if test="requestOrderId != null">
+                and request_order_id = #{requestOrderId}
+            </if>
+            <if test="orgCode != null and orgCode != ''">
+                and org_code = #{orgCode}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and biz_org_code = #{bizOrgCode}
+            </if>
+            <if test="creator != null and creator != ''">
+                and creator = #{creator}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updater != null and updater != ''">
+                and updater = #{updater}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="isDelete != null">
+                and is_delete = #{isDelete}
+            </if>
+            <if test="submitter != null and submitter != ''">
+                and submitter = #{submitter}
+            </if>
+            <if test="orderCycleId != null">
+                and order_cycle_id = #{orderCycleId}
+            </if>
+            <if test="discountAmount != null">
+                and discount_amount = #{discountAmount}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 直营订货单分页查询 -->
+    <select id="findDirOrderByPage" resultType="com.edc.erp.directly.distribution.model.out.DirOrderOut">
+        select odo.id,
+               odo.order_cycle_id,
+               odo.store_code,
+               odo.order_no,
+               odo.order_status_code,
+               odo.order_amount,
+               odo.preferential_amount,
+               odo.source_code,
+               odo.org_code,
+               odo.submitter,
+               odo.sumbit_time,
+               odo.creator,
+               odo.create_time,
+               odo.updater,
+               odo.update_time,
+               odo.is_delete,
+               odoc.truncation_date_time,
+               oddr.request_order_no,
+               oddr.id requestOrderId,
+               ootc.order_type_code,
+                d.distribution_order_no,
+               ootc.order_type_name
+        from ord_dir_order odo
+                 inner join ord_dir_order_cycle odoc on odoc.id = odo.order_cycle_id
+                 inner join opt_dir_order_type_config ootc on ootc.id = odoc.order_type_config_id
+                 left join ord_dir_deliv_request oddr on odo.request_order_id = oddr.id
+            left join ord_dir_order_distribution_rel dr on dr.order_id = odo.id
+            left join ord_dir_order_distribution d on d.id = dr.distribution_order_id
+        <where>
+            <if test="orderNo != null and orderNo != ''">
+                and odo.order_no = #{orderNo}
+            </if>
+            <if test="id != null">
+                and odo.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="sourceCode != null and sourceCode != ''">
+                and odo.source_code = #{sourceCode}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and odo.store_code = #{storeCode}
+            </if>
+            <if test="orderStatusCode != null and orderStatusCode != ''">
+                and odo.order_status_code = #{orderStatusCode}
+            </if>
+            <if test="beginAcceptDate != null and beginAcceptDate != '' and endAcceptDate != null and endAcceptDate != ''">
+                and odoc.truncation_date_time between #{beginAcceptDate} and #{endAcceptDate}
+            </if>
+            <if test="orderTypeCode != null and orderTypeCode != ''">
+                and ootc.order_type_code = #{orderTypeCode}
+            </if>
+            <if test="orderTypeCodeList != null and orderTypeCodeList.size > 0">
+                and ootc.order_type_code in
+                <foreach collection="orderTypeCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="distributionOrderNo != null and distributionOrderNo != ''">
+                and d.distribution_order_no = #{distributionOrderNo}
+            </if>
+            <if test="creator != null and creator != ''">
+                and odo.creator like concat('%', #{creator}, '%')
+            </if>
+            <if test="createTime != null">
+                and odo.create_time = #{createTime}
+            </if>
+            <if test="isDelete != null">
+                and odo.is_delete = #{isDelete}
+            </if>
+            <if test="storeCodeList != null and storeCodeList.size() > 0">
+                and odo.store_code in
+                <foreach collection="storeCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and exists(select odod.order_id
+                           from ord_dir_order_detail odod
+                           where odod.order_id = odo.id
+                             and odod.goods_code = #{goodsCode})
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and odo.biz_org_code = #{bizOrgCode,jdbcType=VARCHAR}
+            </if>
+            <if test="requestOrderNo != null and requestOrderNo != ''">
+                and oddr.request_order_no = #{requestOrderNo}
+            </if>
+            <if test="totalPayAmountOperator !=null and totalPayAmountOperator ==1">
+                and odo.order_amount &lt;= #{payableAmount}
+            </if>
+            <if test="totalPayAmountOperator !=null and totalPayAmountOperator ==2">
+                and odo.order_amount &gt;= #{payableAmount}
+            </if>
+        </where>
+        group by odo.id
+        order by odo.id desc
+    </select>
+
+    <!-- 根据id、业务组织代码获取直营订货单信息 -->
+    <select id="getOrderByIdAndBizOrgCode" resultMap="resultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dir_order
+        where id = #{orderId,jdbcType=INTEGER}
+          and biz_org_code = #{bizOrgCode,jdbcType=VARCHAR}
+          and is_delete = 0
+    </select>
+
+    <!-- 修改直营订货单状态 -->
+    <update id="updateOrderStatus">
+        update ord_dir_order
+        set order_status_code = #{orderStatusCode},
+            updater           = #{updater},
+            update_time       = now()
+        where id = #{id}
+          and biz_org_code = #{bizOrgCode,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 截单时间未支付状态修改 -->
+    <update id="updateForTruncationOrderByNoPay">
+        update ord_dir_order
+        set order_status_code = #{orderStatusCode},
+            updater           = #{updater},
+            update_time       = #{updateTime}
+        where id = #{id}
+          and order_status_code = 'waitPayment'
+          and biz_org_code = #{bizOrgCode,jdbcType=VARCHAR}
+    </update>
+
+    <!-- 批量修改订单 -->
+    <update id="batchUpdateOrder">
+        <foreach collection="orderList" item="item" index="index" separator=";">
+            update ord_dir_order
+            <set>
+                <if test="item.orderStatusCode != null and item.orderStatusCode != ''">
+                    order_status_code = #{item.orderStatusCode},
+                </if>
+                <if test="item.orderAmount != null">
+                    order_amount = #{item.orderAmount},
+                </if>
+                <if test="item.orderAmount != null">
+                    order_amount = #{item.orderAmount},
+                </if>
+                <if test="item.preferentialAmount != null">
+                    preferential_amount = #{item.preferentialAmount},
+                </if>
+                <if test="item.updater != null and item.updater != ''">
+                    updater = #{item.updater},
+                </if>
+                update_time = now()
+            </set>
+            where id = #{item.id}
+              and biz_org_code = #{item.bizOrgCode}
+        </foreach>
+    </update>
+
+    <!-- 批量修改要货单订货单关联关系 -->
+    <update id="batchUpdateOrderRequestRel">
+        <foreach collection="orderList" item="item" index="index" separator=";">
+            update ord_dir_order
+            <set>
+                <if test="item.requestOrderId != null and item.requestOrderId != ''">
+                    request_order_id = #{item.requestOrderId},
+                </if>
+                <if test="item.updater != null and item.updater != ''">
+                    updater = #{item.updater},
+                </if>
+                update_time = now()
+            </set>
+            where id = #{item.id}
+              and biz_org_code = #{item.bizOrgCode}
+        </foreach>
+    </update>
+
+    <!-- 直营订货单汇总 -->
+    <select id="orderSummary" resultType="com.edc.erp.directly.distribution.model.out.OrderSummaryOut">
+        select sum(odo.order_amount)        payableTotalAmount,
+               sum(odo.preferential_amount) preferentialTotalAmount
+        from ord_dir_order odo
+        inner join ord_dir_order_cycle odoc on odoc.id = odo.order_cycle_id
+        inner join opt_dir_order_type_config ootc on ootc.id = odoc.order_type_config_id
+        left join ord_dir_deliv_request oddr on odo.request_order_id = oddr.id
+        left join ord_dir_order_distribution_rel dr on dr.order_id = odo.id
+        left join ord_dir_order_distribution d on d.id = dr.distribution_order_id
+        <where>
+            <if test="orderNo != null and orderNo != ''">
+                and odo.order_no = #{orderNo}
+            </if>
+            <if test="id != null">
+                and odo.id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="sourceCode != null and sourceCode != ''">
+                and odo.source_code = #{sourceCode}
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                and odo.store_code = #{storeCode}
+            </if>
+            <if test="orderStatusCode != null and orderStatusCode != ''">
+                and odo.order_status_code = #{orderStatusCode}
+            </if>
+            <if test="beginAcceptDate != null and beginAcceptDate != '' and endAcceptDate != null and endAcceptDate != ''">
+                and odoc.truncation_date_time between #{beginAcceptDate} and #{endAcceptDate}
+            </if>
+            <if test="orderTypeCode != null and orderTypeCode != ''">
+                and ootc.order_type_code = #{orderTypeCode}
+            </if>
+            <if test="orderTypeCodeList != null and orderTypeCodeList.size > 0">
+                and ootc.order_type_code in
+                <foreach collection="orderTypeCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="distributionOrderNo != null and distributionOrderNo != ''">
+                and d.distribution_order_no = #{distributionOrderNo}
+            </if>
+            <if test="creator != null and creator != ''">
+                and odo.creator like concat('%', #{creator}, '%')
+            </if>
+            <if test="createTime != null">
+                and odo.create_time = #{createTime}
+            </if>
+            <if test="isDelete != null">
+                and odo.is_delete = #{isDelete}
+            </if>
+            <if test="storeCodeList != null and storeCodeList.size() > 0">
+                and odo.store_code in
+                <foreach collection="storeCodeList" item="item" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="goodsCode != null and goodsCode != ''">
+                and exists(select odod.order_id
+                from ord_dir_order_detail odod
+                where odod.order_id = odo.id
+                and odod.goods_code = #{goodsCode})
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and odo.biz_org_code = #{bizOrgCode,jdbcType=VARCHAR}
+            </if>
+            <if test="requestOrderNo != null and requestOrderNo != ''">
+                and oddr.request_order_no = #{requestOrderNo}
+            </if>
+            <if test="totalPayAmountOperator !=null and totalPayAmountOperator ==1">
+                and odo.order_amount &lt;= #{payableAmount}
+            </if>
+            <if test="totalPayAmountOperator !=null and totalPayAmountOperator ==2">
+                and odo.order_amount &gt;= #{payableAmount}
+            </if>
+        </where>
+        order by odo.id desc
+    </select>
+
+    <!-- 根据id查询订货单出参信息 -->
+    <select id="getByIdAndOrg" resultType="com.edc.erp.directly.distribution.model.out.DirOrderOut">
+        select
+        odo.id,odo.order_cycle_id,odo.store_code,odo.order_no,odo.order_status_code,odo.order_amount,odo.preferential_amount,odo.source_code,
+        odo.cut_off_time,odo.org_code,odo.creator,odo.create_time,odo.updater,odo.update_time,odo.is_delete,odoc.truncation_date_time,oddr.request_order_no,
+        oddr.id requestOrderId,ootc.order_type_code,ootc.order_type_name,odo.submitter,odo.sumbit_time,odo.discount_amount
+        from ord_dir_order odo
+        inner join ord_dir_order_cycle odoc on odoc.id = odo.order_cycle_id
+        inner join opt_dir_order_type_config ootc on ootc.id = odoc.order_type_config_id
+        left join ord_dir_deliv_request oddr on odo.request_order_id = oddr.id
+        <where>
+            <if test="orderId != null">
+                and odo.id = #{orderId}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and odo.biz_org_code = #{bizOrgCode,jdbcType=VARCHAR}
+            </if>
+        </where>
+        group by odo.id
+    </select>
+
+    <!-- 根据要货单主键获取实付单价 -->
+    <select id="findRealUnitPrice" resultType="java.math.BigDecimal">
+        SELECT odod.real_unit_price
+        FROM ord_dir_order odo
+        INNER JOIN ord_dir_order_detail odod ON odod.order_id = odo.id AND odod.is_delete = 0
+        where odo.request_order_id = #{requestOrderId} and odo.is_delete =0
+    </select>
+
+    <select id="findNeedCutOrderListByParameter" resultMap="resultMap">
+        select <include refid="Base_Column_List"/> from ord_dir_order where order_cycle_id = #{orderCycleId} and store_code = #{storeCode}
+        and biz_org_code = #{bizOrgCode} and order_status_code in
+        <foreach collection="orderStatusCodeList" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+        and is_delete = 0
+    </select>
+
+    <select id="findOrderListByOrderQueryIn" resultMap="resultMap">
+        select o.id,o.order_cycle_id,o.store_code,o.order_no,o.order_status_code,o.order_amount,o.preferential_amount,
+        o.source_code,o.cut_off_time
+        from ord_dir_order o INNER JOIN ord_dir_order_cycle c on c.id = o.order_cycle_id
+        where o.store_code = #{storeCode} and c.truncation_date_time = #{truncationDateTime}
+        and c.order_type_config_id = #{orderTypeConfigId}
+        <if test="null != sourceCodeList and sourceCodeList.size() > 0">
+            and o.source_code in
+            <foreach collection="sourceCodeList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="null != orderStatusCodeList and orderStatusCodeList.size() > 0">
+            and o.order_status_code in
+            <foreach collection="orderStatusCodeList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        and o.is_delete = 0
+    </select>
+
+
+
+    <select id="findThirtyDaysRequestOrderTotalAmountByStoreCodeAndOrderTypeConfigId" resultType="java.math.BigDecimal">
+        select sum(total_amount) from ord_dir_deliv_request where store_code = #{storeCode} and order_type_config_id = #{orderTypeConfigId}
+        and biz_org_code = #{bizOrgCode} and is_delete = 0 and truncation_date_time &lt; CURDATE() GROUP BY order_cycle_id ORDER BY id desc limit 30
+    </select>
+
+    <select id="getLastUpAndDownOrder" resultMap="resultMap">
+        select <include refid="Base_Column_List"/> from ord_dir_order where store_code = #{storeCode}
+        <![CDATA[ and id < #{id} ]]>
+        and source_code = 'upLowDown' and biz_org_code = #{bizOrgCode} and is_delete = 0 order by id desc limit 1
+    </select>
+
+    <select id="sumOrderAmount" resultType="java.math.BigDecimal">
+        select sum(order_amount) from ord_dir_order where store_code = #{storeCode} and biz_org_code = #{bizOrgCode} and order_status_code = #{orderStatusCode}
+        and id in
+        <foreach item="item" index="index" collection="orderIdList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and is_delete = 0
+    </select>
+    <select id="findPaidTransferOrderStoreCodeList" resultType="java.lang.String">
+        select oc.store_code from ord_dir_order_cycle oc LEFT JOIN ord_dir_order o on oc.id = o.order_cycle_id
+        where oc.truncation_date_time between #{truncationDateTimeBegin} and #{truncationDateTimeEnd}
+        <if test="orderTypeConfigIdList != null and orderTypeConfigIdList.size() > 0">
+            and oc.order_type_config_id in
+            <foreach collection="orderTypeConfigIdList" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        and oc.biz_org_code = #{bizOrgCode}
+        <if test="orderStatusCodeList != null and orderStatusCodeList.size() > 0">
+            and o.order_status_code in
+            <foreach collection="orderStatusCodeList" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        and oc.is_delete = 0 and o.is_delete = 0
+    </select>
+    <select id="findOrderByTruncationDateTimeAndOrderStatus"
+            resultType="com.edc.erp.common.model.out.warning.LogisticsMessageOrderOut">
+        select o.id,o.order_cycle_id,o.store_code,o.order_no,o.order_status_code,o.order_amount + o.preferential_amount as order_amount,o.order_amount payable_amount,
+        o.preferential_amount,o.source_code,o.biz_org_code,c.minimum_order_amount
+        from ord_dir_order o INNER JOIN ord_dir_order_cycle c on c.id = o.order_cycle_id
+        where o.order_status_code in
+        <foreach collection="orderStatusCodeList" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        <if test="null != storeCodeList and storeCodeList.size() > 0">
+            and o.store_code in
+            <foreach collection="storeCodeList" item="store" open="(" close=")" separator=",">
+                #{store}
+            </foreach>
+        </if>
+        <if test="null != truncationDateTime and truncationDateTime !=''">
+            and c.truncation_date_time = #{truncationDateTime}
+        </if>
+        <if test="null != beginTruncationDateTime and beginTruncationDateTime !='' and null != endTruncationDateTime and endTruncationDateTime !=''">
+            and c.truncation_date_time between #{beginTruncationDateTime} and #{endTruncationDateTime}
+        </if>
+        and c.biz_org_code = #{bizOrgCode} and o.is_delete = 0 and c.is_delete = 0
+    </select>
+    <select id="findNotToRequestOrderList" resultType="java.lang.String">
+        select o.order_no from ord_dir_order_cycle oc inner JOIN ord_dir_order o on oc.id = o.order_cycle_id
+        where oc.truncation_date_time = #{truncationDateTime}
+        and o.order_status_code in
+        <foreach collection="orderStatusCodeList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+        and oc.biz_org_code = #{bizOrgCode} and oc.is_delete = 0  and o.is_delete = 0
+    </select>
+    <select id="getCountByParameter" resultType="java.lang.Integer">
+        select count(o.id) from ord_dir_order_cycle oc inner JOIN ord_dir_order o on oc.id = o.order_cycle_id
+        where oc.truncation_date_time = #{truncationDateTime} and o.store_code = #{storeCode} and o.source_code = #{sourceCode} and o.order_status_code != 'invalid' and o.is_delete = 0
+    </select>
+
+    <update id="updateOrderSourceCode">
+        <foreach collection="orderIdList" item="item" index="index" separator=";">
+            update ord_dir_order set source_code = #{sourceCode} where id = #{item}
+        </foreach>
+    </update>
+
+
+</mapper>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.distribution.mapper.OrdDirOrderDistributionMapper">
+
+    <!-- 结果集 -->
+    <resultMap id="resultMap" type="com.edc.erp.directly.distribution.entity.OrdDirOrderDistribution">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="distributionOrderNo" column="distribution_order_no" jdbcType="VARCHAR"/>
+        <result property="distributionOrderStatus" column="distribution_order_status" jdbcType="VARCHAR"/>
+        <result property="stockCode" column="stock_code" jdbcType="VARCHAR"/>
+        <result property="stockName" column="stock_name" jdbcType="VARCHAR"/>
+        <result property="distributionTotalQuantity" column="distribution_total_quantity" jdbcType="DECIMAL"/>
+        <result property="distributionTotalAmount" column="distribution_total_amount" jdbcType="DECIMAL"/>
+        <result property="isEffectiveImmediately" column="is_effective_immediately" jdbcType="INTEGER"/>
+        <result property="effectiveTime" column="effective_time" jdbcType="TIMESTAMP"/>
+        <result property="isEnd" column="is_end" jdbcType="INTEGER"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="orderId" column="order_id" jdbcType="BIGINT"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id, distribution_order_no, distribution_order_status, stock_code, stock_name, distribution_total_quantity, distribution_total_amount, is_effective_immediately, effective_time, is_end, remark, order_id, org_code, biz_org_code, creator, create_time, updater, update_time, is_delete
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Base_Where_Clause">
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="distributionOrderNo != null and distributionOrderNo != ''">
+                and distribution_order_no = #{distributionOrderNo}
+            </if>
+            <if test="distributionOrderStatus != null and distributionOrderStatus != ''">
+                and distribution_order_status = #{distributionOrderStatus}
+            </if>
+            <if test="stockCode != null and stockCode != ''">
+                and stock_code = #{stockCode}
+            </if>
+            <if test="stockName != null and stockName != ''">
+                and stock_name = #{stockName}
+            </if>
+
+            <if test="distributionTotalQuantity != null">
+                and distribution_total_quantity = #{distributionTotalQuantity}
+            </if>
+
+            <if test="distributionTotalAmount != null">
+                and distribution_total_amount = #{distributionTotalAmount}
+            </if>
+
+            <if test="isEffectiveImmediately != null">
+                and is_effective_immediately = #{isEffectiveImmediately}
+            </if>
+
+            <if test="effectiveTime != null">
+                and effective_time = #{effectiveTime}
+            </if>
+            <if test="isEnd != null">
+                and is_end = #{isEnd}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="orderId != null">
+                and order_id = #{orderId}
+            </if>
+            <if test="orgCode != null and orgCode != ''">
+                and org_code = #{orgCode}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and biz_org_code = #{bizOrgCode}
+            </if>
+            <if test="creator != null and creator != ''">
+                and creator = #{creator}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updater != null and updater != ''">
+                and updater = #{updater}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="isDelete != null">
+                and is_delete = #{isDelete}
+            </if>
+        </where>
+    </sql>
+    <select id="findOrdDirOrderDistributionByPage"
+            resultType="com.edc.erp.directly.distribution.model.out.OrdDirOrderDistributionOrderOut">
+        select DISTINCT
+            od.id,
+            od.distribution_order_no,
+            od.distribution_order_status,
+            od.stock_code,
+            od.stock_name,
+            od.distribution_total_quantity,
+            od.distribution_total_amount,
+            od.is_effective_immediately,
+            od.effective_time,
+            od.is_end,
+            od.remark,
+            od.order_id,
+            od.org_code,
+            od.biz_org_code,
+            od.creator,
+            od.create_time,
+            od.updater,
+            od.update_time,
+            od.is_delete
+        from
+            ord_dir_order_distribution od
+        <where>
+            1=1
+            <if test="distributionOrderStatus != null and distributionOrderStatus != ''">
+                and od.distribution_order_status = #{distributionOrderStatus}
+            </if>
+            <if test="stockCode != null and stockCode != ''">
+                and od.stock_code = #{stockCode}
+            </if>
+            <if test="(storeCode != null and storeCode != '') or (goodsCode != null and goodsCode != '')">
+                and EXISTS
+                (
+                    SELECT
+                        ods.store_code,
+                        ods.goods_code
+                    FROM
+                        ord_dir_order_distribution_detail ods
+                    WHERE
+                        1 = 1 and ods.distribution_order_id = od.id and ods.is_delete = #{isDelete}
+                        <if test="storeCode != null and storeCode != ''">
+                            and ods.store_code = #{storeCode}
+                        </if>
+                        <if test="goodsCode != null and goodsCode != ''">
+                            and ods.goods_code = #{goodsCode}
+                        </if>
+                )
+            </if>
+            <if test="createTimeStart != null and createTimeStart != '' and createTimeEnd != null and createTimeEnd != ''">
+                and od.create_time between #{createTimeStart} and #{createTimeEnd}
+            </if>
+            <if test="effectiveStateTime != null and effectiveStateTime != '' and effectiveEndTime != null and effectiveEndTime != ''">
+                and od.effective_time between #{effectiveStateTime} and #{effectiveEndTime}
+            </if>
+            <if test="distributionOrderNo != null and distributionOrderNo != ''">
+                and od.distribution_order_no = #{distributionOrderNo}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and od.biz_org_code = #{bizOrgCode}
+            </if>
+            <if test="creator != null and creator != ''">
+                and od.creator = #{creator}
+            </if>
+            and od.is_delete = #{isDelete}
+        </where>
+        ORDER BY od.create_time DESC,od.id DESC
+    </select>
+
+    <!-- 查询分货订单列表  -->
+    <select id="findDirJoinOrderListByPage" resultType="com.edc.erp.directly.distribution.model.out.DirJoinOrderOut">
+        SELECT
+            odo.id,
+            odo.order_no,
+            odo.order_status_code,
+            odo.store_code
+        FROM
+            ord_dir_order_distribution_rel ododr
+        INNER JOIN
+            ord_dir_order odo on odo.id = ododr.order_id and odo.is_delete = 0
+        <where>
+            <if test="disId != null">
+                ododr.distribution_order_id = #{disId}
+            </if>
+            <if test="bizOrgCode != null and bizOrgCode != ''">
+                and odo.biz_org_code = #{bizOrgCode}
+            </if>
+        </where>
+            order by odo.id
+    </select>
+
+    <!--  根据时间和状态查询分货单 -->
+    <select id="findOrderByNewTimeAndStatus"
+            resultType="com.edc.erp.directly.distribution.model.out.OrdDirOrderDistributionOrderOut">
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            ord_dir_order_distribution
+        WHERE
+            is_delete = 0 and distribution_order_status = #{status} and is_effective_immediately = 0 and effective_time &lt;= #{nowTime} and is_end != 1
+    </select>
+
+    <!-- 查找直营分货单操作人集合  -->
+    <select id="findDirOrderCreatorList" resultType="com.edc.erp.common.model.out.ucmanager.UserNameOut">
+        SELECT creator FROM ord_dir_order_distribution WHERE is_delete = 0 AND biz_org_code = #{bizOrgCode} AND creator IS NOT NULL AND creator != '' GROUP BY creator
+    </select>
+    <select id="getDistributionOrderNoByOrderId" resultType="java.lang.String">
+        select d.distribution_order_no,dr.distribution_order_id,dr.order_id from ord_dir_order_distribution d
+        inner join ord_dir_order_distribution_rel dr on dr.distribution_order_id = d.id
+        where dr.order_id = #{orderId} and d.biz_org_code = #{bizOrgCode} and d.is_delete = 0
+    </select>
+
+    <select id="findNeedExecuteList" resultType="java.lang.Long">
+        SELECT id FROM ord_dir_order_distribution
+        WHERE
+        is_delete = 0 and distribution_order_status = #{status} and is_effective_immediately = 0 and effective_time &lt;= #{nowTime} and is_end != 1
+    </select>
+</mapper>

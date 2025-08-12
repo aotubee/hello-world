@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.directly.distribution.mapper.OrdDirOrderDistributionRelMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.directly.distribution.entity.OrdDirOrderDistributionRel">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="distributionOrderId" column="distribution_order_id" jdbcType="BIGINT"/>
+        <result property="orderId" column="order_id" jdbcType="BIGINT"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, distribution_order_id, order_id, creator, create_time    
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="distributionOrderId != null">
+                    and distribution_order_id = #{distributionOrderId}
+                </if>
+                    <if test="orderId != null">
+                    and order_id = #{orderId}
+                </if>
+                    <if test="creator != null and creator != ''">
+                    and creator = #{creator}
+                </if>
+                    <if test="createTime != null">
+                    and create_time = #{createTime}
+                </if>
+                </where>
+     </sql>
+
+    <insert id="batchSaveDistributionJoinOrder">
+        insert into ord_dir_order_distribution_rel
+        (distribution_order_id, order_id, creator, create_time)
+        values
+        <foreach collection="disJoinOrder" item="item" separator=",">
+            (#{item.distributionOrderId,jdbcType=BIGINT}, #{item.orderId,jdbcType=BIGINT}, #{item.creator,jdbcType=VARCHAR},
+            #{item.createTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+</mapper>

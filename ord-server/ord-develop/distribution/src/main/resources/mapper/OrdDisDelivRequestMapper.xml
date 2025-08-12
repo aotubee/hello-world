@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.disrequestorder.mapper.OrdDisDelivRequestMapper">
+
+    <!-- 结果集 -->
+    <resultMap id="resultMap" type="com.edc.erp.disrequestorder.entity.OrdDisDelivRequest">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="storeCode" column="store_code" jdbcType="VARCHAR"/>
+        <result property="orderTypeConfigId" column="order_type_config_id" jdbcType="BIGINT"/>
+        <result property="orderCycleId" column="order_cycle_id" jdbcType="BIGINT"/>
+        <result property="truncationDateTime" column="truncation_date_time" jdbcType="TIMESTAMP"/>
+        <result property="requestOrderNo" column="request_order_no" jdbcType="VARCHAR"/>
+        <result property="statusCode" column="status_code" jdbcType="VARCHAR"/>
+        <result property="totalAmount" column="total_amount" jdbcType="DECIMAL"/>
+        <result property="orgCode" column="org_code" jdbcType="VARCHAR"/>
+        <result property="bizOrgCode" column="biz_org_code" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, store_code, order_type_config_id, order_cycle_id, truncation_date_time, request_order_no, status_code, total_amount, org_code, biz_org_code, creator, create_time, updater, update_time, is_delete    
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="Base_Where_Clause">
+        ord_dis_deliv_request oddr
+        INNER JOIN ord_dis_order_cycle odoc on oddr.order_cycle_id=odoc.id and odoc.store_code=oddr.store_code and
+        odoc.biz_org_code=oddr.biz_org_code and odoc.is_delete=0
+        inner join opt_order_type_config ootc on odoc.order_type_config_id=ootc.id and
+        odoc.biz_org_code=ootc.biz_org_code and ootc.is_delete=0
+        <if test="orderNo != null and orderNo != ''">
+            inner join ord_dis_order odo on odo.request_order_id=oddr.id and odo.biz_org_code=#{bizOrgCode} and
+            odo.is_delete=0
+        </if>
+        <if test="deliveryOrderNo != null and deliveryOrderNo != ''">
+            inner join ord_dis_deliv_request_delivery oddrd on oddrd.request_order_id = oddr.id
+            inner join ord_dis_delivery odd on odd.id = oddrd.delivery_order_id and odd.biz_org_code = #{bizOrgCode} and
+            odd.is_delete = 0
+        </if>
+        where
+        oddr.biz_org_code = #{bizOrgCode} and oddr.is_delete = 0
+        <if test="requestOrderNo != null and requestOrderNo != ''">
+            and oddr.request_order_no = #{requestOrderNo}
+        </if>
+        <if test="statusCode != null and statusCode != ''">
+            and oddr.status_code = #{statusCode}
+        </if>
+        <if test="orderTypeConfigId != null">
+            and odoc.order_type_config_id = #{orderTypeConfigId}
+        </if>
+        <if test="orderTypeConfigIdList != null and orderTypeConfigIdList.size() > 0">
+            and odoc.order_type_config_id  in
+            <foreach collection="orderTypeConfigIdList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="storeCode != null and storeCode != ''">
+            and oddr.store_code = #{storeCode}
+        </if>
+        <if test="storeCodeList != null and storeCodeList.size() > 0">
+            and oddr.store_code in
+            <foreach collection="storeCodeList" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="orderNo != null and orderNo != ''">
+            and odo.order_no = #{orderNo}
+        </if>
+        <if test="deliveryOrderNo != null and deliveryOrderNo != ''">
+            and odd.delivery_order_no = #{deliveryOrderNo}
+        </if>
+        <if test="beginTruncationTime != null and beginTruncationTime != ''">
+            and oddr.truncation_date_time &gt;= #{beginTruncationTime}
+        </if>
+        <if test="endTruncationTime != null and endTruncationTime != ''">
+            and oddr.truncation_date_time &lt;= #{endTruncationTime}
+        </if>
+        <if test="totalAmount != null and totalAmountType != null and totalAmountType == 2">
+            and oddr.total_amount &gt;= #{totalAmount}
+        </if>
+        <if test="totalAmount != null and totalAmountType != null and totalAmountType == 1">
+            and oddr.total_amount &lt;= #{totalAmount}
+        </if>
+        <if test="createMonth != null and createMonth != ''">
+            and  date_format(oddr.create_time, '%Y-%m') =#{createMonth}
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and exists (
+            SELECT
+            1
+            FROM
+            ord_dis_deliv_request_detail oddrd
+            WHERE oddrd.request_order_id = oddr.id
+            AND oddrd.goods_code = #{goodsCode}
+            AND oddrd.is_delete = 0
+            )
+        </if>
+    </sql>
+    <select id="findRequestOrderListByPage"
+            resultType="com.edc.erp.disrequestorder.model.out.BackRequestOrderOut">
+        select
+        oddr.id as requestOrderId,oddr.store_code,oddr.order_type_config_id,
+        odoc.short_order_type,oddr.truncation_date_time,oddr.request_order_no,oddr.status_code,
+        oddr.total_amount,oddr.create_time,oddr.creator, oddr.org_code,oddr.biz_org_code, ootc.order_type_code,
+        ootc.order_type_name
+        FROM
+        <include refid="Base_Where_Clause"/>
+        order by oddr.id desc
+    </select>
+    <select id="getDeliveryOrderNosById" resultType="java.lang.String">
+         select group_concat(odd.delivery_order_no) from ord_dis_deliv_request_delivery oddrd
+        inner join ord_dis_delivery odd on odd.id = oddrd.delivery_order_id and odd.is_delete=0 and odd.biz_org_code=#{bizOrgCode}
+        where oddrd.request_order_id = #{requestOrderId}
+    </select>
+    <select id="getOrderNosById" resultType="java.lang.String">
+   select group_concat(odo.order_no) from ord_dis_order odo
+   where odo.request_order_id=#{requestOrderId} and odo.biz_org_code=#{bizOrgCode}
+    </select>
+    <select id="getRequestOrderById" resultType="com.edc.erp.disrequestorder.model.out.BackRequestOrderOut">
+        select
+        oddr.id as requestOrderId,oddr.store_code,oddr.order_type_config_id,
+        odoc.short_order_type,oddr.truncation_date_time,oddr.request_order_no,oddr.status_code,
+        oddr.total_amount,oddr.create_time,oddr.creator, oddr.org_code,oddr.biz_org_code, ootc.order_type_code,
+        ootc.order_type_name
+        FROM
+        ord_dis_deliv_request oddr
+        INNER JOIN ord_dis_order_cycle odoc on oddr.order_cycle_id=odoc.id and odoc.store_code=oddr.store_code and
+        odoc.biz_org_code=oddr.biz_org_code and odoc.is_delete=0
+        inner join opt_order_type_config ootc on odoc.order_type_config_id=ootc.id and
+        odoc.biz_org_code=ootc.biz_org_code and ootc.is_delete=0
+        where oddr.id=#{requestOrderId} and oddr.is_delete=0
+    </select>
+
+    <select id="getRequestOrderByDeliveryOrderIdAndBizOrgCode" resultMap="resultMap">
+        select oddr.id, oddr.store_code, oddr.order_type_config_id, oddr.order_cycle_id, oddr.truncation_date_time, oddr.request_order_no,
+        oddr.status_code, oddr.total_amount, oddr.org_code, oddr.biz_org_code, oddr.creator, oddr.create_time, oddr.updater, oddr.update_time, oddr.is_delete
+        from ord_dis_deliv_request oddr
+        inner join ord_dis_delivery odd
+        on oddr.request_order_no = odd.request_order_no
+        where odd.id =#{deliveryOrderId,jdbcType=BIGINT}
+        and odd.biz_org_code = #{bizOrgCode,jdbcType=VARCHAR}
+        and oddr.is_delete = 0
+    </select>
+
+    <select id="findOrderByRequestOrderId" resultType="com.edc.erp.distribution.entity.OrdDisOrder">
+        select
+        odo.id,
+        odo.order_cycle_id,
+        odo.request_order_id,
+        odo.order_no,
+        odo.sumbit_time,
+        odo.store_code,
+        odo.order_status_code,
+        odo.order_amount,
+        odo.preferential_amount,
+        odo.source_code,
+        odo.cut_off_time,
+        odo.org_code,
+        odo.biz_org_code,
+        odo.creator,
+        odo.create_time,
+        odo.updater,
+        odo.update_time,
+        odo.is_delete,
+        odo.submitter,
+        odo.discount_amount
+        from ord_dis_order odo
+        where odo.request_order_id=#{requestOrderId} and odo.biz_org_code=#{bizOrgCode}
+    </select>
+
+    <select id="findDelivOrderByRequestOrderId" resultType="com.edc.erp.disdeliveryorder.entity.OrdDisDelivery">
+        select
+        odd.id,
+        odd.delivery_order_no,
+        odd.delivery_status_code,
+        odd.stock_code,
+        odd.is_reversal_order,
+        odd.is_reversal,
+        odd.distribution_type,
+        odd.sku_count,
+        odd.store_name,
+        odd.store_code,
+        odd.delivery_quantity,
+        odd.delivery_amount,
+        odd.distribution_quantity,
+        odd.distribution_amount,
+        odd.difference_order_no,
+        odd.request_order_no,
+        odd.hd_delivery_no,
+        odd.delivery_time,
+        odd.distribution_time,
+        odd.receive_time,
+        odd.receive_progress,
+        odd.auto_take_delivery_time,
+        odd.take_remark,
+        odd.org_code,
+        odd.biz_org_code,
+        odd.source_no,
+        odd.logistics_no,
+        odd.creator,
+        odd.create_time,
+        odd.updater,
+        odd.update_time,
+        odd.is_delete,
+        odd.remark,
+        odd.order_priority,
+        odd.wrh_code
+        from ord_dis_deliv_request_delivery oddrd
+        inner join ord_dis_delivery odd on odd.id = oddrd.delivery_order_id and odd.is_delete=0 and odd.biz_org_code=#{bizOrgCode}
+        where oddrd.request_order_id = #{requestOrderId}
+    </select>
+    <select id="findNotToDeliveryOrderList" resultType="java.lang.String">
+        select request_order_no from ord_dis_deliv_request
+        where create_time &gt;= #{createTimeBegin} and create_time &lt;= #{createTimeEnd}
+          and status_code = #{statusCode}
+          and biz_org_code = #{bizOrgCode}
+          and is_delete = 0
+    </select>
+    <select id="requestOrderSummary" resultType="java.math.BigDecimal">
+        select sum(oddr.total_amount)
+        from
+        <include refid="Base_Where_Clause"/>
+    </select>
+    <select id="findOrderCycleIdByDeliveryOrderId" resultType="java.lang.Long">
+        select r.order_cycle_id
+        from ord_dis_delivery d
+                 INNER JOIN ord_dis_deliv_request_delivery drd  on drd.delivery_order_id = d.id
+                 INNER JOIN ord_dis_deliv_request r on r.id = drd.request_order_id
+        where  d.id = #{deliveryOrderId} and d.biz_org_code = #{bizOrgCode} and d.is_delete = 0 and r.is_delete = 0
+    </select>
+
+</mapper>

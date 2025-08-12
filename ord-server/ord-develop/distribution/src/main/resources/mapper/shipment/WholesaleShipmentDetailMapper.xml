@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.wholesale.shipment.mapper.WholesaleShipmentDetailMapper">
+    
+    <!-- 结果集 -->
+    <resultMap  id="resultMap" type="com.edc.erp.wholesale.shipment.entity.WholesaleShipmentDetail">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="wholesaleShipmentId" column="wholesale_shipment_id" jdbcType="BIGINT"/>
+        <result property="goodsCode" column="goods_code" jdbcType="VARCHAR"/>
+        <result property="goodsName" column="goods_name" jdbcType="VARCHAR"/>
+        <result property="goodsType" column="goods_type" jdbcType="VARCHAR"/>
+        <result property="barCode" column="bar_code" jdbcType="VARCHAR"/>
+        <result property="packageSpecification" column="package_specification" jdbcType="VARCHAR"/>
+        <result property="packageUnit" column="package_unit" jdbcType="VARCHAR"/>
+        <result property="applyQuantity" column="apply_quantity" jdbcType="INTEGER"/>
+        <result property="applyPackageNum" column="apply_package_num" jdbcType="INTEGER"/>
+        <result property="unitPrice" column="unit_price" jdbcType="DECIMAL"/>
+        <result property="applyAmount" column="apply_amount" jdbcType="DECIMAL"/>
+        <result property="auditQuantity" column="audit_quantity" jdbcType="INTEGER"/>
+        <result property="auditAmount" column="audit_amount" jdbcType="DECIMAL"/>
+        <result property="shipmentQuantity" column="shipment_quantity" jdbcType="INTEGER"/>
+        <result property="shipmentPackageQuantity" column="shipment_package_quantity" jdbcType="INTEGER"/>
+        <result property="inventoryPrice" column="inventory_price" jdbcType="DECIMAL"/>
+        <result property="practicalShipmentAmount" column="practical_shipment_amount" jdbcType="DECIMAL"/>
+        <result property="shipmentNetProfit" column="shipment_net_profit" jdbcType="DECIMAL"/>
+        <result property="shipmentTax" column="shipment_tax" jdbcType="DECIMAL"/>
+        <result property="costAmount" column="cost_amount" jdbcType="DECIMAL"/>
+        <result property="costNetProfitAmount" column="cost_net_profit_amount" jdbcType="DECIMAL"/>
+        <result property="costTax" column="cost_tax" jdbcType="DECIMAL"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="creator" column="creator" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updater" column="updater" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="returnPrinciple" column="return_principle" jdbcType="VARCHAR"/>
+        <result property="line" column="line" jdbcType="INTEGER"/>
+        <result property="isGift" column="is_gift" jdbcType="INTEGER"/>
+        <result property="vendorCode" column="vendor_code" jdbcType="VARCHAR"/>
+        <result property="purchaseNo" column="purchase_no" jdbcType="VARCHAR"/>
+        <result property="invoiceType" column="invoice_type" jdbcType="VARCHAR"/>
+    </resultMap>
+  
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+       id, wholesale_shipment_id, goods_code, goods_name, goods_type, bar_code, package_specification, package_unit,
+         apply_quantity, apply_package_num, unit_price, apply_amount, audit_quantity, audit_amount, shipment_quantity,
+         shipment_package_quantity, inventory_price, practical_shipment_amount, shipment_net_profit, shipment_tax,
+         cost_amount, cost_net_profit_amount, cost_tax, remark, creator, create_time, updater, update_time, is_delete,
+         return_principle,line,is_gift,vendor_code,purchase_no,invoice_type
+    </sql>
+    
+     <!-- 查询条件 -->
+     <sql id="Base_Where_Clause">
+            <where>
+                    <if test="id != null">
+                    and id = #{id}
+                </if>
+                    <if test="wholesaleShipmentId != null">
+                    and wholesale_shipment_id = #{wholesaleShipmentId}
+                </if>
+                    <if test="goodsCode != null and goodsCode != ''">
+                    and goods_code = #{goodsCode}
+                </if>
+                    <if test="goodsName != null and goodsName != ''">
+                    and goods_name = #{goodsName}
+                </if>
+                    <if test="goodsType != null and goodsType != ''">
+                    and goods_type = #{goodsType}
+                </if>
+                    <if test="barCode != null and barCode != ''">
+                    and bar_code = #{barCode}
+                </if>
+                    <if test="packageSpecification != null and packageSpecification != ''">
+                    and package_specification = #{packageSpecification}
+                </if>
+                    <if test="packageUnit != null and packageUnit != ''">
+                    and package_unit = #{packageUnit}
+                </if>
+                    <if test="applyQuantity != null">
+                    and apply_quantity = #{applyQuantity}
+                </if>
+                    <if test="applyPackageNum != null">
+                    and apply_package_num = #{applyPackageNum}
+                </if>
+                    <if test="unitPrice != null">
+                    and unit_price = #{unitPrice}
+                </if>
+                    <if test="applyAmount != null">
+                    and apply_amount = #{applyAmount}
+                </if>
+                    <if test="auditQuantity != null">
+                    and audit_quantity = #{auditQuantity}
+                </if>
+                    <if test="auditAmount != null">
+                    and audit_amount = #{auditAmount}
+                </if>
+                    <if test="shipmentQuantity != null">
+                    and shipment_quantity = #{shipmentQuantity}
+                </if>
+                    <if test="shipmentPackageQuantity != null">
+                    and shipment_package_quantity = #{shipmentPackageQuantity}
+                </if>
+                    <if test="inventoryPrice != null">
+                    and inventory_price = #{inventoryPrice}
+                </if>
+                    <if test="practicalShipmentAmount != null">
+                    and practical_shipment_amount = #{practicalShipmentAmount}
+                </if>
+                    <if test="shipmentNetProfit != null">
+                    and shipment_net_profit = #{shipmentNetProfit}
+                </if>
+                    <if test="shipmentTax != null">
+                    and shipment_tax = #{shipmentTax}
+                </if>
+                    <if test="costAmount != null">
+                    and cost_amount = #{costAmount}
+                </if>
+                    <if test="costNetProfitAmount != null">
+                    and cost_net_profit_amount = #{costNetProfitAmount}
+                </if>
+                    <if test="costTax != null">
+                    and cost_tax = #{costTax}
+                </if>
+                    <if test="remark != null and remark != ''">
+                    and remark = #{remark}
+                </if>
+                    <if test="creator != null and creator != ''">
+                    and creator = #{creator}
+                </if>
+                    <if test="createTime != null">
+                    and create_time = #{createTime}
+                </if>
+                    <if test="updater != null and updater != ''">
+                    and updater = #{updater}
+                </if>
+                    <if test="updateTime != null">
+                    and update_time = #{updateTime}
+                </if>
+                    <if test="isDelete != null">
+                    and is_delete = #{isDelete}
+                </if>
+                <if test="returnPrinciple != null and returnPrinciple != ''">
+                    and return_principle = #{returnPrinciple}
+                </if>
+                <if test="line != null">
+                    and line = #{line}
+                </if>
+                <if test="isGift != null">
+                    and is_gift = #{isGift}
+                </if>
+                <if test="vendorCode != null and vendorCode != ''">
+                    and vendor_code = #{vendorCode}
+                </if>
+                <if test="purchaseNo != null and purchaseNo != ''">
+                    and purchase_no = #{purchaseNo}
+                </if>
+                <if test="invoiceType != null and invoiceType != ''">
+                    and invoice_type = #{invoiceType}
+                </if>
+                </where>
+     </sql>
+
+    <!-- 批量保存出货单明细 -->
+    <insert id="batchSave">
+        INSERT INTO ord_wholesale_shipment_detail
+        (wholesale_shipment_id,goods_code, goods_name, goods_type, bar_code, package_specification,
+        package_unit, apply_quantity, apply_package_num, unit_price, apply_amount, audit_quantity,
+        audit_amount, shipment_quantity, shipment_package_quantity, inventory_price, practical_shipment_amount,
+        shipment_net_profit, shipment_tax, cost_amount, cost_net_profit_amount, cost_tax,return_principle,line,is_gift,vendor_code,purchase_no,
+        remark, creator, create_time, updater, update_time,invoice_type)
+        values
+        <foreach collection="detailList" item="item" separator=",">
+            (#{item.wholesaleShipmentId},#{item.goodsCode,jdbcType=VARCHAR}, #{item.goodsName,jdbcType=VARCHAR}, #{item.goodsType,jdbcType=VARCHAR}, #{item.barCode,jdbcType=VARCHAR},
+            #{item.packageSpecification,jdbcType=VARCHAR}, #{item.packageUnit,jdbcType=VARCHAR},
+            #{item.applyQuantity,jdbcType=INTEGER}, #{item.applyPackageNum,jdbcType=INTEGER},
+            #{item.unitPrice,jdbcType=DECIMAL}, #{item.applyAmount,jdbcType=DECIMAL}, #{item.auditQuantity,jdbcType=INTEGER},
+            #{item.auditAmount,jdbcType=DECIMAL}, #{item.shipmentQuantity,jdbcType=INTEGER},
+            #{item.shipmentPackageQuantity,jdbcType=INTEGER}, #{item.inventoryPrice,jdbcType=DECIMAL},
+            #{item.practicalShipmentAmount,jdbcType=DECIMAL}, #{item.shipmentNetProfit,jdbcType=DECIMAL},
+            #{item.shipmentTax,jdbcType=DECIMAL}, #{item.costAmount,jdbcType=DECIMAL}, #{item.costNetProfitAmount,jdbcType=DECIMAL},
+            #{item.costTax,jdbcType=DECIMAL},#{item.returnPrinciple,jdbcType=VARCHAR},#{item.line,jdbcType=INTEGER},#{item.isGift,jdbcType=INTEGER},#{item.vendorCode,jdbcType=VARCHAR},
+            #{item.purchaseNo,jdbcType=VARCHAR},#{item.remark,jdbcType=VARCHAR}, #{item.creator,jdbcType=VARCHAR},
+            #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP},#{item.invoiceType,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <!--  查询出货单详情 -->
+    <select id="findShipmentDetailList"
+            parameterType="com.edc.erp.wholesale.model.in.shipment.QueryShipmentDetailIn"
+            resultType="com.edc.erp.wholesale.model.in.shipment.WholesaleShipmentDetailIn">
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            ord_wholesale_shipment_detail
+        <where>
+            <if test="query.isDelete != null">
+                is_delete = #{query.isDelete}
+            </if>
+            <if test="query.wholesaleShipmentId != null">
+                and wholesale_shipment_id = #{query.wholesaleShipmentId}
+            </if>
+            <if test="query.goodsCode != null and query.goodsCode != ''">
+                and goods_code = #{query.goodsCode}
+            </if>
+            <if test="query.goodsName != null and query.goodsName != ''">
+                and goods_name like concat('%', #{query.goodsName}, '%')
+            </if>
+            <if test="query.shipmentWithDetailOuts != null and query.shipmentWithDetailOuts.size() != 0">
+                and wholesale_shipment_id in
+                <foreach collection="query.shipmentWithDetailOuts" item="orderOut" open="(" separator="," close=")">
+                    #{orderOut.id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <!--  分页查询货单明细 -->
+    <select id="findByPage" resultType="com.edc.erp.wholesale.model.out.shipment.WholesaleShipmentDetailOut">
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            ord_wholesale_shipment_detail
+        <where>
+            <if test="query.isDelete != null">
+                is_delete = #{query.isDelete}
+            </if>
+            <if test="query.wholesaleShipmentId != null">
+                and wholesale_shipment_id = #{query.wholesaleShipmentId}
+            </if>
+            <if test="query.goodsCode != null and query.goodsCode != ''">
+                and goods_code = #{query.goodsCode}
+            </if>
+            <if test="query.goodsName != null and query.goodsName != ''">
+                and goods_name like concat('%', #{query.goodsName}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="findNeedPushPurDetailList"
+            resultType="com.edc.erp.wholesale.model.out.shipment.TransferShipmentPushPurchaseOut">
+        select ws.shipment_wrh as warehouseCode,ws.shipment_stock_code as stockCode,wsd.wholesale_shipment_id,wsd.goods_code,
+               wsd.audit_quantity,wsd.apply_quantity,wsd.line,wsd.vendor_code,ws.order_priority
+        from ord_wholesale_shipment ws
+        left join ord_wholesale_shipment_detail wsd on wsd.wholesale_shipment_id = ws.id
+         where ws.distribution_type = #{distributionType} and ws.shipment_status = #{shipmentStatus}
+           and ws.audit_time between #{beginTime} and #{endTime} and ws.pur_batch_number is null and wsd.purchase_no is null and ws.push_pur_progress = 1 and ws.push_pur_time is null
+         and ws.biz_org_code = #{bizOrgCode} and ws.is_delete = 0 and wsd.is_delete = 0
+    </select>
+    <select id="findNeedPushPurDetailListByShipmentIdList"
+            resultType="com.edc.erp.wholesale.model.out.shipment.TransferShipmentPushPurchaseOut">
+        select ws.shipment_wrh as warehouseCode,ws.shipment_stock_code as stockCode,wsd.wholesale_shipment_id,wsd.goods_code,
+               wsd.audit_quantity,wsd.apply_quantity,wsd.line,wsd.vendor_code,ws.order_priority
+        from ord_wholesale_shipment ws
+        left join ord_wholesale_shipment_detail wsd on wsd.wholesale_shipment_id = ws.id
+        where ws.distribution_type = 'transfer' and ws.shipment_status = 'approved' and ws.id in
+          <foreach collection="shipmentIdList" separator="," item="item" open="(" close=")">
+              #{item}
+          </foreach>
+          and ws.pur_batch_number is null and wsd.purchase_no is null and ws.push_pur_progress = 1 and ws.push_pur_time is null
+          and ws.biz_org_code = #{bizOrgCode} and ws.is_delete = 0 and wsd.is_delete = 0
+    </select>
+    <select id="sumWholesaleDateInfoByIdList"
+            resultType="com.edc.erp.wholesale.model.out.shipment.WholesaleDateInfoOut">
+        SELECT
+        IFNULL(sum(apply_quantity),0) as totalApplyQuantity, IFNULL(sum(apply_amount),0) as totalApplyAmount, IFNULL(sum(audit_quantity),0) as totalAuditQuantity,
+        IFNULL(sum(audit_amount),0) as totalAuditAmount, IFNULL(sum(shipment_quantity),0) as totalShipmentQuantity, IFNULL(sum(practical_shipment_amount),0) as totalPracticalShipmentAmount
+        FROM ord_wholesale_shipment_detail
+        where wholesale_shipment_id in
+        <foreach collection="idList" item="wholesaleShipmentId" open="(" separator="," close=")">
+            #{wholesaleShipmentId}
+        </foreach>
+        and is_delete = 0
+    </select>
+
+    <!-- 批量更新批发出货单明细  -->
+    <update id="batchUpdate">
+        <if test="detailList != null and detailList.size() != 0">
+            <foreach collection="detailList" item="item" index="index" separator=";">
+                update ord_wholesale_shipment_detail
+                <set>
+                    <if test="item.wholesaleShipmentId != null">
+                        wholesale_shipment_id = #{item.wholesaleShipmentId,jdbcType=BIGINT},
+                    </if>
+                    <if test="item.goodsCode != null">
+                        goods_code = #{item.goodsCode,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.goodsName != null">
+                        goods_name = #{item.goodsName,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.goodsType != null">
+                        goods_type = #{item.goodsType,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.barCode != null">
+                        bar_code = #{item.barCode,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.packageSpecification != null">
+                        package_specification = #{item.packageSpecification,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.packageUnit != null">
+                        package_unit = #{item.packageUnit,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.applyQuantity != null">
+                        apply_quantity = #{item.applyQuantity,jdbcType=INTEGER},
+                    </if>
+                    <if test="item.applyPackageNum != null">
+                        apply_package_num = #{item.applyPackageNum,jdbcType=INTEGER},
+                    </if>
+                    <if test="item.unitPrice != null">
+                        unit_price = #{item.unitPrice,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.applyAmount != null">
+                        apply_amount = #{item.applyAmount,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.auditQuantity != null">
+                        audit_quantity = #{item.auditQuantity,jdbcType=INTEGER},
+                    </if>
+                    <if test="item.auditAmount != null">
+                        audit_amount = #{item.auditAmount,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.shipmentQuantity != null">
+                        shipment_quantity = #{item.shipmentQuantity,jdbcType=INTEGER},
+                    </if>
+                    <if test="item.shipmentPackageQuantity != null">
+                        shipment_package_quantity = #{item.shipmentPackageQuantity,jdbcType=INTEGER},
+                    </if>
+                    <if test="item.inventoryPrice != null">
+                        inventory_price = #{item.inventoryPrice,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.practicalShipmentAmount != null">
+                        practical_shipment_amount = #{item.practicalShipmentAmount,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.shipmentNetProfit != null">
+                        shipment_net_profit = #{item.shipmentNetProfit,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.shipmentTax != null">
+                        shipment_tax = #{item.shipmentTax,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.costAmount != null">
+                        cost_amount = #{item.costAmount,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.costNetProfitAmount != null">
+                        cost_net_profit_amount = #{item.costNetProfitAmount,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.costTax != null">
+                        cost_tax = #{item.costTax,jdbcType=DECIMAL},
+                    </if>
+                    <if test="item.remark != null">
+                        remark = #{item.remark,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.creator != null">
+                        creator = #{item.creator,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.createTime != null">
+                        create_time = #{item.createTime,jdbcType=TIMESTAMP},
+                    </if>
+                    <if test="item.updater != null">
+                        updater = #{item.updater,jdbcType=VARCHAR},
+                    </if>
+                    <if test="item.updateTime != null">
+                        update_time = #{item.updateTime,jdbcType=TIMESTAMP},
+                    </if>
+                    <if test="item.isDelete != null">
+                        is_delete = #{item.isDelete,jdbcType=TINYINT},
+                    </if>
+                    <if test="item.invoiceType != null">
+                        invoice_type = #{item.invoiceType,jdbcType=VARCHAR},
+                    </if>
+                </set>
+                WHERE id = #{item.id,jdbcType=BIGINT}
+            </foreach>
+        </if>
+    </update>
+    <update id="batchUpdateAudit">
+        <foreach collection="wholesaleShipmentDetailList" item="item" separator=";">
+            update ord_wholesale_shipment_detail set
+            <if test="item.auditQuantity != null">
+                audit_quantity = #{item.auditQuantity},
+            </if>
+            <if test="item.auditAmount != null">
+                audit_amount = #{item.auditAmount},
+            </if>
+            update_time = #{item.updateTime},updater = #{item.updater}
+            where id = #{item.id}
+        </foreach>
+
+    </update>
+    <update id="updateShipmentDetailPurchaseNoByPurBatchNumber">
+        update ord_wholesale_shipment_detail wsd left join ord_wholesale_shipment ws on ws.id = wsd.wholesale_shipment_id
+            set wsd.purchase_no = #{obj.purchaseOrderNo},wsd.updater = #{updater},wsd.update_time = #{updateTime}
+        where wsd.vendor_code = #{obj.vendorCode} and ws.pur_batch_number = #{obj.purBatchNumber} and ws.biz_org_code = #{obj.bizOrgCode} and wsd.is_delete = 0 and ws.is_delete = 0
+    </update>
+
+    <insert id="batchSaveList">
+        INSERT INTO ord_wholesale_shipment_detail
+        (wholesale_shipment_id,goods_code, goods_name, goods_type, bar_code, package_specification,
+        package_unit, apply_quantity, apply_package_num, unit_price, apply_amount, audit_quantity,
+        audit_amount, shipment_quantity, shipment_package_quantity, inventory_price, practical_shipment_amount,
+        shipment_net_profit, shipment_tax, cost_amount, cost_net_profit_amount, cost_tax,return_principle,line,is_gift,vendor_code,
+        remark, creator, create_time, updater, update_time,invoice_type)
+        values
+        <foreach collection="detailList" item="item" separator=",">
+            (#{item.wholesaleShipmentId},#{item.goodsCode,jdbcType=VARCHAR}, #{item.goodsName,jdbcType=VARCHAR}, #{item.goodsType,jdbcType=VARCHAR}, #{item.barCode,jdbcType=VARCHAR},
+            #{item.packageSpecification,jdbcType=VARCHAR}, #{item.packageUnit,jdbcType=VARCHAR},
+            #{item.applyQuantity,jdbcType=INTEGER}, #{item.applyPackageNum,jdbcType=INTEGER},
+            #{item.unitPrice,jdbcType=DECIMAL}, #{item.applyAmount,jdbcType=DECIMAL}, #{item.auditQuantity,jdbcType=INTEGER},
+            #{item.auditAmount,jdbcType=DECIMAL}, #{item.shipmentQuantity,jdbcType=INTEGER},
+            #{item.shipmentPackageQuantity,jdbcType=INTEGER}, #{item.inventoryPrice,jdbcType=DECIMAL},
+            #{item.practicalShipmentAmount,jdbcType=DECIMAL}, #{item.shipmentNetProfit,jdbcType=DECIMAL},
+            #{item.shipmentTax,jdbcType=DECIMAL}, #{item.costAmount,jdbcType=DECIMAL}, #{item.costNetProfitAmount,jdbcType=DECIMAL},
+            #{item.costTax,jdbcType=DECIMAL},#{item.returnPrinciple,jdbcType=VARCHAR},#{item.line,jdbcType=INTEGER},#{item.isGift,jdbcType=INTEGER},#{item.vendorCode,jdbcType=VARCHAR},
+             #{item.remark,jdbcType=VARCHAR}, #{item.creator,jdbcType=VARCHAR},
+            #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP},#{item.invoiceType,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <select id="findNeedDelayPushPurDetailList"
+            resultType="com.edc.erp.wholesale.model.out.shipment.TransferShipmentPushPurchaseOut">
+        select ws.shipment_wrh as warehouseCode,ws.shipment_stock_code as stockCode,wsd.wholesale_shipment_id,wsd.goods_code,
+               wsd.audit_quantity,wsd.apply_quantity,wsd.line,wsd.vendor_code,ws.order_priority
+        from ord_wholesale_shipment ws
+                 left join ord_wholesale_shipment_detail wsd on wsd.wholesale_shipment_id = ws.id
+        where ws.distribution_type = #{distributionType} and ws.shipment_status = #{shipmentStatus}
+          and ws.pur_batch_number is null and wsd.purchase_no is null and ws.push_pur_progress = 1
+          <![CDATA[
+          and ws.push_pur_time <= #{executeTime}
+          ]]>
+          and ws.biz_org_code = #{bizOrgCode} and ws.is_delete = 0 and wsd.is_delete = 0
+    </select>
+</mapper>

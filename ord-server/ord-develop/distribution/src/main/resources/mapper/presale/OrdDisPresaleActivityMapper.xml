@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edc.erp.presale.mapper.OrdDisPresaleActivityMapper">
+
+    <!-- 所有字段 -->
+    <sql id="Base_Column_List">
+        id, presale_activity_no, status, total_goods_qty, total_store_qty, begin_sale_date, end_sale_date,
+        begin_order_date, end_order_date,
+        profile, presale_image, is_limit_buy,limit_buy_time,promotional_price,creator,org_code,biz_org_code,
+        create_time, updater, update_time, is_delete
+    </sql>
+
+    <update id="updatePresaleActivityStatus">
+        update ord_dis_presale_activity
+        set status = #{activity.status} ,update_time = #{activity.updateTime},updater =
+        #{activity.updater}
+        where id = #{activity.id}
+        <if test="beforeStatus != null and beforeStatus != ''">
+            AND status = #{beforeStatus}
+        </if>
+    </update>
+    <select id="findNeedExecutePresaleActivityIdList" resultType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dis_presale_activity
+        <![CDATA[ where status = 'approved' and now() >= begin_sale_date and now() < end_sale_date  and is_delete = 0 ]]>
+    </select>
+
+    <select id="findExistPresaleActivityInfo"
+            resultType="com.edc.erp.presale.model.out.CheckExistPresaleActivityOut">
+        SELECT pa.id,pa.presale_activity_no,ps.store_code,pg.goods_code,pa.begin_order_date,pa.end_order_date
+        FROM ord_dis_presale_activity pa
+        INNER JOIN ord_dis_presale_activity_store ps on ps.presale_activity_id = pa.id
+        INNER JOIN ord_dis_presale_activity_goods pg on pg.presale_activity_id = pa.id
+        where 1 = 1
+         and pa.`status` in
+        <foreach collection="statusList" item="status" separator="," open="(" close=")">
+            #{status}
+        </foreach>
+        and ps.store_code in
+        <foreach collection="storeCodeList" item="storeCode" separator="," open="(" close=")">
+            #{storeCode}
+        </foreach>
+        and pg.goods_code in
+        <foreach collection="goodsCodeList" item="goodsCode" separator="," open="(" close=")">
+            #{goodsCode}
+        </foreach>
+        <if test="isGift != null">
+            and pg.is_gift = #{isGift}
+        </if>
+        <if test="id != null">
+            and pa.id != #{id}
+        </if>
+        and pa.is_delete = 0
+    </select>
+    <select id="findNeedStopPresaleActivityIdList" resultType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from ord_dis_presale_activity
+        <![CDATA[ where status = 'executed' and now() >= end_sale_date  and is_delete = 0 ]]>
+    </select>
+    <select id="findExecutePresaleActivityImageList"
+            resultType="com.edc.erp.presale.entity.OrdDisPresaleActivity">
+        SELECT
+        pa.id,
+        pa.presale_image
+        FROM
+        ord_dis_presale_activity pa
+        INNER JOIN ord_dis_presale_activity_store ps ON ps.presale_activity_id = pa.id
+        WHERE
+        pa.STATUS = 'executed'
+        <![CDATA[ and pa.begin_sale_date <= now() and pa.end_sale_date > now() ]]>
+        and ps.store_code = #{storeCode}
+    </select>
+    <select id="findPresaleActivityInfoList"
+            resultType="com.edc.erp.presale.entity.OrdDisPresaleActivity">
+        SELECT
+        pa.id,
+        pa.presale_activity_no,
+        pa.STATUS,
+        pa.total_goods_qty,
+        pa.total_store_qty,
+        pa.begin_sale_date,
+        pa.end_sale_date,
+        pa.begin_order_date,
+        pa.end_order_date,
+        pa.PROFILE,
+        pa.presale_image,
+        pa.is_limit_buy,
+        pa.limit_buy_time,
+        pa.promotional_price,
+        pa.biz_org_code
+        FROM
+        ord_dis_presale_activity pa
+        INNER JOIN ord_dis_presale_activity_store ps ON ps.presale_activity_id = pa.id
+        WHERE
+        pa.STATUS = 'executed'
+        <![CDATA[ and pa.begin_sale_date <= now() and pa.end_sale_date > now() ]]>
+        and ps.store_code = #{storeCode}
+    </select>
+    <select id="findPresaleActivityListByPage"
+            resultType="com.edc.erp.presale.model.out.PresaleActivityListOut">
+        SELECT
+        pa.id,
+        pa.presale_activity_no,
+        pa.status,
+        (select count(1) from ord_dis_presale_activity_goods where presale_activity_id = pa.id) total_goods_qty,
+        (select count(1) from ord_dis_presale_activity_store where presale_activity_id = pa.id) total_store_qty,
+        pa.begin_sale_date,
+        pa.end_sale_date,
+        pa.begin_order_date,
+        pa.end_order_date,
+        pa.creator,
+        pa.create_time,
+        pa.updater,
+        pa.update_time
+        FROM
+        ord_dis_presale_activity pa
+        WHERE is_delete = 0
+        <if test="status != null and status != ''">
+            and pa.status = #{status}
+        </if>
+        <if test="goodsCode != null and goodsCode != ''">
+            and exists(select 1 from ord_dis_presale_activity_goods pg where pg.presale_activity_id = pa.id and
+            pg.goods_code = #{goodsCode})
+        </if>
+        <if test="presaleActivityNo != null and presaleActivityNo != ''">
+            and pa.presale_activity_no = #{presaleActivityNo}
+        </if>
+        <if test="beginSaleDate != null and beginSaleDate != ''">
+            and pa.begin_sale_date <![CDATA[>=]]> #{beginSaleDate}
+        </if>
+        <if test="endSaleDate != null and endSaleDate != ''">
+            and pa.end_sale_date <![CDATA[<=]]> #{endSaleDate}
+        </if>
+        <if test="beginOrderDate != null and beginOrderDate != ''">
+            and pa.begin_order_date <![CDATA[>=]]> #{beginOrderDate}
+        </if>
+        <if test="endOrderDate != null and endOrderDate != ''">
+            and pa.end_order_date <![CDATA[<=]]> #{endOrderDate}
+        </if>
+        <if test="storeCode != null and storeCode != ''">
+            and exists(select 1 from ord_dis_presale_activity_store ps where ps.presale_activity_id = pa.id and
+            ps.store_code = #{storeCode})
+        </if>
+        <if test="bizOrgCode != null and bizOrgCode != ''">
+            and pa.biz_org_code = #{bizOrgCode}
+        </if>
+        ORDER BY pa.id DESC
+    </select>
+</mapper>
